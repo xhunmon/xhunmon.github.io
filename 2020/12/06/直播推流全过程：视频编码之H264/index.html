@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>直播推流全过程：视频编码之H.264（3） | 秦城季</title>
+  <meta name="description" content="简单说说编码 当我们把摄像头采集画面直接写入到文件中时，我们会发现没一会文件已经非常大了。这导致很不适合保存和传输，所以需要编码，把画面数据进行压缩。视频编码标准有很多，而我们这里讲的是H.264编码。其他请看：视频编码标准汇总及比较。  H.264编码 制订H.264的主要目标有两个： （1）视频编码层(VCL，全称：Video Coding Layer)：得到高的视频压缩比。 （2）网络提取">
+<meta property="og:type" content="article">
+<meta property="og:title" content="直播推流全过程：视频编码之H.264（3）">
+<meta property="og:url" content="http://qincji.gitee.io/2020/12/06/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E8%A7%86%E9%A2%91%E7%BC%96%E7%A0%81%E4%B9%8BH264/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="简单说说编码 当我们把摄像头采集画面直接写入到文件中时，我们会发现没一会文件已经非常大了。这导致很不适合保存和传输，所以需要编码，把画面数据进行压缩。视频编码标准有很多，而我们这里讲的是H.264编码。其他请看：视频编码标准汇总及比较。  H.264编码 制订H.264的主要目标有两个： （1）视频编码层(VCL，全称：Video Coding Layer)：得到高的视频压缩比。 （2）网络提取">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://qincji.gitee.io/2020/12/06/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E8%A7%86%E9%A2%91%E7%BC%96%E7%A0%81%E4%B9%8BH264/h264-%E5%B8%A6%E8%B5%B7%E5%A7%8B%E7%A0%81.png">
+<meta property="og:image" content="http://qincji.gitee.io/2020/12/06/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E8%A7%86%E9%A2%91%E7%BC%96%E7%A0%81%E4%B9%8BH264/h264-flv.png">
+<meta property="og:image" content="http://qincji.gitee.io/2020/12/06/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E8%A7%86%E9%A2%91%E7%BC%96%E7%A0%81%E4%B9%8BH264/h264-nalu%E7%BB%84%E6%88%90.png">
+<meta property="og:image" content="http://qincji.gitee.io/2020/12/06/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E8%A7%86%E9%A2%91%E7%BC%96%E7%A0%81%E4%B9%8BH264/h264-sps%E8%A1%A8.png">
+<meta property="og:image" content="http://qincji.gitee.io/2020/12/06/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E8%A7%86%E9%A2%91%E7%BC%96%E7%A0%81%E4%B9%8BH264/h264-sps%E5%88%86%E6%9E%90.png">
+<meta property="og:image" content="http://qincji.gitee.io/2020/12/06/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E8%A7%86%E9%A2%91%E7%BC%96%E7%A0%81%E4%B9%8BH264/h264-pps%E8%A1%A8.png">
+<meta property="og:image" content="http://qincji.gitee.io/2020/12/06/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E8%A7%86%E9%A2%91%E7%BC%96%E7%A0%81%E4%B9%8BH264/h264-x264-as.png">
+<meta property="article:published_time" content="2020-12-06T08:54:50.000Z">
+<meta property="article:modified_time" content="2020-12-06T09:13:32.741Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="直播推流全过程">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://qincji.gitee.io/2020/12/06/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E8%A7%86%E9%A2%91%E7%BC%96%E7%A0%81%E4%B9%8BH264/h264-%E5%B8%A6%E8%B5%B7%E5%A7%8B%E7%A0%81.png">
+  <!-- Canonical links -->
+  <link rel="canonical" href="http://qincji.gitee.io/2020/12/06/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E8%A7%86%E9%A2%91%E7%BC%96%E7%A0%81%E4%B9%8BH264/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 5.2.0"></head>
+
+
+<body class="main-center" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://qincji.gitee.io" target="_blank">
+          <img class="img-circle img-rotate" src="/images/avatar.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">秦城季</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">Android &amp; 音视频</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> 中国·广州</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav menu-highlight">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">首页</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-life">
+          <a href="/life">
+            
+            <i class="icon icon-book-fill"></i>
+            
+            <span class="menu-title">生活</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">归档</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">标签</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-repository">
+          <a href="/repository">
+            
+            <i class="icon icon-project"></i>
+            
+            <span class="menu-title">项目</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="icon icon-friendship"></i>
+            
+            <span class="menu-title">友链</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/xhunmon" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>5G时代将音视频推向新高度！欢迎共同谈论与学习！</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%85%B6%E4%BB%96/" rel="tag">其他</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B/" rel="tag">直播推流全过程</a><span class="tag-list-count">4</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/%E5%85%B6%E4%BB%96/" style="font-size: 13px;">其他</a> <a href="/tags/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B/" style="font-size: 14px;">直播推流全过程</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">十二月 2020</a><span class="archive-list-count">5</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2020/12/06/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E8%A7%86%E9%A2%91%E7%BC%96%E7%A0%81%E4%B9%8BH264/" class="title">直播推流全过程：视频编码之H.264（3）</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-12-06T08:54:50.000Z" itemprop="datePublished">2020-12-06</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2020/12/04/%E6%88%91%E7%9A%84%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA%E7%AC%94%E8%AE%B0/" class="title">我的博客搭建笔记</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-12-04T14:59:35.000Z" itemprop="datePublished">2020-12-04</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2020/12/04/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E9%9F%B3%E9%A2%91%E6%95%B0%E6%8D%AE%E6%BA%90%E4%B9%8BPCM/" class="title">直播推流全过程：音频数据源之PCM（2）</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-12-04T10:10:20.000Z" itemprop="datePublished">2020-12-04</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2020/12/04/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9AH.264%E6%8F%8F%E8%BF%B0%E7%AC%A6/" class="title">直播推流全过程：H.264描述符</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-12-04T04:50:20.000Z" itemprop="datePublished">2020-12-04</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2020/12/03/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E8%A7%86%E9%A2%91%E6%95%B0%E6%8D%AE%E6%BA%90%E4%B9%8BYUV/" class="title">直播推流全过程：视频数据源之YUV（1）</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-12-03T14:20:51.000Z" itemprop="datePublished">2020-12-03</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">文章目录</h3>
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AE%80%E5%8D%95%E8%AF%B4%E8%AF%B4%E7%BC%96%E7%A0%81"><span class="toc-number">1.</span> <span class="toc-text"> 简单说说编码</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#h264%E7%BC%96%E7%A0%81"><span class="toc-number">2.</span> <span class="toc-text"> H.264编码</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%BC%96%E7%A0%81%E7%9A%84%E8%BE%93%E5%85%A5%E4%B8%8E%E8%BE%93%E5%87%BA"><span class="toc-number">2.1.</span> <span class="toc-text"> 编码的输入与输出</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#nalunal-%E5%8D%95%E5%85%83"><span class="toc-number">2.2.</span> <span class="toc-text"> NALU（NAL 单元）</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#sps%E5%BA%8F%E5%88%97%E5%8F%82%E6%95%B0%E9%9B%86"><span class="toc-number">3.</span> <span class="toc-text"> SPS（序列参数集）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#pps%E5%9B%BE%E5%83%8F%E5%8F%82%E6%95%B0%E9%9B%86"><span class="toc-number">4.</span> <span class="toc-text"> PPS（图像参数集）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#x264"><span class="toc-number">5.</span> <span class="toc-text"> X264</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%82%E8%80%83"><span class="toc-number">6.</span> <span class="toc-text"> 参考</span></a></li></ol>
+    </nav>
+  </div>
+</aside>
+
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-直播推流全过程：视频编码之H264" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      直播推流全过程：视频编码之H.264（3）
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2020/12/06/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E8%A7%86%E9%A2%91%E7%BC%96%E7%A0%81%E4%B9%8BH264/" class="article-date">
+	  <time datetime="2020-12-06T08:54:50.000Z" itemprop="datePublished">2020-12-06</time>
+	</a>
+</span>
+        
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link-link" href="/tags/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B/" rel="tag">直播推流全过程</a>
+  </span>
+
+
+        
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2020/12/06/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E8%A7%86%E9%A2%91%E7%BC%96%E7%A0%81%E4%B9%8BH264/#comments" class="article-comment-link">评论</a></span>
+        
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <h3 id="简单说说编码"><a class="markdownIt-Anchor" href="#简单说说编码"></a> 简单说说编码</h3>
+<p>当我们把摄像头采集画面直接写入到文件中时，我们会发现没一会文件已经非常大了。这导致很不适合保存和传输，所以需要编码，把画面数据进行压缩。视频编码标准有很多，而我们这里讲的是H.264编码。其他请看：<a target="_blank" rel="noopener" href="https://blog.csdn.net/leixiaohua1020/article/details/84483343">视频编码标准汇总及比较</a>。</p>
+<h3 id="h264编码"><a class="markdownIt-Anchor" href="#h264编码"></a> H.264编码</h3>
+<p>制订H.264的主要目标有两个：<br />
+（1）视频编码层(VCL，全称：Video Coding Layer)：得到高的视频压缩比。<br />
+（2）网络提取层(NAL，全称：Network Abstraction Layer)：具有良好的网络亲和性，即可适用于各种传输网络。而NAL则是以NALU（NAL Unit）为单元来支持编码数据在基于包交换技术网络中传输的。</p>
+<h4 id="编码的输入与输出"><a class="markdownIt-Anchor" href="#编码的输入与输出"></a> 编码的输入与输出</h4>
+<p>一张张画面通过以H.264编码标准的编码器(如x264)编码后，输出一段包含N个NALU的数据，每个NALU之间通过<code>起始码</code>来分隔，如图：</p>
+<img src="/2020/12/06/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E8%A7%86%E9%A2%91%E7%BC%96%E7%A0%81%E4%B9%8BH264/h264-%E5%B8%A6%E8%B5%B7%E5%A7%8B%E7%A0%81.png" class="" title="image-20201201094616230">
+<ul>
+<li><strong>起始码：</strong> 0x00 00 01 或者 0x00 00 00 01。</li>
+</ul>
+<p>在网络传输（如RTMP）或者一些容器中（如FLV），通常会把NALU整合到视频区域的数据中。如下图的flv格式：</p>
+<img src="/2020/12/06/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E8%A7%86%E9%A2%91%E7%BC%96%E7%A0%81%E4%B9%8BH264/h264-flv.png" class="" title="h264-flv">
+<p>所以这篇文章主要学习NALU的基本知识，学会如何去分析一段NALU数据。</p>
+<h4 id="nalunal-单元"><a class="markdownIt-Anchor" href="#nalunal-单元"></a> NALU（NAL 单元）</h4>
+<p>NALU(NAL Unit，NAL 单元)的组成部分如下图。其中，f(0)占1bit，u(2)占2bit，u(5)占5bit，文中如有出现类似描述符请看<a target="_blank" rel="noopener" href="https://xhunmon.github.io/2020/12/04/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9AH.264%E6%8F%8F%E8%BF%B0%E7%AC%A6/">H.264描述符</a>。</p>
+<img src="/2020/12/06/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E8%A7%86%E9%A2%91%E7%BC%96%E7%A0%81%E4%B9%8BH264/h264-nalu%E7%BB%84%E6%88%90.png" class="" title="nalu组成">
+<p>从上图可以看出来，当前NAL单元属于什么样的类型，这取决于RBSP具体是什么样的类型，而RBSP的类型是根据<code>nal_unit_type</code>的值来定义的。<br />
+①当<code>nal_unit_type</code>为1~5时：RBSP为切片类型（有5种切片类型）；整个NAL单元类型为VCL NAL单元，VCL是上面说的视频编码层，里面有编码后画面数据。<br />
+②当<code>nal_unit_type</code>为其他时：RBSP为序列参数集类型、图像参数集类型等等；整个NAL单元类型为非VCL NAL单元。<br />
+具体的<code>nal_unit_type</code>所对应的RBSP类型如下表所示：</p>
+<table>
+<thead>
+<tr>
+<th>nal_unit_type</th>
+<th>NAL 单元和 RBSP 语法结构的内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>未指定</td>
+</tr>
+<tr>
+<td>1</td>
+<td>一个非IDR图像的编码条带<br />slice_layer_without_partitioning_rbsp( )</td>
+</tr>
+<tr>
+<td>2</td>
+<td>编码条带数据分割块A<br />slice_data_partition_a_layer_rbsp( )</td>
+</tr>
+<tr>
+<td>3</td>
+<td>编码条带数据分割块B<br />slice_data_partition_b_layer_rbsp( )</td>
+</tr>
+<tr>
+<td>4</td>
+<td>编码条带数据分割块C<br />slice_data_partition_c_layer_rbsp( )</td>
+</tr>
+<tr>
+<td>5</td>
+<td>IDR图像的编码条带<br />slice_layer_without_partitioning_rbsp( )</td>
+</tr>
+<tr>
+<td>6</td>
+<td>辅助增强信息 (SEI)<br />sei_rbsp( )</td>
+</tr>
+<tr>
+<td>7</td>
+<td>序列参数集（SPS）<br />seq_parameter_set_rbsp( )</td>
+</tr>
+<tr>
+<td>8</td>
+<td>图像参数集(PPS)<br />pic_parameter_set_rbsp( )</td>
+</tr>
+<tr>
+<td>9</td>
+<td>访问单元分隔符<br />access_unit_delimiter_rbsp( )</td>
+</tr>
+<tr>
+<td>10</td>
+<td>序列结尾<br />end_of_seq_rbsp( )</td>
+</tr>
+<tr>
+<td>11</td>
+<td>流结尾<br />end_of_stream_rbsp( )</td>
+</tr>
+<tr>
+<td>12</td>
+<td>填充数据<br />filler_data_rbsp( )</td>
+</tr>
+<tr>
+<td>13</td>
+<td>序列参数集扩展<br />seq_parameter_set_extension_rbsp( )</td>
+</tr>
+<tr>
+<td>14…18</td>
+<td>保留</td>
+</tr>
+<tr>
+<td>19</td>
+<td>未分割的辅助编码图像的编码条带<br />slice_layer_without_partitioning_rbsp( )</td>
+</tr>
+<tr>
+<td>20…23</td>
+<td>保留</td>
+</tr>
+<tr>
+<td>24…31</td>
+<td>未指定</td>
+</tr>
+</tbody>
+</table>
+<h3 id="sps序列参数集"><a class="markdownIt-Anchor" href="#sps序列参数集"></a> SPS（序列参数集）</h3>
+<p>SPS全称<code>Sequence parameter set</code>(序列参数集)，当<code>nal_unit_type</code>=7时，RBSP就是SPS类型，也可以说NAL单元为SPS的NAL单元。SPS主要包含的是针对一连续编码视频序列的参数，如帧数、图像尺寸等；详见下表 <em>序列参数集RBSP 语法</em>：</p>
+<img src="/2020/12/06/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E8%A7%86%E9%A2%91%E7%BC%96%E7%A0%81%E4%B9%8BH264/h264-sps%E8%A1%A8.png" class="" title="sps表">
+<p>上面中的主要参数的含义：</p>
+<ul>
+<li><strong>profile_idc</strong> 档次（H.264编码标准有几个档次）：66=基本；77=主要；88=扩展…</li>
+<li><strong>seq_parameter_set_id</strong> 标识符，本序列的id号，会被PPS引用。</li>
+<li><strong>num_ref_frames</strong> 指定参考帧队列可能达到的最大长度。</li>
+<li><strong>pic_width_in_mbs_minus1</strong> 加1是指以宏块为单元的每个解码图像的宽度。</li>
+<li><strong>pic_height_in_map_units_minus1</strong> 加1表示以条带组映射为单位的一个解码帧或场的高度。</li>
+</ul>
+<p>下面为从一个只放h.264视频编码文件的一段（SPS）：</p>
+<img src="/2020/12/06/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E8%A7%86%E9%A2%91%E7%BC%96%E7%A0%81%E4%B9%8BH264/h264-sps%E5%88%86%E6%9E%90.png" class="" title="sps分析">
+<p>ue(v)和se(v)的计算公式见 <a target="_blank" rel="noopener" href="https://xhunmon.github.io/2020/12/04/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9AH.264%E6%8F%8F%E8%BF%B0%E7%AC%A6/">H.264描述符</a>。</p>
+<pre class="highlight"><code class="shell"><span class="hljs-meta">#</span><span class="bash"> 00000001 6764001E ACD940A0 2FF96100 00030001 00000300 320F162D 96</span>
+00000001 #起始码
+<span class="hljs-meta">#</span><span class="bash">NAL单元头---0x67 0110 0111 --------------</span>
+0... .... # forbidden_zero_bit --&gt;u(1)
+.11. .... # nal_ref_idc --&gt;u(2) --&gt;HIGHEST
+...0 0111 # nal_unit_type --&gt;u(5) --&gt;SPS
+64 # profile_idc=103 --&gt;u(8) 
+<span class="hljs-meta">#</span><span class="bash">---0x00 0000 0000 --------------</span>
+0... .... #constraint_set0_flag
+.0.. .... #constraint_set1_flag
+..0. .... #constraint_set2_flag
+...0 .... #constraint_set3_flag
+.... 0000 #reserved_zero_4bits
+1E # level_idc --&gt;u(8) --&gt; 30
+<span class="hljs-meta">#</span><span class="bash">-----------0xAC 1010 1100 --------------</span>
+1... .... # seq_parameter_set_id --&gt; ue(v) --&gt; 0
+.010 .... # log2_max_frame_num_minus4 --&gt; ue(v) --&gt; 1
+.... 1... # pic_order_cnt_type --&gt; ue(v) --&gt;1 执行else if( pic_order_cnt_type == 1 )
+.... .1..#delta_pic_order_always_zero_flag --&gt;u(1)
+<span class="hljs-meta">#</span><span class="bash">----------0xACD9 (1010 11)00 1101 1001 ====== 括号里面的bit上面已使用</span>
+.... ..00 110. .... #offset_for_non_ref_pic --&gt;se(v)-&gt;codeNum=5-&gt;value=3
+.... .... ...1 .... #offset_for_top_to_bottom_field --&gt;se(v)-&gt;codeNum=0-&gt;value=0
+.... .... .... 1... #num_ref_frames_in_pic_order_cnt_cycle --&gt;ue(v)-&gt;0
+<span class="hljs-meta">#</span><span class="bash">----------0xD940 (1101 1)001 0100 0000 ====== 括号里面的bit上面已使用</span>
+.... .001 01.. .... #num_ref_frames --&gt;ue(v)-&gt;4
+.... .... ..0. .... #gaps_in_frame_num_value_allowed_flag --&gt;u(1)-&gt;0
+<span class="hljs-meta">#</span><span class="bash">----------0x40A0 (010)0 0000 1010 0000 ====== 括号里面的bit上面已使用</span>
+...0 0000 1010 00.. #pic_width_in_mbs_minus1 --&gt;ue(v)-&gt;32-1+8=39
+<span class="hljs-meta">#</span><span class="bash">----------0xA02F (1010 00)00 0010 1111 ====== 括号里面的bit上面已使用</span>
+.... ..00 0010 111. #pic_height_in_map_units_minus1 --&gt;ue(v)-&gt;16-1+7=22
+…………就到这里了，偷个懒，有兴趣大家自己分析下去，哈哈
+
+</code></pre>
+<h3 id="pps图像参数集"><a class="markdownIt-Anchor" href="#pps图像参数集"></a> PPS（图像参数集）</h3>
+<p>PPS全称<code>picture parameter set</code>(图像参数集)，当<code>nal_unit_type</code>=8时，RBSP就是PPS类型，也可以说NAL单元为SPS的NAL单元。一个序列中某一幅图像或者某几幅图像，其参数如标识符pic_parameter_set_id、可选的seq_parameter_set_id、熵编码模式选择标识、片组数目、初始量化参数和去方块滤波系数调整标识等；详见下表 <em>图像参数集RBSP 语法</em>：</p>
+<img src="/2020/12/06/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E8%A7%86%E9%A2%91%E7%BC%96%E7%A0%81%E4%B9%8BH264/h264-pps%E8%A1%A8.png" class="" title="pps表">
+<h3 id="x264"><a class="markdownIt-Anchor" href="#x264"></a> X264</h3>
+<p>这是国际好评的H.264协议标准的编码工具，这里简单介绍一下如何使用。</p>
+<p>（1）下载：<a target="_blank" rel="noopener" href="https://www.videolan.org/developers/x264.html">https://www.videolan.org/developers/x264.html</a></p>
+<p>（2）编译（android的交叉编译，平台：Mac）</p>
+<pre class="highlight"><code class="shell"><span class="hljs-meta">#</span><span class="bash">!/bin/sh</span>
+<span class="hljs-meta">#</span><span class="bash"><span class="hljs-comment">#########脚本忘记是参考哪位大神的了##########</span></span>
+<span class="hljs-meta">#</span><span class="bash">ndk的路径</span>
+NDK=/Users/Qincji/Desktop/develop/android/source/sdk/ndk/android-ndk-r17c
+API=17 #最低支持Android版本
+<span class="hljs-meta">#</span><span class="bash">编译平台darwin-x86_64为mac，linux-x86_64为linux</span>
+HOST_PLATFORM=darwin-x86_64
+function build_x264 &#123; 
+  OUTPUT=$(pwd)/"android"/"$CPU"
+  ./configure \
+  --prefix=$OUTPUT \
+  --cross-prefix=$CROSS_PREFIX \
+  --sysroot=$SYSROOT \
+  --host=$HOST \
+  --disable-asm \
+  --disable-shared \
+	--enable-static \
+  --disable-opencl \
+  --enable-pic \
+  --disable-cli \
+  --extra-cflags="$EXTRA_CFLAGS" \
+  --extra-ldflags="$EXTRA_LDFLAGS" 
+   make clean 
+   make install
+   echo "编译结束，路径如下："
+   echo "$OUTPUT"     
+ &#125;
+ 
+CPU="armeabi-v7a"
+CROSS_PREFIX=$NDK/toolchains/arm-linux-androideabi-4.9/prebuilt/darwin-x86_64/bin/arm-linux-androideabi-
+SYSROOT=$NDK/platforms/android-$API/arch-arm/
+EXTRA_CFLAGS="-D__ANDROID_API__=$API -isysroot $NDK/sysroot -I$NDK/sysroot/usr/include/arm-linux-androideabi -Os -fPIC -marm"
+EXTRA_LDFLAGS="-marm"
+HOST=arm-linux
+build_x264
+</code></pre>
+<p>（3）把编译生成的静态库移入android studio</p>
+<img src="/2020/12/06/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E8%A7%86%E9%A2%91%E7%BC%96%E7%A0%81%E4%B9%8BH264/h264-x264-as.png" class="" title="as导入">
+<p>在CMakeList.txt文件中添加：</p>
+<pre class="highlight"><code class="cmake">...
+<span class="hljs-keyword">include_directories</span>(<span class="hljs-keyword">include</span>)
+...
+<span class="hljs-keyword">target_link_libraries</span>(
+        ...
+        x264
+        )
+</code></pre>
+<p>（4）API简单使用</p>
+<pre class="highlight"><code class="c++"><span class="hljs-comment">/**
+关键步骤，来自雷神：https://blog.csdn.net/leixiaohua1020/article/details/42078645
+x264_param_default()：设置参数集结构体x264_param_t的缺省值。
+x264_picture_alloc()：为图像结构体x264_picture_t分配内存。
+x264_encoder_open()：打开编码器。
+x264_encoder_encode()：编码一帧图像。
+x264_encoder_close()：关闭编码器。
+x264_picture_clean()：释放x264_picture_alloc()申请的资源。
+ 
+存储数据的结构体如下所示。
+x264_picture_t：存储压缩编码前的像素数据。
+x264_nal_t：存储压缩编码后的码流数据。
+*/</span>
+<span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">X264Rtmp::encode</span><span class="hljs-params">(<span class="hljs-keyword">const</span> <span class="hljs-keyword">char</span> *url, <span class="hljs-keyword">int</span> <span class="hljs-built_in">width</span>, <span class="hljs-keyword">int</span> <span class="hljs-built_in">height</span>, <span class="hljs-keyword">int</span> bitRate, <span class="hljs-keyword">int</span> fps)</span> </span>&#123;
+    <span class="hljs-comment">//计算一帧等信息</span>
+    <span class="hljs-keyword">int</span> ySize = <span class="hljs-built_in">width</span> * <span class="hljs-built_in">height</span>;
+    <span class="hljs-keyword">int</span> uvSize = ySize / <span class="hljs-number">4</span>;
+    FILE *fp_src = fopen(url, <span class="hljs-string">"rb"</span>);
+
+    <span class="hljs-comment">//初始化VLC图片编码层的参数</span>
+    <span class="hljs-keyword">x264_picture_t</span> *pic_in = (<span class="hljs-keyword">x264_picture_t</span> *) <span class="hljs-built_in">malloc</span>(<span class="hljs-keyword">sizeof</span>(<span class="hljs-keyword">x264_picture_t</span>));
+    <span class="hljs-keyword">x264_t</span> *videoCodec = <span class="hljs-number">0</span>;
+
+    <span class="hljs-keyword">x264_param_t</span> param;
+    x264_param_default(&amp;param);
+    <span class="hljs-comment">//根据应用场景设置编码速度，以及编码质量。2：x264_preset_names，3：x264_tune_names</span>
+    x264_param_default_preset(&amp;param, x264_preset_names[<span class="hljs-number">0</span>], x264_tune_names[<span class="hljs-number">7</span>]);
+    <span class="hljs-comment">//输入数据格式， yuv 4:2:0</span>
+    param.i_csp = X264_CSP_I420;
+    param.i_width = <span class="hljs-built_in">width</span>;
+    param.i_height = <span class="hljs-built_in">height</span>;
+
+    <span class="hljs-comment">//base_line 3.2 编码规格，影响网络带宽，图像分辨率等。 -- https://en.wikipedia.org/wiki/Advanced_Video_Coding</span>
+    param.i_level_idc = <span class="hljs-number">32</span>;
+    <span class="hljs-comment">//两张参考图片间b帧的数量</span>
+    param.i_bframe = <span class="hljs-number">0</span>;
+    <span class="hljs-comment">//参数i_rc_method表示码率控制，CQP(恒定质量)，CRF(恒定码率)，ABR(平均码率)</span>
+    param.rc.i_rc_method = X264_RC_ABR;
+    <span class="hljs-comment">//比特率(码率, 单位Kbps)</span>
+    param.rc.i_bitrate = bitRate / <span class="hljs-number">1000</span>;
+    <span class="hljs-comment">//瞬时最大码率</span>
+    param.rc.i_vbv_max_bitrate = bitRate / <span class="hljs-number">1000</span> * <span class="hljs-number">1.2</span>;
+    <span class="hljs-comment">//设置了i_vbv_max_bitrate必须设置此参数，码率控制区大小,单位kbps</span>
+    param.rc.i_vbv_buffer_size = bitRate / <span class="hljs-number">1000</span>;
+    <span class="hljs-comment">//帧率（每秒显示多少张画面）</span>
+    param.i_fps_num = fps;
+    param.i_fps_den = <span class="hljs-number">1</span>;
+    param.i_timebase_den = param.i_fps_num;
+    param.i_timebase_num = param.i_fps_den;
+<span class="hljs-comment">//    param.pf_log = x264_log_default2;</span>
+    <span class="hljs-comment">//用fps而不是时间戳来计算帧间距离</span>
+    param.b_vfr_input = <span class="hljs-number">0</span>;
+    <span class="hljs-comment">//帧距离(关键帧)  2s一个关键帧</span>
+    param.i_keyint_max = fps * <span class="hljs-number">2</span>;
+    <span class="hljs-comment">// 是否复制sps和pps放在每个关键帧的前面 该参数设置是让每个关键帧(I帧)都附带sps/pps。</span>
+    param.b_repeat_headers = <span class="hljs-number">1</span>;
+    <span class="hljs-comment">//多线程</span>
+    param.i_threads = <span class="hljs-number">1</span>;
+
+    x264_param_apply_profile(&amp;param, <span class="hljs-string">"baseline"</span>);
+    <span class="hljs-comment">//打开编码器</span>
+    videoCodec = x264_encoder_open(&amp;param);
+
+    x264_picture_alloc(pic_in, X264_CSP_I420, <span class="hljs-built_in">width</span>, <span class="hljs-built_in">height</span>);
+
+    <span class="hljs-comment">//编码：h264码流</span>
+    <span class="hljs-keyword">while</span> (!feof(fp_src)) &#123;
+        <span class="hljs-comment">//y数据</span>
+        fread(pic_in-&gt;img.plane[<span class="hljs-number">0</span>], ySize, <span class="hljs-number">1</span>, fp_src);         <span class="hljs-comment">//Y</span>
+        fread(pic_in-&gt;img.plane[<span class="hljs-number">1</span>], uvSize, <span class="hljs-number">1</span>, fp_src);     <span class="hljs-comment">//U</span>
+        fread(pic_in-&gt;img.plane[<span class="hljs-number">2</span>], uvSize, <span class="hljs-number">1</span>, fp_src);     <span class="hljs-comment">//V</span>
+        <span class="hljs-comment">//编码出来的数据  （帧数据）</span>
+        <span class="hljs-keyword">x264_nal_t</span> *pp_nal;
+        <span class="hljs-comment">//编码出来有几个数据 （多少帧）</span>
+        <span class="hljs-keyword">int</span> pi_nal;
+        <span class="hljs-keyword">x264_picture_t</span> pic_out;
+        x264_encoder_encode(videoCodec, &amp;pp_nal, &amp;pi_nal, pic_in, &amp;pic_out);
+        <span class="hljs-comment">//如果是关键帧 3</span>
+        <span class="hljs-keyword">int</span> sps_len;
+        <span class="hljs-keyword">int</span> pps_len;
+        <span class="hljs-keyword">uint8_t</span> sps[<span class="hljs-number">100</span>];
+        <span class="hljs-keyword">uint8_t</span> pps[<span class="hljs-number">100</span>];
+        <span class="hljs-comment">// chroma_format_idc</span>
+        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>; i &lt; pi_nal; ++i) &#123;
+            <span class="hljs-keyword">x264_nal_t</span> &amp;nal = pp_nal[i];
+            <span class="hljs-keyword">if</span> (nal.i_type == NAL_SPS) &#123;
+            &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (nal.i_type == NAL_PPS) &#123;
+            &#125; <span class="hljs-keyword">else</span> &#123;
+            &#125;
+        &#125;
+    &#125;
+&#125;
+</code></pre>
+<h3 id="参考"><a class="markdownIt-Anchor" href="#参考"></a> 参考</h3>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/leixiaohua1020/article/details/84483343">视频编码标准汇总及比较</a></li>
+<li><a target="_blank" rel="noopener" href="http://103.23.20.16/srs/trunk/doc/H.264-AVC-ISO_IEC_14496-10.pdf">H.264-AVC-ISO_IEC_14496-10</a></li>
+<li>新一代视频压缩编码标准-H.264_AVC(第二版)</li>
+<li><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/28421375/usage-of-start-code-for-h264-video/29103276">https://stackoverflow.com/questions/28421375/usage-of-start-code-for-h264-video/29103276</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/engineer_james/article/details/81750864">https://blog.csdn.net/engineer_james/article/details/81750864</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/leixiaohua1020/article/details/42078645">x264流程</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.lagou.com/lgeduarticle/76946.html">x264参数注释</a></li>
+</ul>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="http://qincji.gitee.io/2020/12/06/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E8%A7%86%E9%A2%91%E7%BC%96%E7%A0%81%E4%B9%8BH264/" title="直播推流全过程：视频编码之H.264（3）" target="_blank" rel="external">http://qincji.gitee.io/2020/12/06/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E8%A7%86%E9%A2%91%E7%BC%96%E7%A0%81%E4%B9%8BH264/</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://qincji.gitee.io" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/images/avatar.jpg" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://qincji.gitee.io" target="_blank"><span class="text-dark">秦城季</span><small class="ml-1x">Android &amp; 音视频</small></a></h3>
+        <div></div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+      <div id="vcomments"></div>
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    
+    <li class="next">
+      <a href="/2020/12/04/%E6%88%91%E7%9A%84%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA%E7%AC%94%E8%AE%B0/" title="我的博客搭建笔记"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+    <li class="toggle-toc">
+      <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="文章目录" role="button">
+        <span>[&nbsp;</span><span>文章目录</span>
+        <i class="text-collapsed icon icon-anchor"></i>
+        <i class="text-in icon icon-close"></i>
+        <span>]</span>
+      </a>
+    </li>
+    
+  </ul>
+  
+  
+  <!-- Button trigger modal -->
+  <button type="button" class="btn btn-fancy btn-donate pop-onhover bg-gradient-warning" data-toggle="modal" data-target="#donateModal"><span>赏</span></button>
+  <!-- <div class="wave-icon wave-icon-danger btn-donate" data-toggle="modal" data-target="#donateModal">
+    <div class="wave-circle"><span class="icon"><i class="icon icon-bill"></i></span></div>
+  </div> -->
+  
+  
+  <div class="bar-right">
+    
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+    
+  </div>
+  </div>
+</nav>
+  
+<!-- Modal -->
+<div class="modal modal-center modal-small modal-xs-full fade" id="donateModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content donate">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      <div class="modal-body">
+        <div class="donate-box">
+          <div class="donate-head">
+            <p>感谢您的支持，我会继续努力的!</p>
+          </div>
+          <div class="tab-content">
+            <div role="tabpanel" class="tab-pane fade active in" id="alipay">
+              <div class="donate-payimg">
+                <img src="/images/donate/alipayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开支付宝扫一扫，即可进行扫码打赏哦</p>
+            </div>
+            <div role="tabpanel" class="tab-pane fade" id="wechatpay">
+              <div class="donate-payimg">
+                <img src="/images/donate/wechatpayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开微信扫一扫，即可进行扫码打赏哦</p>
+            </div>
+          </div>
+          <div class="donate-footer">
+            <ul class="nav nav-tabs nav-justified" role="tablist">
+              <li role="presentation" class="active">
+                <a href="#alipay" id="alipay-tab" role="tab" data-toggle="tab" aria-controls="alipay" aria-expanded="true"><i class="icon icon-alipay"></i> 支付宝</a>
+              </li>
+              <li role="presentation" class="">
+                <a href="#wechatpay" role="tab" id="wechatpay-tab" data-toggle="tab" aria-controls="wechatpay" aria-expanded="false"><i class="icon icon-wepay"></i> 微信支付</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/xhunmon" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+
+
+
+
+   
+    
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/valine"></script>
+  <script type="text/javascript">
+  var GUEST = ['nick', 'mail', 'link'];
+  var meta = 'nick,mail,link';
+  meta = meta.split(',').filter(function(item) {
+    return GUEST.indexOf(item) > -1;
+  });
+  new Valine({
+    el: '#vcomments',
+    verify: false,
+    notify: false,
+    appId: '',
+    appKey: '',
+    placeholder: 'Just go go',
+    avatar: 'mm',
+    meta: meta,
+    pageSize: '10' || 10,
+    visitor: false
+  });
+  </script>
+
+     
+
+
+
+
+
+
+
+</body>
+</html>

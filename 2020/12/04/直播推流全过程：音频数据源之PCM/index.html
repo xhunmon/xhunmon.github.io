@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>直播推流全过程：音频数据源之PCM（2） | 秦城季</title>
+  <meta name="description" content="声音与音频 声音是波，成为声波，而声波的三要素是频率、振幅和波形。频率代表音阶的高低（女高音、男低音）单位赫兹（Hz），人耳能听到的声波范围：频率在20Hz~20kHz之间；振幅代表响度（音量）；波形代表音色。而我们音频处理就是对声波采集成数字信号后进行处理。  音频采集与关键名词 音频采集的过程主要是通过设备设置采样率、采样数，将音频信号采集为pcm（Pulse-code modulation">
+<meta property="og:type" content="article">
+<meta property="og:title" content="直播推流全过程：音频数据源之PCM（2）">
+<meta property="og:url" content="http://qincji.gitee.io/2020/12/04/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E9%9F%B3%E9%A2%91%E6%95%B0%E6%8D%AE%E6%BA%90%E4%B9%8BPCM/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="声音与音频 声音是波，成为声波，而声波的三要素是频率、振幅和波形。频率代表音阶的高低（女高音、男低音）单位赫兹（Hz），人耳能听到的声波范围：频率在20Hz~20kHz之间；振幅代表响度（音量）；波形代表音色。而我们音频处理就是对声波采集成数字信号后进行处理。  音频采集与关键名词 音频采集的过程主要是通过设备设置采样率、采样数，将音频信号采集为pcm（Pulse-code modulation">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://qincji.gitee.io/2020/12/04/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E9%9F%B3%E9%A2%91%E6%95%B0%E6%8D%AE%E6%BA%90%E4%B9%8BPCM/pcm-%E6%95%B0%E6%8D%AE%E9%87%87%E9%9B%86.png">
+<meta property="article:published_time" content="2020-12-04T10:10:20.000Z">
+<meta property="article:modified_time" content="2020-12-06T09:52:52.390Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="直播推流全过程">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://qincji.gitee.io/2020/12/04/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E9%9F%B3%E9%A2%91%E6%95%B0%E6%8D%AE%E6%BA%90%E4%B9%8BPCM/pcm-%E6%95%B0%E6%8D%AE%E9%87%87%E9%9B%86.png">
+  <!-- Canonical links -->
+  <link rel="canonical" href="http://qincji.gitee.io/2020/12/04/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E9%9F%B3%E9%A2%91%E6%95%B0%E6%8D%AE%E6%BA%90%E4%B9%8BPCM/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 5.2.0"></head>
+
+
+<body class="main-center" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://qincji.gitee.io" target="_blank">
+          <img class="img-circle img-rotate" src="/images/avatar.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">秦城季</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">Android &amp; 音视频</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> 中国·广州</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav menu-highlight">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">首页</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-life">
+          <a href="/life">
+            
+            <i class="icon icon-book-fill"></i>
+            
+            <span class="menu-title">生活</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">归档</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">标签</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-repository">
+          <a href="/repository">
+            
+            <i class="icon icon-project"></i>
+            
+            <span class="menu-title">项目</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="icon icon-friendship"></i>
+            
+            <span class="menu-title">友链</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/xhunmon" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>5G时代将音视频推向新高度！欢迎共同谈论与学习！</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%85%B6%E4%BB%96/" rel="tag">其他</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B/" rel="tag">直播推流全过程</a><span class="tag-list-count">4</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/%E5%85%B6%E4%BB%96/" style="font-size: 13px;">其他</a> <a href="/tags/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B/" style="font-size: 14px;">直播推流全过程</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">十二月 2020</a><span class="archive-list-count">5</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2020/12/06/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E8%A7%86%E9%A2%91%E7%BC%96%E7%A0%81%E4%B9%8BH264/" class="title">直播推流全过程：视频编码之H.264（3）</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-12-06T08:54:50.000Z" itemprop="datePublished">2020-12-06</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2020/12/04/%E6%88%91%E7%9A%84%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA%E7%AC%94%E8%AE%B0/" class="title">我的博客搭建笔记</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-12-04T14:59:35.000Z" itemprop="datePublished">2020-12-04</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2020/12/04/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E9%9F%B3%E9%A2%91%E6%95%B0%E6%8D%AE%E6%BA%90%E4%B9%8BPCM/" class="title">直播推流全过程：音频数据源之PCM（2）</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-12-04T10:10:20.000Z" itemprop="datePublished">2020-12-04</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2020/12/04/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9AH.264%E6%8F%8F%E8%BF%B0%E7%AC%A6/" class="title">直播推流全过程：H.264描述符</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-12-04T04:50:20.000Z" itemprop="datePublished">2020-12-04</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2020/12/03/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E8%A7%86%E9%A2%91%E6%95%B0%E6%8D%AE%E6%BA%90%E4%B9%8BYUV/" class="title">直播推流全过程：视频数据源之YUV（1）</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-12-03T14:20:51.000Z" itemprop="datePublished">2020-12-03</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-直播推流全过程：音频数据源之PCM" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      直播推流全过程：音频数据源之PCM（2）
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2020/12/04/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E9%9F%B3%E9%A2%91%E6%95%B0%E6%8D%AE%E6%BA%90%E4%B9%8BPCM/" class="article-date">
+	  <time datetime="2020-12-04T10:10:20.000Z" itemprop="datePublished">2020-12-04</time>
+	</a>
+</span>
+        
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link-link" href="/tags/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B/" rel="tag">直播推流全过程</a>
+  </span>
+
+
+        
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2020/12/04/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E9%9F%B3%E9%A2%91%E6%95%B0%E6%8D%AE%E6%BA%90%E4%B9%8BPCM/#comments" class="article-comment-link">评论</a></span>
+        
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <h3 id="声音与音频"><a class="markdownIt-Anchor" href="#声音与音频"></a> 声音与音频</h3>
+<p>声音是波，成为声波，而声波的三要素是频率、振幅和波形。频率代表音阶的高低（女高音、男低音）单位赫兹（Hz），人耳能听到的声波范围：频率在20Hz~20kHz之间；振幅代表响度（音量）；波形代表音色。而我们音频处理就是对声波采集成数字信号后进行处理。</p>
+<h3 id="音频采集与关键名词"><a class="markdownIt-Anchor" href="#音频采集与关键名词"></a> 音频采集与关键名词</h3>
+<p>音频采集的过程主要是通过设备设置采样率、采样数，将音频信号采集为<strong>pcm</strong>（Pulse-code modulation，脉冲编码调制）编码的原始数据（无损压缩），然后编码压缩成mp3、aac等封装格式的数据。音频关键知识：</p>
+<ul>
+<li><strong>采样率：</strong> 一段音频数据中单位时间内（每秒）采样的个数。</li>
+<li><strong>位宽：</strong> 一次最大能传递数据的宽度，可以理解成放单个采集数据的内存。常有8位和16位，而8位：代表着每个采集点的数据都使用8位（1字节）来存储；16位：代表着每个采集点的数据都使用16位（2字节）来存储。</li>
+<li><strong>声道数：</strong> 扬声器的个数，单声道、双声道等。每一个声道都占一个位宽。</li>
+</ul>
+<p>来一张图来描述一下：</p>
+<img src="/2020/12/04/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E9%9F%B3%E9%A2%91%E6%95%B0%E6%8D%AE%E6%BA%90%E4%B9%8BPCM/pcm-%E6%95%B0%E6%8D%AE%E9%87%87%E9%9B%86.png" class="" title="pcm-数据采集">
+<p>一段时间内的数据大小如何计算？</p>
+<blockquote>
+<p>采样率 x (位宽 / 8) x 声道数 x 时间  =  数据大小（单位：字节）</p>
+</blockquote>
+<p>比如 2分钟的CD（采样率为：44100，位宽：16，声道数：2）的数据大小：44100 x (16 / 8) x 2 x 120  = 20671.875 Byte 约为 20.18M。</p>
+<h3 id="pcm数据的基本使用"><a class="markdownIt-Anchor" href="#pcm数据的基本使用"></a> PCM数据的基本使用</h3>
+<p>我们采集到的pcm原始数据要怎么玩？首先得知道怎么这些数据都代表啥意思，然后才能入手处理。</p>
+<h4 id="1-pcm数据时如何组成存储"><a class="markdownIt-Anchor" href="#1-pcm数据时如何组成存储"></a> 1、pcm数据时如何组成（存储）？</h4>
+<p>举个例子，分别使用不同的方式存储一段采集数据 0x11 0x22 0x33 0x44 0x55 0x66 0x77 0x88 总共8个字节。</p>
+<ul>
+<li>
+<p><strong>8位单声道：</strong> 按照数据采集时间顺序存储，即：0x11 0x22 0x33 0x44 0x55 0x66 0x77 0x88</p>
+</li>
+<li>
+<p><strong>8位双声道：</strong> L声道-R声道-L声道-R声道形式存储，即：0x11(L) 0x22® 0x33(L) 0x44® ……</p>
+</li>
+<li>
+<p><strong>16位单声道：</strong> 首先从 <a target="_blank" rel="noopener" href="https://wiki.multimedia.cx/index.php/PCM">维基多媒体：pcm</a>了解到位宽大于8位时，字节的排序方式是有差别的，描述如下：</p>
+<blockquote>
+<p>When more than one byte is used to represent a PCM sample, the byte order (big endian vs. little endian) must be known. Due to the widespread use of little-endian Intel CPUs, little-endian PCM tends to be the most common byte orientation.</p>
+<p>当使用一个以上的字节表示PCM样本时，必须知道字节顺序（大端与小端）。由于低端字节Intel CPU的广泛使用，低端字节PCM往往是最常见的字节方向。</p>
+<p>举个栗子：当位宽为16位（2字节）存储一个采集数据时，如：<code>0x12ab</code>，大端和小端分别是：</p>
+<blockquote>
+<p>big-endian: <code>0x12</code> <code>0xab</code>；<br />
+little-endian: <code>0xab</code> <code>0x12</code>。</p>
+</blockquote>
+</blockquote>
+<p>所以：<br />
+big-endian存储方式：0x1122  0x3344 0x5566  0x7788；<br />
+little-endian存储方式：0x2211 0x4433 0x6655  0x8877。</p>
+</li>
+<li>
+<p><strong>16位双声道：</strong> L声道-R声道-L声道-R声道形式存储：</p>
+<p>big-endian：0x1122(L) 0x3344® 0x5566(L)  0x7788®</p>
+<p>little-endian: 0x2211(L) 0x4433® 0x66550(L)  0x8877®</p>
+</li>
+</ul>
+<h4 id="2-pcm原始数据可以怎么玩"><a class="markdownIt-Anchor" href="#2-pcm原始数据可以怎么玩"></a> 2、pcm原始数据可以怎么玩？</h4>
+<ul>
+<li>
+<p>将little-endian_2_44100_16.pcm采样数据进行切割，只保留后面5秒的数据</p>
+<pre class="highlight"><code class="c"><span class="hljs-comment">/**
+ * 将little-endian_2_44100_16.pcm采样数据进行切割，只保留后面5秒的数据
+ * 1、该类型数据5秒有多长？
+ * 2、从哪里开始截取？
+ */</span>
+<span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">cut5second</span><span class="hljs-params">(<span class="hljs-keyword">const</span> <span class="hljs-keyword">char</span> *url)</span></span>&#123;
+    FILE *in = fopen(url, <span class="hljs-string">"rb+"</span>);
+    FILE *out = fopen(<span class="hljs-string">"./output/spit5second.pcm"</span>, <span class="hljs-string">"wb+"</span>);
+    <span class="hljs-keyword">long</span> <span class="hljs-keyword">long</span>  data5Length = <span class="hljs-number">44100</span> * (<span class="hljs-number">16</span>/<span class="hljs-number">8</span>) * <span class="hljs-number">2</span> * <span class="hljs-number">5</span>;
+    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">stat</span> <span class="hljs-title">statbuf</span>;</span>
+    stat(url,&amp;statbuf);
+    <span class="hljs-keyword">long</span> <span class="hljs-keyword">long</span> fileLength = statbuf.st_size;
+    <span class="hljs-keyword">long</span> <span class="hljs-keyword">long</span>  start = fileLength - data5Length;
+    <span class="hljs-keyword">char</span> *simple = (<span class="hljs-keyword">char</span> *)<span class="hljs-built_in">malloc</span>(data5Length);
+    <span class="hljs-comment">//把指针位置移动到start位置开始读取</span>
+    fseek(in,start,<span class="hljs-number">1</span>);
+    <span class="hljs-comment">//每次从in文件中读取1组data5Length个长度数据的到simple中</span>
+    fread(simple,data5Length,<span class="hljs-number">1</span>,in);
+    fwrite(simple,data5Length,<span class="hljs-number">1</span>,out);
+    fclose(in);
+    fclose(out);
+    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+&#125;
+
+</code></pre>
+</li>
+<li>
+<p>分离各声道的数据：把各个声道的采集点数据分开存储。</p>
+<pre class="highlight"><code class="c"><span class="hljs-comment">/**
+ * 将little-endian_2_44100_16.pcm 分离各声道的数据，即把各个声道的采集点数据分开存储。
+ */</span>
+<span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">separateLR</span><span class="hljs-params">(<span class="hljs-keyword">const</span> <span class="hljs-keyword">char</span> *url)</span></span>&#123;
+    FILE *in = fopen(url, <span class="hljs-string">"rb+"</span>);
+    FILE *outL = fopen(<span class="hljs-string">"./output/l.pcm"</span>, <span class="hljs-string">"wb+"</span>);
+    FILE *outR = fopen(<span class="hljs-string">"./output/r.pcm"</span>, <span class="hljs-string">"wb+"</span>);
+    <span class="hljs-keyword">int</span> simpleLength = <span class="hljs-number">16</span> / <span class="hljs-number">8</span> * <span class="hljs-number">2</span>;
+    <span class="hljs-keyword">char</span> *simple = (<span class="hljs-keyword">char</span> *)<span class="hljs-built_in">malloc</span>(simpleLength);
+    <span class="hljs-keyword">while</span> (<span class="hljs-number">1</span>)&#123;
+        <span class="hljs-comment">//每次从in文件中读取1组4个长度数据的到simple中</span>
+        fread(simple,<span class="hljs-number">4</span>,<span class="hljs-number">1</span>,in);
+        <span class="hljs-keyword">if</span>(feof(in))&#123;
+            <span class="hljs-keyword">break</span>;
+        &#125;
+        <span class="hljs-comment">//l(0声道)：1-2</span>
+        fwrite(simple,<span class="hljs-number">2</span>,<span class="hljs-number">1</span>,outL);
+        <span class="hljs-comment">//r(1声道)：3-4</span>
+        fwrite(simple+<span class="hljs-number">2</span>,<span class="hljs-number">2</span>,<span class="hljs-number">1</span>,outR);
+    &#125;
+    fclose(in);
+    fclose(outL);
+    fclose(outR);
+    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+&#125;
+</code></pre>
+</li>
+<li>
+<p>音量调节：把每个采集点数据的值 x 调节比例。注意：需要注意的是可调节范围，如：8位有无符号时最大是多少。</p>
+<pre class="highlight"><code class="c"><span class="hljs-comment">/**
+ * 将little-endian_2_44100_16.pcm 调节音量 比例
+ * 1、little-endian排序的值是如何排序的？真正的值是多少？
+ * 2、little-endian转成真正的值之后再进行计算，得到的结果再反转little-endian。
+ * 如：原始pcm数据：0xaa 0x01(左声道采样点数据)，当scale=2：
+ * -&gt; 值：0x01aa * 2 = 0x0354
+ * -&gt; 转回little-endian再进行存储：0x5403（缩放后的值）
+ */</span>
+<span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">volumeAdjustment</span><span class="hljs-params">(<span class="hljs-keyword">const</span> <span class="hljs-keyword">char</span> *url, <span class="hljs-keyword">float</span> scale)</span></span>&#123;
+    FILE *in = fopen(url, <span class="hljs-string">"rb+"</span>);
+    FILE *out = fopen(<span class="hljs-string">"./output/volume_adjustment.pcm"</span>, <span class="hljs-string">"wb+"</span>);
+    <span class="hljs-keyword">char</span> *simple = (<span class="hljs-keyword">char</span> *)<span class="hljs-built_in">malloc</span>(<span class="hljs-number">4</span>);
+    <span class="hljs-keyword">while</span> (<span class="hljs-number">1</span>)&#123;
+        <span class="hljs-comment">//每次从in文件中读取1组4个长度数据的到simple中</span>
+        fread(simple, <span class="hljs-number">4</span>, <span class="hljs-number">1</span>, in);
+        <span class="hljs-keyword">if</span>(feof(in))&#123;
+            <span class="hljs-keyword">break</span>;
+        &#125;
+        short *simple8bitTemp = (short *)<span class="hljs-built_in">malloc</span>(<span class="hljs-number">2</span>);
+
+        <span class="hljs-comment">//l(0声道)：</span>
+        simple8bitTemp[<span class="hljs-number">0</span>] = (simple[<span class="hljs-number">0</span>] + (simple[<span class="hljs-number">1</span>] &lt;&lt; <span class="hljs-number">8</span>)) * scale;
+        <span class="hljs-comment">//r(1声道)：</span>
+        simple8bitTemp[<span class="hljs-number">1</span>] = (simple[<span class="hljs-number">2</span>] + (simple[<span class="hljs-number">3</span>] &lt;&lt; <span class="hljs-number">8</span>)) * scale;
+
+        simple[<span class="hljs-number">0</span>] = simple8bitTemp[<span class="hljs-number">0</span>] &amp; <span class="hljs-number">0x00FF</span>;
+        simple[<span class="hljs-number">1</span>] = simple8bitTemp[<span class="hljs-number">0</span>] &gt;&gt; <span class="hljs-number">8</span>;
+
+        simple[<span class="hljs-number">2</span>] = simple8bitTemp[<span class="hljs-number">1</span>] &amp; <span class="hljs-number">0x00FF</span>;
+        simple[<span class="hljs-number">3</span>] = simple8bitTemp[<span class="hljs-number">1</span>] &gt;&gt; <span class="hljs-number">8</span>;
+        <span class="hljs-keyword">for</span>(<span class="hljs-keyword">int</span> i=<span class="hljs-number">0</span>; i&lt;<span class="hljs-number">4</span>; i++)&#123;
+            <span class="hljs-built_in">printf</span>(<span class="hljs-string">"simple[%d]=%d\n"</span>,i,simple[i]);
+        &#125;
+        fwrite(simple, <span class="hljs-number">4</span>, <span class="hljs-number">1</span>, out);
+    &#125;
+    fclose(in);
+    fclose(out);
+    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+&#125;
+</code></pre>
+</li>
+<li>
+<p>播放速度：按照比例丢弃（或插入0）采集点的数据即可。（涉及到不是整数倍不单单是这么处理，我也不懂）</p>
+</li>
+<li>
+<p>参照雷神的必看项目： <a target="_blank" rel="noopener" href="http://blog.csdn.net/leixiaohua1020/article/details/50534316">视音频数据处理入门：PCM音频采样数据处理</a> 。</p>
+</li>
+</ul>
+<h3 id="android终端音频采样介绍"><a class="markdownIt-Anchor" href="#android终端音频采样介绍"></a> Android终端音频采样介绍</h3>
+<ul>
+<li>1、关于采集的主要api介绍</li>
+</ul>
+<pre class="highlight"><code class="java"><span class="hljs-comment">/** 
+* <span class="hljs-doctag">@param</span> audioSource 音频来源&#123;<span class="hljs-doctag">@link</span> MediaRecorder.AudioSource&#125;；如指定麦克风：MediaRecorder.AudioSource.MIC
+* <span class="hljs-doctag">@param</span> sampleRateInHz 采样率&#123;<span class="hljs-doctag">@link</span> AudioFormat#SAMPLE_RATE_UNSPECIFIED&#125;，单位Hz；安卓支持所有的设备是：44100Hz
+* <span class="hljs-doctag">@param</span> channelConfig 声道数&#123;<span class="hljs-doctag">@link</span> AudioFormat#CHANNEL_IN_MONO&#125;；
+* <span class="hljs-doctag">@param</span> audioFormat 位宽&#123;<span class="hljs-doctag">@link</span> AudioFormat#ENCODING_PCM_8BIT&#125;
+* <span class="hljs-doctag">@param</span> bufferSizeInBytes 采集期间缓存区的大小
+*/</span>
+<span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">AudioRecord</span><span class="hljs-params">(<span class="hljs-keyword">int</span> audioSource, <span class="hljs-keyword">int</span> sampleRateInHz, <span class="hljs-keyword">int</span> channelConfig, <span class="hljs-keyword">int</span> audioFormat,
+            <span class="hljs-keyword">int</span> bufferSizeInBytes)</span>
+  
+<span class="hljs-comment">//获取最小缓存区，参数跟AudioRecord保持一致</span>
+<span class="hljs-keyword">int</span> <span class="hljs-title">getMinBufferSize</span><span class="hljs-params">(<span class="hljs-keyword">int</span> sampleRateInHz, <span class="hljs-keyword">int</span> channelConfig, <span class="hljs-keyword">int</span> audioFormat)</span> </span>&#123;&#125;
+</code></pre>
+<ul>
+<li>2、实现采集的伪代码</li>
+</ul>
+<pre class="highlight"><code class="java"><span class="hljs-comment">//1、申请权限</span>
+
+<span class="hljs-comment">//2、获取最小缓存大小（根据api介绍，应该取要比预期大的缓冲区大小），这个大小其实也可以取①和②计算得来的大小</span>
+<span class="hljs-keyword">int</span> minBufferSize = AudioRecord.getMinBufferSize(<span class="hljs-number">44100</span>, AudioFormat.CHANNEL_IN_STEREO, AudioFormat.ENCODING_PCM_16BIT) * <span class="hljs-number">2</span>;
+
+<span class="hljs-comment">//3、初始化AudioRecord对象</span>
+AudioRecord audioRecord = <span class="hljs-keyword">new</span> AudioRecord(MediaRecorder.AudioSource.MIC, <span class="hljs-number">44100</span>, AudioFormat.CHANNEL_IN_STEREO, AudioFormat.ENCODING_PCM_16BIT, minBufferSize);
+
+<span class="hljs-comment">//4、开始在子线程中进行采集数据</span>
+<span class="hljs-keyword">new</span> Thread(<span class="hljs-keyword">new</span> Runnable() &#123;
+  <span class="hljs-meta">@Override</span>
+  <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">run</span><span class="hljs-params">()</span> </span>&#123;
+    audioRecord.startRecording();
+    <span class="hljs-keyword">while</span>(isRunning)&#123;
+      <span class="hljs-keyword">byte</span>[] bytes = <span class="hljs-keyword">new</span> <span class="hljs-keyword">byte</span>[minBufferSize];
+    	<span class="hljs-keyword">int</span> len = audioRecord.read(bytes, <span class="hljs-number">0</span>, bytes.length);
+      <span class="hljs-comment">//这里就可以把数据直接写入到sdcard了，如：xxx.pcm；输出排序方式为：little endian。</span>
+    &#125;
+     <span class="hljs-comment">//5、停止录音机</span>
+		audioRecord.stop();
+  &#125;
+&#125;).start();
+
+
+<span class="hljs-comment">//6、最后释放资源</span>
+audioRecord.release();
+</code></pre>
+<h3 id="播放pcm原始数据"><a class="markdownIt-Anchor" href="#播放pcm原始数据"></a> 播放pcm原始数据</h3>
+<ul>
+<li>ffmpeg：</li>
+</ul>
+<blockquote>
+<p>ffplay -f s16le -sample_rate 44100 -channels 2 -i xxx.pcm</p>
+</blockquote>
+<ul>
+<li>其他：</li>
+</ul>
+<blockquote>
+<p>Adobe Audition</p>
+</blockquote>
+<h3 id="参考"><a class="markdownIt-Anchor" href="#参考"></a> 参考</h3>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://wiki.multimedia.cx/index.php/PCM">维基多媒体：pcm</a></li>
+<li><a target="_blank" rel="noopener" href="http://blog.csdn.net/leixiaohua1020/article/details/50534316">视音频数据处理入门：PCM音频采样数据处理</a></li>
+<li>Android 音视频开发_何俊林（书）</li>
+</ul>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="http://qincji.gitee.io/2020/12/04/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E9%9F%B3%E9%A2%91%E6%95%B0%E6%8D%AE%E6%BA%90%E4%B9%8BPCM/" title="直播推流全过程：音频数据源之PCM（2）" target="_blank" rel="external">http://qincji.gitee.io/2020/12/04/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E9%9F%B3%E9%A2%91%E6%95%B0%E6%8D%AE%E6%BA%90%E4%B9%8BPCM/</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://qincji.gitee.io" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/images/avatar.jpg" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://qincji.gitee.io" target="_blank"><span class="text-dark">秦城季</span><small class="ml-1x">Android &amp; 音视频</small></a></h3>
+        <div></div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+      <div id="vcomments"></div>
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/2020/12/04/%E6%88%91%E7%9A%84%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA%E7%AC%94%E8%AE%B0/" title="我的博客搭建笔记"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;上一篇</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/2020/12/04/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9AH.264%E6%8F%8F%E8%BF%B0%E7%AC%A6/" title="直播推流全过程：H.264描述符"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+  </ul>
+  
+  
+  <!-- Button trigger modal -->
+  <button type="button" class="btn btn-fancy btn-donate pop-onhover bg-gradient-warning" data-toggle="modal" data-target="#donateModal"><span>赏</span></button>
+  <!-- <div class="wave-icon wave-icon-danger btn-donate" data-toggle="modal" data-target="#donateModal">
+    <div class="wave-circle"><span class="icon"><i class="icon icon-bill"></i></span></div>
+  </div> -->
+  
+  
+  <div class="bar-right">
+    
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+    
+  </div>
+  </div>
+</nav>
+  
+<!-- Modal -->
+<div class="modal modal-center modal-small modal-xs-full fade" id="donateModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content donate">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      <div class="modal-body">
+        <div class="donate-box">
+          <div class="donate-head">
+            <p>感谢您的支持，我会继续努力的!</p>
+          </div>
+          <div class="tab-content">
+            <div role="tabpanel" class="tab-pane fade active in" id="alipay">
+              <div class="donate-payimg">
+                <img src="/images/donate/alipayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开支付宝扫一扫，即可进行扫码打赏哦</p>
+            </div>
+            <div role="tabpanel" class="tab-pane fade" id="wechatpay">
+              <div class="donate-payimg">
+                <img src="/images/donate/wechatpayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开微信扫一扫，即可进行扫码打赏哦</p>
+            </div>
+          </div>
+          <div class="donate-footer">
+            <ul class="nav nav-tabs nav-justified" role="tablist">
+              <li role="presentation" class="active">
+                <a href="#alipay" id="alipay-tab" role="tab" data-toggle="tab" aria-controls="alipay" aria-expanded="true"><i class="icon icon-alipay"></i> 支付宝</a>
+              </li>
+              <li role="presentation" class="">
+                <a href="#wechatpay" role="tab" id="wechatpay-tab" data-toggle="tab" aria-controls="wechatpay" aria-expanded="false"><i class="icon icon-wepay"></i> 微信支付</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/xhunmon" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+
+
+
+
+   
+    
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/valine"></script>
+  <script type="text/javascript">
+  var GUEST = ['nick', 'mail', 'link'];
+  var meta = 'nick,mail,link';
+  meta = meta.split(',').filter(function(item) {
+    return GUEST.indexOf(item) > -1;
+  });
+  new Valine({
+    el: '#vcomments',
+    verify: false,
+    notify: false,
+    appId: '',
+    appKey: '',
+    placeholder: 'Just go go',
+    avatar: 'mm',
+    meta: meta,
+    pageSize: '10' || 10,
+    visitor: false
+  });
+  </script>
+
+     
+
+
+
+
+
+
+
+</body>
+</html>
