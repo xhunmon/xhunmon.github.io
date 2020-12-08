@@ -21,25 +21,25 @@
   <meta name="description" content="简单说说编码 当我们把摄像头采集画面直接写入到文件中时，我们会发现没一会文件已经非常大了。这导致很不适合保存和传输，所以需要编码，把画面数据进行压缩。视频编码标准有很多，而我们这里讲的是H.264编码。其他请看：视频编码标准汇总及比较。  H.264编码 制订H.264的主要目标有两个： （1）视频编码层(VCL，全称：Video Coding Layer)：得到高的视频压缩比。 （2）网络提取">
 <meta property="og:type" content="article">
 <meta property="og:title" content="直播推流全过程：视频编码之H.264（3）">
-<meta property="og:url" content="http://qincji.gitee.io/2020/12/06/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E8%A7%86%E9%A2%91%E7%BC%96%E7%A0%81%E4%B9%8BH264/index.html">
+<meta property="og:url" content="http://qincji.gitee.io/2020/12/06/rtmppush/3-h264/index.html">
 <meta property="og:site_name" content="Hexo">
 <meta property="og:description" content="简单说说编码 当我们把摄像头采集画面直接写入到文件中时，我们会发现没一会文件已经非常大了。这导致很不适合保存和传输，所以需要编码，把画面数据进行压缩。视频编码标准有很多，而我们这里讲的是H.264编码。其他请看：视频编码标准汇总及比较。  H.264编码 制订H.264的主要目标有两个： （1）视频编码层(VCL，全称：Video Coding Layer)：得到高的视频压缩比。 （2）网络提取">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://qincji.gitee.io/2020/12/06/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E8%A7%86%E9%A2%91%E7%BC%96%E7%A0%81%E4%B9%8BH264/h264-%E5%B8%A6%E8%B5%B7%E5%A7%8B%E7%A0%81.png">
-<meta property="og:image" content="http://qincji.gitee.io/2020/12/06/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E8%A7%86%E9%A2%91%E7%BC%96%E7%A0%81%E4%B9%8BH264/h264-flv.png">
-<meta property="og:image" content="http://qincji.gitee.io/2020/12/06/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E8%A7%86%E9%A2%91%E7%BC%96%E7%A0%81%E4%B9%8BH264/h264-nalu%E7%BB%84%E6%88%90.png">
-<meta property="og:image" content="http://qincji.gitee.io/2020/12/06/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E8%A7%86%E9%A2%91%E7%BC%96%E7%A0%81%E4%B9%8BH264/h264-sps%E8%A1%A8.png">
-<meta property="og:image" content="http://qincji.gitee.io/2020/12/06/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E8%A7%86%E9%A2%91%E7%BC%96%E7%A0%81%E4%B9%8BH264/h264-sps%E5%88%86%E6%9E%90.png">
-<meta property="og:image" content="http://qincji.gitee.io/2020/12/06/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E8%A7%86%E9%A2%91%E7%BC%96%E7%A0%81%E4%B9%8BH264/h264-pps%E8%A1%A8.png">
-<meta property="og:image" content="http://qincji.gitee.io/2020/12/06/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E8%A7%86%E9%A2%91%E7%BC%96%E7%A0%81%E4%B9%8BH264/h264-x264-as.png">
+<meta property="og:image" content="http://qincji.gitee.io/2020/12/06/rtmppush/3-h264/h264-%E5%B8%A6%E8%B5%B7%E5%A7%8B%E7%A0%81.png">
+<meta property="og:image" content="http://qincji.gitee.io/2020/12/06/rtmppush/3-h264/h264-flv.png">
+<meta property="og:image" content="http://qincji.gitee.io/2020/12/06/rtmppush/3-h264/h264-nalu%E7%BB%84%E6%88%90.png">
+<meta property="og:image" content="http://qincji.gitee.io/2020/12/06/rtmppush/3-h264/h264-sps%E8%A1%A8.png">
+<meta property="og:image" content="http://qincji.gitee.io/2020/12/06/rtmppush/3-h264/h264-sps%E5%88%86%E6%9E%90.png">
+<meta property="og:image" content="http://qincji.gitee.io/2020/12/06/rtmppush/3-h264/h264-pps%E8%A1%A8.png">
+<meta property="og:image" content="http://qincji.gitee.io/2020/12/06/rtmppush/3-h264/h264-x264-as.png">
 <meta property="article:published_time" content="2020-12-06T08:54:50.000Z">
-<meta property="article:modified_time" content="2020-12-08T05:54:00.715Z">
+<meta property="article:modified_time" content="2020-12-08T14:04:24.300Z">
 <meta property="article:author" content="John Doe">
 <meta property="article:tag" content="直播推流全过程">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://qincji.gitee.io/2020/12/06/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E8%A7%86%E9%A2%91%E7%BC%96%E7%A0%81%E4%B9%8BH264/h264-%E5%B8%A6%E8%B5%B7%E5%A7%8B%E7%A0%81.png">
+<meta name="twitter:image" content="http://qincji.gitee.io/2020/12/06/rtmppush/3-h264/h264-%E5%B8%A6%E8%B5%B7%E5%A7%8B%E7%A0%81.png">
   <!-- Canonical links -->
-  <link rel="canonical" href="http://qincji.gitee.io/2020/12/06/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E8%A7%86%E9%A2%91%E7%BC%96%E7%A0%81%E4%B9%8BH264/index.html">
+  <link rel="canonical" href="http://qincji.gitee.io/2020/12/06/rtmppush/3-h264/index.html">
   
     <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
   
@@ -250,7 +250,7 @@
                 
               </p>
               <p class="item-title">
-                <a href="/2020/12/08/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E6%80%BB%E7%BA%B2/" class="title">直播推流全过程：总纲</a>
+                <a href="/2020/12/08/rtmppush/outline/" class="title">直播推流全过程：总纲</a>
               </p>
               <p class="item-date">
                 <time datetime="2020-12-08T05:30:20.000Z" itemprop="datePublished">2020-12-08</time>
@@ -265,7 +265,7 @@
                 
               </p>
               <p class="item-title">
-                <a href="/2020/12/08/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E7%BC%96%E7%A0%81%E4%B9%8BRTMP/" class="title">直播推流全过程：直播推流编码之RTMP（5）</a>
+                <a href="/2020/12/08/rtmppush/5-rtmp/" class="title">直播推流全过程：直播推流编码之RTMP（5）</a>
               </p>
               <p class="item-date">
                 <time datetime="2020-12-08T05:10:30.000Z" itemprop="datePublished">2020-12-08</time>
@@ -280,7 +280,7 @@
                 
               </p>
               <p class="item-title">
-                <a href="/2020/12/07/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E9%9F%B3%E9%A2%91%E7%BC%96%E7%A0%81%E4%B9%8BAAC/" class="title">直播推流全过程：音频编码之AAC（4）</a>
+                <a href="/2020/12/07/rtmppush/4-aac/" class="title">直播推流全过程：音频编码之AAC（4）</a>
               </p>
               <p class="item-date">
                 <time datetime="2020-12-07T14:30:15.000Z" itemprop="datePublished">2020-12-07</time>
@@ -295,7 +295,7 @@
                 
               </p>
               <p class="item-title">
-                <a href="/2020/12/06/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E8%A7%86%E9%A2%91%E7%BC%96%E7%A0%81%E4%B9%8BH264/" class="title">直播推流全过程：视频编码之H.264（3）</a>
+                <a href="/2020/12/06/rtmppush/3-h264/" class="title">直播推流全过程：视频编码之H.264（3）</a>
               </p>
               <p class="item-date">
                 <time datetime="2020-12-06T08:54:50.000Z" itemprop="datePublished">2020-12-06</time>
@@ -310,7 +310,7 @@
                 
               </p>
               <p class="item-title">
-                <a href="/2020/12/04/%E6%88%91%E7%9A%84%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA%E7%AC%94%E8%AE%B0/" class="title">我的博客搭建笔记</a>
+                <a href="/2020/12/04/other/001blog/notes/" class="title">我的博客搭建笔记</a>
               </p>
               <p class="item-date">
                 <time datetime="2020-12-04T14:59:35.000Z" itemprop="datePublished">2020-12-04</time>
@@ -340,7 +340,7 @@
 
 <main class="main" role="main">
   <div class="content">
-  <article id="post-直播推流全过程：视频编码之H264" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+  <article id="post-rtmppush/3-h264" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
     
     <div class="article-header">
       
@@ -355,7 +355,7 @@
       <div class="article-meta">
         <span class="article-date">
     <i class="icon icon-calendar-check"></i>
-	<a href="/2020/12/06/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E8%A7%86%E9%A2%91%E7%BC%96%E7%A0%81%E4%B9%8BH264/" class="article-date">
+	<a href="/2020/12/06/rtmppush/3-h264/" class="article-date">
 	  <time datetime="2020-12-06T08:54:50.000Z" itemprop="datePublished">2020-12-06</time>
 	</a>
 </span>
@@ -376,7 +376,7 @@
 	</span>
 
 
-        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2020/12/06/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E8%A7%86%E9%A2%91%E7%BC%96%E7%A0%81%E4%B9%8BH264/#comments" class="article-comment-link">评论</a></span>
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2020/12/06/rtmppush/3-h264/#comments" class="article-comment-link">评论</a></span>
         
       </div>
     </div>
@@ -390,16 +390,16 @@
 （2）网络提取层(NAL，全称：Network Abstraction Layer)：具有良好的网络亲和性，即可适用于各种传输网络。而NAL则是以NALU（NAL Unit）为单元来支持编码数据在基于包交换技术网络中传输的。</p>
 <h4 id="编码的输入与输出"><a class="markdownIt-Anchor" href="#编码的输入与输出"></a> 编码的输入与输出</h4>
 <p>一张张画面通过以H.264编码标准的编码器(如x264)编码后，输出一段包含N个NALU的数据，每个NALU之间通过<code>起始码</code>来分隔，如图：</p>
-<img src="/2020/12/06/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E8%A7%86%E9%A2%91%E7%BC%96%E7%A0%81%E4%B9%8BH264/h264-%E5%B8%A6%E8%B5%B7%E5%A7%8B%E7%A0%81.png" class="" title="image-20201201094616230">
+<img src="/2020/12/06/rtmppush/3-h264/h264-%E5%B8%A6%E8%B5%B7%E5%A7%8B%E7%A0%81.png" class="" title="image-20201201094616230">
 <ul>
 <li><strong>起始码：</strong> 0x00 00 01 或者 0x00 00 00 01。</li>
 </ul>
 <p>在网络传输（如RTMP）或者一些容器中（如FLV），通常会把NALU整合到视频区域的数据中。如下图的flv格式：</p>
-<img src="/2020/12/06/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E8%A7%86%E9%A2%91%E7%BC%96%E7%A0%81%E4%B9%8BH264/h264-flv.png" class="" title="h264-flv">
+<img src="/2020/12/06/rtmppush/3-h264/h264-flv.png" class="" title="h264-flv">
 <p>所以这篇文章主要学习NALU的基本知识，学会如何去分析一段NALU数据。</p>
 <h4 id="nalunal-单元"><a class="markdownIt-Anchor" href="#nalunal-单元"></a> NALU（NAL 单元）</h4>
 <p>NALU(NAL Unit，NAL 单元)的组成部分如下图。其中，f(0)占1bit，u(2)占2bit，u(5)占5bit，文中如有出现类似描述符请看<a target="_blank" rel="noopener" href="https://xhunmon.github.io/2020/12/04/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9AH.264%E6%8F%8F%E8%BF%B0%E7%AC%A6/">H.264描述符</a>。</p>
-<img src="/2020/12/06/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E8%A7%86%E9%A2%91%E7%BC%96%E7%A0%81%E4%B9%8BH264/h264-nalu%E7%BB%84%E6%88%90.png" class="" title="nalu组成">
+<img src="/2020/12/06/rtmppush/3-h264/h264-nalu%E7%BB%84%E6%88%90.png" class="" title="nalu组成">
 <p>从上图可以看出来，当前NAL单元属于什么样的类型，这取决于RBSP具体是什么样的类型，而RBSP的类型是根据<code>nal_unit_type</code>的值来定义的。<br />
 ①当<code>nal_unit_type</code>为1~5时：RBSP为切片类型（有5种切片类型）；整个NAL单元类型为VCL NAL单元，VCL是上面说的视频编码层，里面有编码后画面数据。<br />
 ②当<code>nal_unit_type</code>为其他时：RBSP为序列参数集类型、图像参数集类型等等；整个NAL单元类型为非VCL NAL单元。<br />
@@ -488,7 +488,7 @@
 </table>
 <h3 id="sps序列参数集"><a class="markdownIt-Anchor" href="#sps序列参数集"></a> SPS（序列参数集）</h3>
 <p>SPS全称 <code>Sequence parameter set</code>(序列参数集)，当<code>nal_unit_type</code>=7时，RBSP就是SPS类型，也可以说NAL单元为SPS的NAL单元。SPS主要包含的是针对一连续编码视频序列的参数，如帧数、图像尺寸等；详见下表 <em>序列参数集RBSP 语法</em>：</p>
-<img src="/2020/12/06/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E8%A7%86%E9%A2%91%E7%BC%96%E7%A0%81%E4%B9%8BH264/h264-sps%E8%A1%A8.png" class="" title="sps表">
+<img src="/2020/12/06/rtmppush/3-h264/h264-sps%E8%A1%A8.png" class="" title="sps表">
 <p>上面中的主要参数的含义：</p>
 <ul>
 <li><strong>profile_idc</strong> 档次（H.264编码标准有几个档次）：66=基本；77=主要；88=扩展…</li>
@@ -498,7 +498,7 @@
 <li><strong>pic_height_in_map_units_minus1</strong> 加1表示以条带组映射为单位的一个解码帧或场的高度。</li>
 </ul>
 <p>下面为从一个只放h.264视频编码文件的一段（SPS）：</p>
-<img src="/2020/12/06/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E8%A7%86%E9%A2%91%E7%BC%96%E7%A0%81%E4%B9%8BH264/h264-sps%E5%88%86%E6%9E%90.png" class="" title="sps分析">
+<img src="/2020/12/06/rtmppush/3-h264/h264-sps%E5%88%86%E6%9E%90.png" class="" title="sps分析">
 <p>ue(v)和se(v)的计算公式见 <a target="_blank" rel="noopener" href="https://xhunmon.github.io/2020/12/04/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9AH.264%E6%8F%8F%E8%BF%B0%E7%AC%A6/">H.264描述符</a>。</p>
 <pre class="highlight"><code class="shell"><span class="hljs-meta">#</span><span class="bash"> 00000001 6764001E ACD940A0 2FF96100 00030001 00000300 320F162D 96</span>
 00000001 #起始码
@@ -535,7 +535,7 @@
 </code></pre>
 <h3 id="pps图像参数集"><a class="markdownIt-Anchor" href="#pps图像参数集"></a> PPS（图像参数集）</h3>
 <p>PPS全称<code>picture parameter set</code>(图像参数集)，当<code>nal_unit_type</code>=8时，RBSP就是PPS类型，也可以说NAL单元为SPS的NAL单元。一个序列中某一幅图像或者某几幅图像，其参数如标识符pic_parameter_set_id、可选的seq_parameter_set_id、熵编码模式选择标识、片组数目、初始量化参数和去方块滤波系数调整标识等；详见下表 <em>图像参数集RBSP 语法</em>：</p>
-<img src="/2020/12/06/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E8%A7%86%E9%A2%91%E7%BC%96%E7%A0%81%E4%B9%8BH264/h264-pps%E8%A1%A8.png" class="" title="pps表">
+<img src="/2020/12/06/rtmppush/3-h264/h264-pps%E8%A1%A8.png" class="" title="pps表">
 <h3 id="x264"><a class="markdownIt-Anchor" href="#x264"></a> X264</h3>
 <p>这是国际好评的H.264协议标准的编码工具，这里简单介绍一下如何使用。</p>
 <p>（1）下载：<a target="_blank" rel="noopener" href="https://www.videolan.org/developers/x264.html">https://www.videolan.org/developers/x264.html</a></p>
@@ -577,7 +577,7 @@ HOST=arm-linux
 build_x264
 </code></pre>
 <p>（3）把编译生成的静态库移入android studio</p>
-<img src="/2020/12/06/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E8%A7%86%E9%A2%91%E7%BC%96%E7%A0%81%E4%B9%8BH264/h264-x264-as.png" class="" title="as导入">
+<img src="/2020/12/06/rtmppush/3-h264/h264-x264-as.png" class="" title="as导入">
 <p>在CMakeList.txt文件中添加：</p>
 <pre class="highlight"><code class="cmake">...
 <span class="hljs-keyword">include_directories</span>(<span class="hljs-keyword">include</span>)
@@ -700,7 +700,7 @@ x264_nal_t：存储压缩编码后的码流数据。
     
     <li class="post-copyright-link hidden-xs">
       <strong>本文链接：</strong>
-      <a href="http://qincji.gitee.io/2020/12/06/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E8%A7%86%E9%A2%91%E7%BC%96%E7%A0%81%E4%B9%8BH264/" title="直播推流全过程：视频编码之H.264（3）" target="_blank" rel="external">http://qincji.gitee.io/2020/12/06/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E8%A7%86%E9%A2%91%E7%BC%96%E7%A0%81%E4%B9%8BH264/</a>
+      <a href="http://qincji.gitee.io/2020/12/06/rtmppush/3-h264/" title="直播推流全过程：视频编码之H.264（3）" target="_blank" rel="external">http://qincji.gitee.io/2020/12/06/rtmppush/3-h264/</a>
     </li>
     
     <li class="post-copyright-license">
@@ -747,12 +747,12 @@ x264_nal_t：存储压缩编码后的码流数据。
   <ul class="pager pull-left">
     
     <li class="prev">
-      <a href="/2020/12/07/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E9%9F%B3%E9%A2%91%E7%BC%96%E7%A0%81%E4%B9%8BAAC/" title="直播推流全过程：音频编码之AAC（4）"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;上一篇</span></a>
+      <a href="/2020/12/07/rtmppush/4-aac/" title="直播推流全过程：音频编码之AAC（4）"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;上一篇</span></a>
     </li>
     
     
     <li class="next">
-      <a href="/2020/12/04/%E6%88%91%E7%9A%84%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA%E7%AC%94%E8%AE%B0/" title="我的博客搭建笔记"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+      <a href="/2020/12/04/other/001blog/notes/" title="我的博客搭建笔记"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
     </li>
     
     

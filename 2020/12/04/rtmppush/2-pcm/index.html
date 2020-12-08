@@ -21,19 +21,19 @@
   <meta name="description" content="声音与音频 声音是波，成为声波，而声波的三要素是频率、振幅和波形。频率代表音阶的高低（女高音、男低音）单位赫兹（Hz），人耳能听到的声波范围：频率在20Hz~20kHz之间；振幅代表响度（音量）；波形代表音色。而我们音频处理就是对声波采集成数字信号后进行处理。  音频采集与关键名词 音频采集的过程主要是通过设备设置采样率、采样数，将音频信号采集为pcm（Pulse-code modulation">
 <meta property="og:type" content="article">
 <meta property="og:title" content="直播推流全过程：音频数据源之PCM（2）">
-<meta property="og:url" content="http://qincji.gitee.io/2020/12/04/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E9%9F%B3%E9%A2%91%E6%95%B0%E6%8D%AE%E6%BA%90%E4%B9%8BPCM/index.html">
+<meta property="og:url" content="http://qincji.gitee.io/2020/12/04/rtmppush/2-pcm/index.html">
 <meta property="og:site_name" content="Hexo">
 <meta property="og:description" content="声音与音频 声音是波，成为声波，而声波的三要素是频率、振幅和波形。频率代表音阶的高低（女高音、男低音）单位赫兹（Hz），人耳能听到的声波范围：频率在20Hz~20kHz之间；振幅代表响度（音量）；波形代表音色。而我们音频处理就是对声波采集成数字信号后进行处理。  音频采集与关键名词 音频采集的过程主要是通过设备设置采样率、采样数，将音频信号采集为pcm（Pulse-code modulation">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://qincji.gitee.io/2020/12/04/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E9%9F%B3%E9%A2%91%E6%95%B0%E6%8D%AE%E6%BA%90%E4%B9%8BPCM/pcm-%E6%95%B0%E6%8D%AE%E9%87%87%E9%9B%86.png">
+<meta property="og:image" content="http://qincji.gitee.io/2020/12/04/rtmppush/2-pcm/pcm-%E6%95%B0%E6%8D%AE%E9%87%87%E9%9B%86.png">
 <meta property="article:published_time" content="2020-12-04T10:10:20.000Z">
-<meta property="article:modified_time" content="2020-12-06T09:52:52.390Z">
+<meta property="article:modified_time" content="2020-12-08T14:04:24.282Z">
 <meta property="article:author" content="John Doe">
 <meta property="article:tag" content="直播推流全过程">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://qincji.gitee.io/2020/12/04/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E9%9F%B3%E9%A2%91%E6%95%B0%E6%8D%AE%E6%BA%90%E4%B9%8BPCM/pcm-%E6%95%B0%E6%8D%AE%E9%87%87%E9%9B%86.png">
+<meta name="twitter:image" content="http://qincji.gitee.io/2020/12/04/rtmppush/2-pcm/pcm-%E6%95%B0%E6%8D%AE%E9%87%87%E9%9B%86.png">
   <!-- Canonical links -->
-  <link rel="canonical" href="http://qincji.gitee.io/2020/12/04/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E9%9F%B3%E9%A2%91%E6%95%B0%E6%8D%AE%E6%BA%90%E4%B9%8BPCM/index.html">
+  <link rel="canonical" href="http://qincji.gitee.io/2020/12/04/rtmppush/2-pcm/index.html">
   
     <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
   
@@ -244,7 +244,7 @@
                 
               </p>
               <p class="item-title">
-                <a href="/2020/12/08/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E6%80%BB%E7%BA%B2/" class="title">直播推流全过程：总纲</a>
+                <a href="/2020/12/08/rtmppush/outline/" class="title">直播推流全过程：总纲</a>
               </p>
               <p class="item-date">
                 <time datetime="2020-12-08T05:30:20.000Z" itemprop="datePublished">2020-12-08</time>
@@ -259,7 +259,7 @@
                 
               </p>
               <p class="item-title">
-                <a href="/2020/12/08/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E7%BC%96%E7%A0%81%E4%B9%8BRTMP/" class="title">直播推流全过程：直播推流编码之RTMP（5）</a>
+                <a href="/2020/12/08/rtmppush/5-rtmp/" class="title">直播推流全过程：直播推流编码之RTMP（5）</a>
               </p>
               <p class="item-date">
                 <time datetime="2020-12-08T05:10:30.000Z" itemprop="datePublished">2020-12-08</time>
@@ -274,7 +274,7 @@
                 
               </p>
               <p class="item-title">
-                <a href="/2020/12/07/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E9%9F%B3%E9%A2%91%E7%BC%96%E7%A0%81%E4%B9%8BAAC/" class="title">直播推流全过程：音频编码之AAC（4）</a>
+                <a href="/2020/12/07/rtmppush/4-aac/" class="title">直播推流全过程：音频编码之AAC（4）</a>
               </p>
               <p class="item-date">
                 <time datetime="2020-12-07T14:30:15.000Z" itemprop="datePublished">2020-12-07</time>
@@ -289,7 +289,7 @@
                 
               </p>
               <p class="item-title">
-                <a href="/2020/12/06/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E8%A7%86%E9%A2%91%E7%BC%96%E7%A0%81%E4%B9%8BH264/" class="title">直播推流全过程：视频编码之H.264（3）</a>
+                <a href="/2020/12/06/rtmppush/3-h264/" class="title">直播推流全过程：视频编码之H.264（3）</a>
               </p>
               <p class="item-date">
                 <time datetime="2020-12-06T08:54:50.000Z" itemprop="datePublished">2020-12-06</time>
@@ -304,7 +304,7 @@
                 
               </p>
               <p class="item-title">
-                <a href="/2020/12/04/%E6%88%91%E7%9A%84%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA%E7%AC%94%E8%AE%B0/" class="title">我的博客搭建笔记</a>
+                <a href="/2020/12/04/other/001blog/notes/" class="title">我的博客搭建笔记</a>
               </p>
               <p class="item-date">
                 <time datetime="2020-12-04T14:59:35.000Z" itemprop="datePublished">2020-12-04</time>
@@ -325,7 +325,7 @@
   
 <main class="main" role="main">
   <div class="content">
-  <article id="post-直播推流全过程：音频数据源之PCM" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+  <article id="post-rtmppush/2-pcm" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
     
     <div class="article-header">
       
@@ -340,7 +340,7 @@
       <div class="article-meta">
         <span class="article-date">
     <i class="icon icon-calendar-check"></i>
-	<a href="/2020/12/04/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E9%9F%B3%E9%A2%91%E6%95%B0%E6%8D%AE%E6%BA%90%E4%B9%8BPCM/" class="article-date">
+	<a href="/2020/12/04/rtmppush/2-pcm/" class="article-date">
 	  <time datetime="2020-12-04T10:10:20.000Z" itemprop="datePublished">2020-12-04</time>
 	</a>
 </span>
@@ -361,7 +361,7 @@
 	</span>
 
 
-        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2020/12/04/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E9%9F%B3%E9%A2%91%E6%95%B0%E6%8D%AE%E6%BA%90%E4%B9%8BPCM/#comments" class="article-comment-link">评论</a></span>
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2020/12/04/rtmppush/2-pcm/#comments" class="article-comment-link">评论</a></span>
         
       </div>
     </div>
@@ -377,7 +377,7 @@
 <li><strong>声道数：</strong> 扬声器的个数，单声道、双声道等。每一个声道都占一个位宽。</li>
 </ul>
 <p>来一张图来描述一下：</p>
-<img src="/2020/12/04/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E9%9F%B3%E9%A2%91%E6%95%B0%E6%8D%AE%E6%BA%90%E4%B9%8BPCM/pcm-%E6%95%B0%E6%8D%AE%E9%87%87%E9%9B%86.png" class="" title="pcm-数据采集">
+<img src="/2020/12/04/rtmppush/2-pcm/pcm-%E6%95%B0%E6%8D%AE%E9%87%87%E9%9B%86.png" class="" title="pcm-数据采集">
 <p>一段时间内的数据大小如何计算？</p>
 <blockquote>
 <p>采样率 x (位宽 / 8) x 声道数 x 时间  =  数据大小（单位：字节）</p>
@@ -599,7 +599,7 @@ audioRecord.release();
     
     <li class="post-copyright-link hidden-xs">
       <strong>本文链接：</strong>
-      <a href="http://qincji.gitee.io/2020/12/04/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E9%9F%B3%E9%A2%91%E6%95%B0%E6%8D%AE%E6%BA%90%E4%B9%8BPCM/" title="直播推流全过程：音频数据源之PCM（2）" target="_blank" rel="external">http://qincji.gitee.io/2020/12/04/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E9%9F%B3%E9%A2%91%E6%95%B0%E6%8D%AE%E6%BA%90%E4%B9%8BPCM/</a>
+      <a href="http://qincji.gitee.io/2020/12/04/rtmppush/2-pcm/" title="直播推流全过程：音频数据源之PCM（2）" target="_blank" rel="external">http://qincji.gitee.io/2020/12/04/rtmppush/2-pcm/</a>
     </li>
     
     <li class="post-copyright-license">
@@ -646,12 +646,12 @@ audioRecord.release();
   <ul class="pager pull-left">
     
     <li class="prev">
-      <a href="/2020/12/04/%E6%88%91%E7%9A%84%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA%E7%AC%94%E8%AE%B0/" title="我的博客搭建笔记"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;上一篇</span></a>
+      <a href="/2020/12/04/other/001blog/notes/" title="我的博客搭建笔记"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;上一篇</span></a>
     </li>
     
     
     <li class="next">
-      <a href="/2020/12/04/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9AH.264%E6%8F%8F%E8%BF%B0%E7%AC%A6/" title="直播推流全过程：H.264描述符"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+      <a href="/2020/12/04/rtmppush/h264-descriptor/" title="直播推流全过程：H.264描述符"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
     </li>
     
     

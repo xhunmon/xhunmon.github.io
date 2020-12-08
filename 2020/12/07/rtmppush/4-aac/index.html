@@ -17,25 +17,30 @@
   <meta http-equiv="window-target" content="_top" />
   
   
-  <title>直播推流全过程：直播推流编码之RTMP（5） | 秦城季</title>
-  <meta name="description" content="简述 Adobe 公司的实时消息传输协议 (RTMP) 通过一个可靠地流传输提供了一个双向多通道消息服务，意图在通信端之间传递带有时间信息的视频、音频和数据消息流。  Handshake Diagram（握手流程）   Uninitialized (未初始化)： 客户端发送C0包(1 字节，版本信息)，如果服务器支持这个版本会响应S0和S1，否则终止连接。 Version Sent (版本已发送">
+  <title>直播推流全过程：音频编码之AAC（4） | 秦城季</title>
+  <meta name="description" content="回顾 还记得我们采集到的PCM原始数据流（俗称裸流）吗？由于PCM裸流过大，不便于储存与传输，于是就出现了针对于PCM裸流的压缩编码标准，包含AAC，MP3，AC-3 等等（wiki audio file format）；而AAC则是当前的主流。这里的AAC指的是一套编码标准（协议），而faac是一个开源的AAC编解码工具。  简述 AAC：高级音频编码(Advanced Audio Codin">
 <meta property="og:type" content="article">
-<meta property="og:title" content="直播推流全过程：直播推流编码之RTMP（5）">
-<meta property="og:url" content="http://qincji.gitee.io/2020/12/08/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E7%BC%96%E7%A0%81%E4%B9%8BRTMP/index.html">
+<meta property="og:title" content="直播推流全过程：音频编码之AAC（4）">
+<meta property="og:url" content="http://qincji.gitee.io/2020/12/07/rtmppush/4-aac/index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="简述 Adobe 公司的实时消息传输协议 (RTMP) 通过一个可靠地流传输提供了一个双向多通道消息服务，意图在通信端之间传递带有时间信息的视频、音频和数据消息流。  Handshake Diagram（握手流程）   Uninitialized (未初始化)： 客户端发送C0包(1 字节，版本信息)，如果服务器支持这个版本会响应S0和S1，否则终止连接。 Version Sent (版本已发送">
+<meta property="og:description" content="回顾 还记得我们采集到的PCM原始数据流（俗称裸流）吗？由于PCM裸流过大，不便于储存与传输，于是就出现了针对于PCM裸流的压缩编码标准，包含AAC，MP3，AC-3 等等（wiki audio file format）；而AAC则是当前的主流。这里的AAC指的是一套编码标准（协议），而faac是一个开源的AAC编解码工具。  简述 AAC：高级音频编码(Advanced Audio Codin">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://qincji.gitee.io/2020/12/08/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E7%BC%96%E7%A0%81%E4%B9%8BRTMP/rtmp-01-handshake.png">
-<meta property="og:image" content="http://qincji.gitee.io/2020/12/08/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E7%BC%96%E7%A0%81%E4%B9%8BRTMP/rtmp-chumk-format.png">
-<meta property="og:image" content="http://qincji.gitee.io/2020/12/08/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E7%BC%96%E7%A0%81%E4%B9%8BRTMP/rtmp-as-lib.jpg">
-<meta property="article:published_time" content="2020-12-08T05:10:30.000Z">
-<meta property="article:modified_time" content="2020-12-08T04:47:32.916Z">
+<meta property="og:image" content="http://qincji.gitee.io/2020/12/07/rtmppush/4-aac/aac-adif%E6%A0%BC%E5%BC%8F.png">
+<meta property="og:image" content="http://qincji.gitee.io/2020/12/07/rtmppush/4-aac/aac-adif.png">
+<meta property="og:image" content="http://qincji.gitee.io/2020/12/07/rtmppush/4-aac/acc-adts-mpeg2.png">
+<meta property="og:image" content="http://qincji.gitee.io/2020/12/07/rtmppush/4-aac/aac-adts-mpeg4.png">
+<meta property="og:image" content="http://qincji.gitee.io/2020/12/07/rtmppush/4-aac/aac-profile.png">
+<meta property="og:image" content="http://qincji.gitee.io/2020/12/07/rtmppush/4-aac/aac-%E9%87%87%E6%A0%B7%E7%8E%87%E6%95%B0%E7%BB%84.png">
+<meta property="og:image" content="http://qincji.gitee.io/2020/12/07/rtmppush/4-aac/aac-adts%E4%BE%8B%E5%AD%90.png">
+<meta property="og:image" content="http://qincji.gitee.io/2020/12/07/rtmppush/4-aac/aac-faac-as.png">
+<meta property="article:published_time" content="2020-12-07T14:30:15.000Z">
+<meta property="article:modified_time" content="2020-12-08T14:04:24.259Z">
 <meta property="article:author" content="John Doe">
 <meta property="article:tag" content="直播推流全过程">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://qincji.gitee.io/2020/12/08/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E7%BC%96%E7%A0%81%E4%B9%8BRTMP/rtmp-01-handshake.png">
+<meta name="twitter:image" content="http://qincji.gitee.io/2020/12/07/rtmppush/4-aac/aac-adif%E6%A0%BC%E5%BC%8F.png">
   <!-- Canonical links -->
-  <link rel="canonical" href="http://qincji.gitee.io/2020/12/08/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E7%BC%96%E7%A0%81%E4%B9%8BRTMP/index.html">
+  <link rel="canonical" href="http://qincji.gitee.io/2020/12/07/rtmppush/4-aac/index.html">
   
     <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
   
@@ -246,7 +251,7 @@
                 
               </p>
               <p class="item-title">
-                <a href="/2020/12/08/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E6%80%BB%E7%BA%B2/" class="title">直播推流全过程：总纲</a>
+                <a href="/2020/12/08/rtmppush/outline/" class="title">直播推流全过程：总纲</a>
               </p>
               <p class="item-date">
                 <time datetime="2020-12-08T05:30:20.000Z" itemprop="datePublished">2020-12-08</time>
@@ -261,7 +266,7 @@
                 
               </p>
               <p class="item-title">
-                <a href="/2020/12/08/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E7%BC%96%E7%A0%81%E4%B9%8BRTMP/" class="title">直播推流全过程：直播推流编码之RTMP（5）</a>
+                <a href="/2020/12/08/rtmppush/5-rtmp/" class="title">直播推流全过程：直播推流编码之RTMP（5）</a>
               </p>
               <p class="item-date">
                 <time datetime="2020-12-08T05:10:30.000Z" itemprop="datePublished">2020-12-08</time>
@@ -276,7 +281,7 @@
                 
               </p>
               <p class="item-title">
-                <a href="/2020/12/07/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E9%9F%B3%E9%A2%91%E7%BC%96%E7%A0%81%E4%B9%8BAAC/" class="title">直播推流全过程：音频编码之AAC（4）</a>
+                <a href="/2020/12/07/rtmppush/4-aac/" class="title">直播推流全过程：音频编码之AAC（4）</a>
               </p>
               <p class="item-date">
                 <time datetime="2020-12-07T14:30:15.000Z" itemprop="datePublished">2020-12-07</time>
@@ -291,7 +296,7 @@
                 
               </p>
               <p class="item-title">
-                <a href="/2020/12/06/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E8%A7%86%E9%A2%91%E7%BC%96%E7%A0%81%E4%B9%8BH264/" class="title">直播推流全过程：视频编码之H.264（3）</a>
+                <a href="/2020/12/06/rtmppush/3-h264/" class="title">直播推流全过程：视频编码之H.264（3）</a>
               </p>
               <p class="item-date">
                 <time datetime="2020-12-06T08:54:50.000Z" itemprop="datePublished">2020-12-06</time>
@@ -306,7 +311,7 @@
                 
               </p>
               <p class="item-title">
-                <a href="/2020/12/04/%E6%88%91%E7%9A%84%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA%E7%AC%94%E8%AE%B0/" class="title">我的博客搭建笔记</a>
+                <a href="/2020/12/04/other/001blog/notes/" class="title">我的博客搭建笔记</a>
               </p>
               <p class="item-date">
                 <time datetime="2020-12-04T14:59:35.000Z" itemprop="datePublished">2020-12-04</time>
@@ -327,14 +332,14 @@
   
 <main class="main" role="main">
   <div class="content">
-  <article id="post-直播推流全过程：直播推流编码之RTMP" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+  <article id="post-rtmppush/4-aac" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
     
     <div class="article-header">
       
         
   
     <h1 class="article-title" itemprop="name">
-      直播推流全过程：直播推流编码之RTMP（5）
+      直播推流全过程：音频编码之AAC（4）
     </h1>
   
 
@@ -342,8 +347,8 @@
       <div class="article-meta">
         <span class="article-date">
     <i class="icon icon-calendar-check"></i>
-	<a href="/2020/12/08/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E7%BC%96%E7%A0%81%E4%B9%8BRTMP/" class="article-date">
-	  <time datetime="2020-12-08T05:10:30.000Z" itemprop="datePublished">2020-12-08</time>
+	<a href="/2020/12/07/rtmppush/4-aac/" class="article-date">
+	  <time datetime="2020-12-07T14:30:15.000Z" itemprop="datePublished">2020-12-07</time>
 	</a>
 </span>
         
@@ -363,152 +368,173 @@
 	</span>
 
 
-        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2020/12/08/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E7%BC%96%E7%A0%81%E4%B9%8BRTMP/#comments" class="article-comment-link">评论</a></span>
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2020/12/07/rtmppush/4-aac/#comments" class="article-comment-link">评论</a></span>
         
       </div>
     </div>
     <div class="article-entry marked-body" itemprop="articleBody">
       
-        <h3 id="简述"><a class="markdownIt-Anchor" href="#简述"></a> 简述</h3>
-<p>Adobe 公司的实时消息传输协议 (RTMP) 通过一个可靠地流传输提供了一个双向多通道消息服务，意图在通信端之间传递带有时间信息的视频、音频和数据消息流。</p>
-<h3 id="handshake-diagram握手流程"><a class="markdownIt-Anchor" href="#handshake-diagram握手流程"></a> Handshake Diagram（握手流程）</h3>
-<img src="/2020/12/08/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E7%BC%96%E7%A0%81%E4%B9%8BRTMP/rtmp-01-handshake.png" class="" title="01-handshake">
+        <h3 id="回顾"><a class="markdownIt-Anchor" href="#回顾"></a> 回顾</h3>
+<p>还记得我们采集到的PCM原始数据流（俗称裸流）吗？由于PCM裸流过大，不便于储存与传输，于是就出现了针对于PCM裸流的压缩编码标准，包含AAC，MP3，AC-3 等等（<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Audio_file_format">wiki audio file format</a>）；而AAC则是当前的主流。这里的AAC指的是一套编码标准（协议），而faac是一个开源的AAC编解码工具。</p>
+<h3 id="简述"><a class="markdownIt-Anchor" href="#简述"></a> 简述</h3>
+<p>AAC：高级音频编码(Advanced Audio Coding)，基于MPEG-2的音频编码技术，目的是取代MP3格式。2000年，MPEG-4标准出现后，AAC重新集成了其特性，为了区别于传统的MPEG-2 AAC又称为MPEG-4 AAC。</p>
+<h3 id="aac的音频文件格式"><a class="markdownIt-Anchor" href="#aac的音频文件格式"></a> AAC的音频文件格式</h3>
+<p>AAC的音频文件格式有两种ADIF和ADTS。这两种格式主要区别：ADIF只有一个文件头，ADTS每个包前面有一个文件头。而我们重点讲解的是ADTS格式。</p>
+<h4 id="adif"><a class="markdownIt-Anchor" href="#adif"></a> ADIF</h4>
+<p>Audio Data Interchange Format 音频数据交换格式。这种格式的特征是可以确定的找到这个音频数据的开始，不需进行在音频数据流中间开始的解码，即它的解码必须在明确定义的开始处进行。故这种格式常用在磁盘文件中。编码格式如下：</p>
+<img src="/2020/12/07/rtmppush/4-aac/aac-adif%E6%A0%BC%E5%BC%8F.png" class="" title="adif格式">
+<p>在MPEG-2 AAC中ADIF语法规则如下：</p>
+<img src="/2020/12/07/rtmppush/4-aac/aac-adif.png" class="" title="aac-adif">
+<h4 id="adts"><a class="markdownIt-Anchor" href="#adts"></a> ADTS</h4>
+<p>Audio Data Transport Stream 音频数据传输流。这种格式的特征是它是一个有同步字的比特流，解码可以在这个流中任何位置开始。也就是说ADTS的每一帧都有一个header和aac音频数据，这可以在网络传输的时候进行实时解码。</p>
+<p>下图为ADTS的组成部分以及在<strong>MPEG-2</strong> AAC的语法结构：</p>
+<img src="/2020/12/07/rtmppush/4-aac/acc-adts-mpeg2.png" class="" title="acc-adts-mpeg2">
+<p>下图为ADTS的组成部分以及在<strong>MPEG-4</strong> AAC的语法结构：</p>
+<img src="/2020/12/07/rtmppush/4-aac/aac-adts-mpeg4.png" class="" title="adts-mpeg4">
+<p>注：ES：全称elementary stream，这里意为编码后的音频数据。</p>
+<p><strong>adts_fixed_header</strong>关键参数如下：</p>
 <ul>
-<li><strong>Uninitialized (未初始化)：</strong> 客户端发送C0包(1 字节，版本信息)，如果服务器支持这个版本会响应S0和S1，否则终止连接。</li>
-<li><strong>Version Sent (版本已发送)：</strong> 当服务器接收到版本号后(已发送S0和S1)，客户端等S1，服务器等C1，当都接收后，客户端发送C2，服务器发送S2，然后两者状态变成Ack Sent。</li>
-<li><strong>Ack Sent (确认已发送)：</strong> 客户端和服务器分别等待 S2 和 C2。</li>
-<li><strong>Handshake Done (握手结束)：</strong> 客户端和服务器可以开始交换消息了。</li>
+<li>
+<p><strong>syncword</strong> 恒为 ‘1111 1111 1111’，也就是0xFFF。作为每个adts_freme的分割。</p>
+</li>
+<li>
+<p><strong>ID</strong> 使用那个MPEG版本。0：MPEG-4，1：MPEG-2。</p>
+</li>
+<li>
+<p><strong>layer</strong> 应该恒 为‘00’。</p>
+</li>
+<li>
+<p><strong>protection_absent</strong> 是否使用error_check()。0：使用，1：不使用。</p>
+</li>
+<li>
+<p><strong>profile(MPEG-4:profile_ObjectType)</strong> 见下表（左边是MPEG-2版本；右边是MPEG-4版本，Profile_ObjectType的值）：</p>
+<img src="/2020/12/07/rtmppush/4-aac/aac-profile.png" class="" title="profile">
+</li>
+<li>
+<p><strong>sampling_frequency_index</strong> 采样率的数组下标，即：sampling frequeny[sampling_frequency_index] ：</p>
+<img src="/2020/12/07/rtmppush/4-aac/aac-%E9%87%87%E6%A0%B7%E7%8E%87%E6%95%B0%E7%BB%84.png" class="" title="采样率数组">
+</li>
+<li>
+<p><strong>private_bit</strong>  私有位，编码时设置为0，解码时忽略。</p>
+</li>
+<li>
+<p><strong>channel_configuration</strong> 声道数。</p>
+</li>
+<li>
+<p><strong>original_copy</strong> 编码时设置为0，解码时忽略。</p>
+</li>
+<li>
+<p><strong>home</strong> 编码时设置为0，解码时忽略。</p>
+</li>
 </ul>
-<h3 id="分块"><a class="markdownIt-Anchor" href="#分块"></a> 分块</h3>
-<p>网络传输过程中，每一个块（每个rtmp包）必须被完全发送才可以发送下一块，而在接收端，这些块被根据 <code>chunk stream ID</code> 被组装成消息。分块允许上层协议将大的消息分解为更小的消息，例如，防止体积大的但优先级小的消息 (比如视频) 阻碍体积较小但优先级高的消息 (比如音频或者控制命令)。分块也让我们能够使用较小开销发送小消息，因为块头包含包含在消息内部的信息压缩提示。下面块格式就是一个块的组成。（注意：当连续接收到<code>chunk stream ID</code> 相同时，这些快是同一个消息，需要合并。）</p>
-<h4 id="chunk-format块格式"><a class="markdownIt-Anchor" href="#chunk-format块格式"></a> Chunk Format（块格式）</h4>
-<p>下图大致的概括了一块的组成，从当前块的 <strong>第一个字节</strong> 大致能分析出该块头的组成信息。 <code>Extended Timestamp</code> 和 <code>Chunk Data</code>具体计算在下面介绍。</p>
-<img src="/2020/12/08/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E7%BC%96%E7%A0%81%E4%B9%8BRTMP/rtmp-chumk-format.png" class="" title="chumk-format">
-<h4 id="basic-header块基本头"><a class="markdownIt-Anchor" href="#basic-header块基本头"></a> Basic Header（块基本头）</h4>
-<p>cs id保留0和1的值，而2的值保留用于下层协议控制消息和命令；具体如下：</p>
-<p><strong>第一个字节低6bit值&gt;1：</strong> <code>Basic Header</code> 为1byte；fmt=2bit；<code>cs id</code> =6bit，范围：2-63（也就是6bit最大能支持的范围）。</p>
-<table>
-<thead>
-<tr>
-<th style="text-align:center">fmt</th>
-<th style="text-align:center">cs id</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:center">高2bit</td>
-<td style="text-align:center">低6bit</td>
-</tr>
-</tbody>
-</table>
-<p>如：0100 1010-&gt;fmt：01… …=2；cs id：…00 1010=10</p>
-<p><strong>第一个字节低6bit值=0：</strong> <code>Basic Header</code> 为2byte；fmt=2bit；此时第一个字节中后6bit的值为0，cs id=第2个byte，范围：64 ~ 319（也就是第2个byte的值 + 64）。</p>
-<table>
-<thead>
-<tr>
-<th style="text-align:center">fmt</th>
-<th style="text-align:center">0</th>
-<th style="text-align:center">cs id - 64</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:center">高2bit</td>
-<td style="text-align:center">低6bit</td>
-<td style="text-align:center">byte</td>
-</tr>
-</tbody>
-</table>
-<p>如：1000 0000 0001 0001-&gt;fmt：10… …=2；0：…00 0000；cs id：(0001 0001)+64=17+64=81</p>
-<p><strong>第一个字节低6bit值=1：</strong>  <code>Basic Header</code> 为3byte；fmt=2bit；此时第一个字节中后6bit的值为0，cs id=第2个byte，范围：64~65599（(第3个byte) * 256 + (第2个byte) + 64）。</p>
-<table>
-<thead>
-<tr>
-<th style="text-align:center">fmt</th>
-<th style="text-align:center">1</th>
-<th style="text-align:center">cs id - 64</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:center">高2bit</td>
-<td style="text-align:center">低6bit</td>
-<td style="text-align:center">2byte</td>
-</tr>
-</tbody>
-</table>
-<p>如：1100 0000 0001 0001 0010 0010-&gt;fmt：11… …=2；1：…00 0001；cs id：(0010 0010)x256 + (0001 0001)+64=8704 + 17 + 64=8785</p>
-<h4 id="message-header块消息头"><a class="markdownIt-Anchor" href="#message-header块消息头"></a> Message Header（块消息头）</h4>
-<p>根据块基本头中的 <strong>fmt</strong> 的值来区分块消息头，从0—3共4种，上图标的很明确了，具体如下：</p>
-<p><strong>fmt = 0：</strong> 块消息头为11字节，当前消息的 <code>timestamp</code> 在这表示(此时 <code>Extended Timestamp</code> 辅助用)，如果用户设置时间戳&gt;=0xFFFFFF时(3字节容不下了)时，<code>timestamp</code> 字段就固定为0xFFFFFF。<code>message length</code> 是指 <code>Chunk Data</code> 的大小。<code>Extended Timestamp</code> 字段用4字节表示；</p>
-<table>
-<thead>
-<tr>
-<th style="text-align:center">timestamp</th>
-<th style="text-align:center">message length</th>
-<th style="text-align:center">message type id</th>
-<th style="text-align:center">message stream id</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:center">3byte</td>
-<td style="text-align:center">3byte</td>
-<td style="text-align:center">1byte</td>
-<td style="text-align:center">4byte</td>
-</tr>
-</tbody>
-</table>
-<p><strong>fmt = 1：</strong> 块消息头为7字节，少了 <code>message stream id</code> ，这一块使用前一块一样的流 ID。</p>
-<table>
-<thead>
-<tr>
-<th style="text-align:center">timestamp delta</th>
-<th style="text-align:center">message length</th>
-<th style="text-align:center">message type id</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:center">3byte</td>
-<td style="text-align:center">3byte</td>
-<td style="text-align:center">1byte</td>
-</tr>
-</tbody>
-</table>
-<p><strong>fmt = 2：</strong> 块消息头为3字节，只有 <code>timestamp delta</code> ，计算方式同 <strong>fmt = 0</strong> 时一样处理；流 ID与 <strong>fmt = 1</strong> 相同。</p>
-<p><strong>fmt = 3：</strong> 无块消息头；流 ID与 <strong>fmt = 1</strong> 相同；当一个消息被切割成多块时，除第一块外，其他都应 <strong>fmt = 3</strong>。</p>
-<h4 id="extended-timestamp扩展时间戳"><a class="markdownIt-Anchor" href="#extended-timestamp扩展时间戳"></a> Extended Timestamp（扩展时间戳）</h4>
-<p>当块消息头中的 <code>timestamp</code> 或者 <code>timestamp delta</code> 字段(3字节)容不下时(<strong>fmt = 0，1或2</strong>)，<code>Extended Timestamp</code> 才会被使用。</p>
-<h3 id="rtmpdump"><a class="markdownIt-Anchor" href="#rtmpdump"></a> RTMPDump</h3>
-<p>tmpdump 是一个用来处理 RTMP 流媒体的工具包，支持 rtmp://, rtmpt://, rtmpe://, rtmpte://, and rtmps:// 等。源码详细api以及流程图请看雷神的<a target="_blank" rel="noopener" href="https://blog.csdn.net/leixiaohua1020/article/details/12952977">RTMPdump 源代码分析 1： main()函数</a> ，这里只是简单介绍，集成到android中使用。因为源码很少，所以直接在as中进行编译生成静态库。</p>
-<p>（1）下载：<a target="_blank" rel="noopener" href="http://rtmpdump.mplayerhq.hu/download/rtmpdump-2.3.tgz">http://rtmpdump.mplayerhq.hu/download/rtmpdump-2.3.tgz</a></p>
-<p>（2）把源码导入到as中，如下图所示：</p>
-<img src="/2020/12/08/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E7%BC%96%E7%A0%81%E4%B9%8BRTMP/rtmp-as-lib.jpg" class="" title="rtmp-as-lib">
-<p>librtmp/CMakeLists.txt文件配置：</p>
-<pre class="highlight"><code class="cmake"><span class="hljs-keyword">cmake_minimum_required</span>(VERSION <span class="hljs-number">3.4</span>.<span class="hljs-number">1</span>)
-<span class="hljs-comment">#预编译宏</span>
-<span class="hljs-keyword">set</span>(CMAKE_C_FLAGS <span class="hljs-string">"$&#123;CMAKE_C_FLAGS&#125; -DNO_CRYPTO"</span>  )
-<span class="hljs-comment">#所有源文件放入 rtmp_source 变量</span>
-<span class="hljs-keyword">file</span>(GLOB rtmp_source *.c)
-<span class="hljs-comment">#编译静态库</span>
-<span class="hljs-keyword">add_library</span>(rtmp STATIC <span class="hljs-variable">$&#123;rtmp_source&#125;</span> )
+<p><strong>adts_variable_header</strong>关键参数如下：</p>
+<ul>
+<li><strong>copyright_identification_bit</strong> 72位版权标识字段中的一位。</li>
+<li><strong>copyright_identification_start</strong> 一位表示 该音频帧中的copyright_identification_bit是 72位版权标识的第一位。如果不 版权标识已传输，此位应 保持为’0’。'0’在 此音频帧“ 1”开始在 此音频帧。</li>
+<li><strong>frame_length(MPEG-4:aac_frame_length)</strong> 帧的长度，包括header和以字节为单位的error_check。</li>
+<li><strong>adts_buffer_fullness</strong> 固定0x7FF，表示比特流是可变速率比特流。</li>
+<li><strong>number_of_raw_data_blocks_in_frame</strong> 在ADTS帧中有number_of_raw_data_blocks_in_frame + 1个AAC原始数据块。number_of_raw_data_blocks_in_frame == 0 表示说ADTS帧中有一个AAC原始数据块。</li>
+</ul>
+<p>下图为一个ADTS格式的文件开头部分</p>
+<img src="/2020/12/07/rtmppush/4-aac/aac-adts%E4%BE%8B%E5%AD%90.png" class="" title="adts例子">
+<p>我们来数一个第一个frame的header</p>
+<pre class="highlight"><code class="shell"><span class="hljs-meta">#</span><span class="bash"><span class="hljs-comment">###adts_fixed_header()</span></span>
+<span class="hljs-meta">#</span><span class="bash">-------FFF1---------</span>
+1111 1111 1111 .... #0xFFF; syncword的值
+.... .... .... 0... #ID=0;使用MPEG-4
+.... .... .... .00. #layer
+.... .... .... ...0 #protection_absent，不使用error_check()
+<span class="hljs-meta">#</span><span class="bash">-------4C80---------</span>
+01.. .... .... .... #Profile_ObjectType=AAC MAIN
+..00 11.. .... .... #sampling_frequency_index=3,采样率为48000
+.... ..0. .... .... #private_bit
+.... ...0 10.. .... #channel_configuration=2（声道数）
+.... .... ..0. .... #original_copy
+.... .... ...0 .... #home
+<span class="hljs-meta">#</span><span class="bash"><span class="hljs-comment">###adts_variable_header()</span></span>
+<span class="hljs-meta">#</span><span class="bash">-------(4C8)0---------</span>
+.... .... .... 0... #copyright_identification_bit
+.... .... .... .0.. #copyright_identification_start
+<span class="hljs-meta">#</span><span class="bash">-------(4C8)0 223F--------</span>
+..00 0010 0010 001. .... #aac_frame_length=0x111=273字节--&gt;下一帧到上图的FFF14C
+<span class="hljs-meta">#</span><span class="bash">-------(22)3F FC--------</span>
+...1 1111 1111 11.. #adts_buffer_fullness=0x7FF
+<span class="hljs-meta">#</span><span class="bash">-------(F)C--------</span>
+..00 #number_of_raw_data_blocks_in_frame
 </code></pre>
-<p>项目的CMakeLists.txt文件引用编译生成的静态库</p>
+<h3 id="faac开源库"><a class="markdownIt-Anchor" href="#faac开源库"></a> faac开源库</h3>
+<p>（1）下载</p>
+<p><a target="_blank" rel="noopener" href="https://nchc.dl.sourceforge.net/project/faac/faac-src/faac-1.29/faac-1.29.9.2.tar.gz">https://nchc.dl.sourceforge.net/project/faac/faac-src/faac-1.29/faac-1.29.9.2.tar.gz</a></p>
+<p>（2）编译生成静态库（这里是android的交叉编译脚本，ndk21，平台mac）</p>
+<pre class="highlight"><code class="shell"><span class="hljs-meta">#</span><span class="bash">!/bin/bash</span>
+
+PREFIX=`pwd`/android/armeabi-v7a
+NDK_ROOT=/Users/Qincji/Desktop/develop/android/source/sdk/ndk/android-ndk-r21
+<span class="hljs-meta">#</span><span class="bash"> 注意：Mac为darwin-x86_64，linux为linux-x86_64；一定要确保路径真实有效</span>
+TOOLCHAIN=$NDK_ROOT/toolchains/llvm/prebuilt/darwin-x86_64
+CROSS_COMPILE=$TOOLCHAIN/bin/arm-linux-androideabi
+<span class="hljs-meta">
+#</span><span class="bash">在android studio中新建一个NDK项目，并且保持NDK版本与这里的一致。该FLAGS从build.ninja文件中拷贝。</span>
+FLAGS="-g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -march=armv7-a -mthumb -Wformat -Werror=format-security   -Oz -DNDEBUG  -fPIC"
+
+export CC=$TOOLCHAIN/bin/armv7a-linux-androideabi21-clang
+export CXX=$TOOLCHAIN/bin/armv7a-linux-androideabi21-clang++
+export CFLAGS="$FLAGS"
+export PATH=$PATH:$TOOLCHAIN/bin
+	
+
+./configure \
+--prefix=$PREFIX \
+--host=arm-linux-androideabi \
+--with-pic \
+--enable-shared=no  
+
+make clean
+make install
+</code></pre>
+<p>（3）移入项目中</p>
+<img src="/2020/12/07/rtmppush/4-aac/aac-faac-as.png" class="" title="faac-as">
+<p>并且配置CMakeList.txt文件</p>
 <pre class="highlight"><code class="cmake">...
-<span class="hljs-comment"># 引入指定目录下的CMakeLists.txt</span>
-<span class="hljs-keyword">add_subdirectory</span>(<span class="hljs-variable">$&#123;CMAKE_SOURCE_DIR&#125;</span>/librtmp)
+<span class="hljs-keyword">include_directories</span>(<span class="hljs-keyword">include</span>)
 ...
-<span class="hljs-comment">#4、链接到库文件，jni/c/c++可以引入链接到</span>
 <span class="hljs-keyword">target_link_libraries</span>(
-        rtmp
-        ...)
+        ...
+        faac
+        )
+</code></pre>
+<p>（4）API简单使用</p>
+<pre class="highlight"><code class="c++"><span class="hljs-comment">//1.打开编码器，获取inputSamples和maxOutputBytes的值，用于后面编码</span>
+<span class="hljs-comment">//1：采样率；2：声道数；3：单次输入的样本数；4：输出数据最大字节数</span>
+faacEncOpen(<span class="hljs-keyword">unsigned</span> <span class="hljs-keyword">long</span> sampleRate,<span class="hljs-keyword">unsigned</span> <span class="hljs-keyword">int</span> numChannels,<span class="hljs-keyword">unsigned</span> <span class="hljs-keyword">long</span> *inputSamples,<span class="hljs-keyword">unsigned</span> <span class="hljs-keyword">long</span> *maxOutputBytes);
+
+<span class="hljs-comment">//2.设置编码器参数</span>
+faacEncConfigurationPtr <span class="hljs-built_in">config</span> = faacEncGetCurrentConfiguration(faacEncHandle hEncoder);
+<span class="hljs-comment">//指定mpeg4编码标准</span>
+<span class="hljs-built_in">config</span>-&gt;mpegVersion = MPEG4;
+<span class="hljs-comment">//config-&gt;mpegVersion = MPEG2;</span>
+<span class="hljs-comment">//lc 标准</span>
+<span class="hljs-built_in">config</span>-&gt;aacObjectType = <span class="hljs-literal">LOW</span>;
+<span class="hljs-comment">//16位</span>
+<span class="hljs-built_in">config</span>-&gt;inputFormat = FAAC_INPUT_16BIT;
+<span class="hljs-comment">// 编码出原始数据；0 = Raw; 1 = ADTS</span>
+<span class="hljs-built_in">config</span>-&gt;outputFormat = <span class="hljs-number">1</span>;
+faacEncSetConfiguration(faacEncHandle hEncoder, <span class="hljs-built_in">config</span>);
+
+<span class="hljs-comment">//3.进行编码</span>
+<span class="hljs-comment">//1：FAAC的handle；2：采集的pcm的原始数据；3：从faacEncOpen获取的inputSamples；4：至少有从faacEncOpen获取maxOutputBytes大小的缓冲区；5：从faacEncOpen获取maxOutputBytes</span>
+<span class="hljs-comment">//返回值为编码后数据字节的长度</span>
+<span class="hljs-keyword">int</span> encodeLenght = faacEncEncode(faacEncHandle hEncoder, <span class="hljs-keyword">int32_t</span> * inputBuffer, <span class="hljs-keyword">unsigned</span> <span class="hljs-keyword">int</span> samplesInput,
+			 <span class="hljs-keyword">unsigned</span> <span class="hljs-keyword">char</span> *outputBuffer,
+			 <span class="hljs-keyword">unsigned</span> <span class="hljs-keyword">int</span> bufferSize);
 </code></pre>
 <h3 id="参考"><a class="markdownIt-Anchor" href="#参考"></a> 参考</h3>
-<p>（1）<a target="_blank" rel="noopener" href="https://wwwimages2.adobe.com/content/dam/acom/en/devnet/rtmp/pdf/rtmp_specification_1.0.pdf">rtmp_specification_1.0</a><br />
-（2）<a target="_blank" rel="noopener" href="https://www.cnblogs.com/Kingfans/p/7083100.html">https://www.cnblogs.com/Kingfans/p/7083100.html</a><br />
-（3）<a target="_blank" rel="noopener" href="https://blog.csdn.net/commshare/article/details/103393461">https://blog.csdn.net/commshare/article/details/103393461</a><br />
-（4）<a target="_blank" rel="noopener" href="https://blog.csdn.net/leixiaohua1020/article/details/12952977">https://blog.csdn.net/leixiaohua1020/article/details/12952977</a></p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/leixiaohua1020/article/details/11822537">AAC格式简介</a></li>
+<li><a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Audio_file_format">wiki audio file format</a></li>
+<li><a target="_blank" rel="noopener" href="https://csclub.uwaterloo.ca/~ehashman/ISO14496-3-2009.pdf">https://csclub.uwaterloo.ca/~ehashman/ISO14496-3-2009.pdf</a></li>
+<li>[AAC ADTS格式分析](</li>
+</ul>
 
       
     </div>
@@ -518,7 +544,7 @@
     
     <li class="post-copyright-link hidden-xs">
       <strong>本文链接：</strong>
-      <a href="http://qincji.gitee.io/2020/12/08/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E7%BC%96%E7%A0%81%E4%B9%8BRTMP/" title="直播推流全过程：直播推流编码之RTMP（5）" target="_blank" rel="external">http://qincji.gitee.io/2020/12/08/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E7%BC%96%E7%A0%81%E4%B9%8BRTMP/</a>
+      <a href="http://qincji.gitee.io/2020/12/07/rtmppush/4-aac/" title="直播推流全过程：音频编码之AAC（4）" target="_blank" rel="external">http://qincji.gitee.io/2020/12/07/rtmppush/4-aac/</a>
     </li>
     
     <li class="post-copyright-license">
@@ -565,12 +591,12 @@
   <ul class="pager pull-left">
     
     <li class="prev">
-      <a href="/2020/12/08/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E6%80%BB%E7%BA%B2/" title="直播推流全过程：总纲"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;上一篇</span></a>
+      <a href="/2020/12/08/rtmppush/5-rtmp/" title="直播推流全过程：直播推流编码之RTMP（5）"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;上一篇</span></a>
     </li>
     
     
     <li class="next">
-      <a href="/2020/12/07/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E9%9F%B3%E9%A2%91%E7%BC%96%E7%A0%81%E4%B9%8BAAC/" title="直播推流全过程：音频编码之AAC（4）"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+      <a href="/2020/12/06/rtmppush/3-h264/" title="直播推流全过程：视频编码之H.264（3）"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
     </li>
     
     

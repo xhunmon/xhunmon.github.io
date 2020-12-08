@@ -21,25 +21,25 @@
   <meta name="description" content="视频基本概念  一个视频简单点理解就是播放一张张画面。我们就从这里面把视频的相关名词扯出来：①一张画面，一张画面也就一帧画面；属性为图像的大小或尺寸称分别率；画面的成像组成的方式有：rgb和yuv；跟计算器关联起来还不是用0101的比特来表示②当画面遇上了时间，爱的结晶就出来了：比特率、帧率和刷新率。接下来我们简单介绍一下他们的作用：  视频帧： 常见有I帧（关键帧，含完整画面，所以数据量大）、">
 <meta property="og:type" content="article">
 <meta property="og:title" content="直播推流全过程：视频数据源之YUV（1）">
-<meta property="og:url" content="http://qincji.gitee.io/2020/12/03/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E8%A7%86%E9%A2%91%E6%95%B0%E6%8D%AE%E6%BA%90%E4%B9%8BYUV/index.html">
+<meta property="og:url" content="http://qincji.gitee.io/2020/12/03/rtmppush/1-yuv/index.html">
 <meta property="og:site_name" content="Hexo">
 <meta property="og:description" content="视频基本概念  一个视频简单点理解就是播放一张张画面。我们就从这里面把视频的相关名词扯出来：①一张画面，一张画面也就一帧画面；属性为图像的大小或尺寸称分别率；画面的成像组成的方式有：rgb和yuv；跟计算器关联起来还不是用0101的比特来表示②当画面遇上了时间，爱的结晶就出来了：比特率、帧率和刷新率。接下来我们简单介绍一下他们的作用：  视频帧： 常见有I帧（关键帧，含完整画面，所以数据量大）、">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://qincji.gitee.io/2020/12/03/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E8%A7%86%E9%A2%91%E6%95%B0%E6%8D%AE%E6%BA%90%E4%B9%8BYUV/yuv-%E7%BF%BB%E4%B9%A6.gif">
-<meta property="og:image" content="http://qincji.gitee.io/2020/12/03/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E8%A7%86%E9%A2%91%E6%95%B0%E6%8D%AE%E6%BA%90%E4%B9%8BYUV/yuv-%E5%8F%96%E6%A0%B7%E6%A0%BC%E5%BC%8F.png">
-<meta property="og:image" content="http://qincji.gitee.io/2020/12/03/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E8%A7%86%E9%A2%91%E6%95%B0%E6%8D%AE%E6%BA%90%E4%B9%8BYUV/yuv-%E5%8F%96%E6%A0%B7.png">
-<meta property="og:image" content="http://qincji.gitee.io/2020/12/03/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E8%A7%86%E9%A2%91%E6%95%B0%E6%8D%AE%E6%BA%90%E4%B9%8BYUV/yuv-NV21.png">
-<meta property="og:image" content="http://qincji.gitee.io/2020/12/03/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E8%A7%86%E9%A2%91%E6%95%B0%E6%8D%AE%E6%BA%90%E4%B9%8BYUV/yuv-I420.png">
-<meta property="og:image" content="http://qincji.gitee.io/2020/12/03/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E8%A7%86%E9%A2%91%E6%95%B0%E6%8D%AE%E6%BA%90%E4%B9%8BYUV/image-20201204082214045.png">
-<meta property="og:image" content="http://qincji.gitee.io/2020/12/03/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E8%A7%86%E9%A2%91%E6%95%B0%E6%8D%AE%E6%BA%90%E4%B9%8BYUV/yuv-%E6%97%8B%E8%BD%AC%E5%89%8D%E5%90%8E.png">
+<meta property="og:image" content="http://qincji.gitee.io/2020/12/03/rtmppush/1-yuv/yuv-%E7%BF%BB%E4%B9%A6.gif">
+<meta property="og:image" content="http://qincji.gitee.io/2020/12/03/rtmppush/1-yuv/yuv-%E5%8F%96%E6%A0%B7%E6%A0%BC%E5%BC%8F.png">
+<meta property="og:image" content="http://qincji.gitee.io/2020/12/03/rtmppush/1-yuv/yuv-%E5%8F%96%E6%A0%B7.png">
+<meta property="og:image" content="http://qincji.gitee.io/2020/12/03/rtmppush/1-yuv/yuv-NV21.png">
+<meta property="og:image" content="http://qincji.gitee.io/2020/12/03/rtmppush/1-yuv/yuv-I420.png">
+<meta property="og:image" content="http://qincji.gitee.io/2020/12/03/rtmppush/1-yuv/image-20201204082214045.png">
+<meta property="og:image" content="http://qincji.gitee.io/2020/12/03/rtmppush/1-yuv/yuv-%E6%97%8B%E8%BD%AC%E5%89%8D%E5%90%8E.png">
 <meta property="article:published_time" content="2020-12-03T14:20:51.000Z">
-<meta property="article:modified_time" content="2020-12-06T09:57:26.241Z">
+<meta property="article:modified_time" content="2020-12-08T14:04:24.293Z">
 <meta property="article:author" content="John Doe">
 <meta property="article:tag" content="直播推流全过程">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://qincji.gitee.io/2020/12/03/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E8%A7%86%E9%A2%91%E6%95%B0%E6%8D%AE%E6%BA%90%E4%B9%8BYUV/yuv-%E7%BF%BB%E4%B9%A6.gif">
+<meta name="twitter:image" content="http://qincji.gitee.io/2020/12/03/rtmppush/1-yuv/yuv-%E7%BF%BB%E4%B9%A6.gif">
   <!-- Canonical links -->
-  <link rel="canonical" href="http://qincji.gitee.io/2020/12/03/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E8%A7%86%E9%A2%91%E6%95%B0%E6%8D%AE%E6%BA%90%E4%B9%8BYUV/index.html">
+  <link rel="canonical" href="http://qincji.gitee.io/2020/12/03/rtmppush/1-yuv/index.html">
   
     <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
   
@@ -250,7 +250,7 @@
                 
               </p>
               <p class="item-title">
-                <a href="/2020/12/08/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E6%80%BB%E7%BA%B2/" class="title">直播推流全过程：总纲</a>
+                <a href="/2020/12/08/rtmppush/outline/" class="title">直播推流全过程：总纲</a>
               </p>
               <p class="item-date">
                 <time datetime="2020-12-08T05:30:20.000Z" itemprop="datePublished">2020-12-08</time>
@@ -265,7 +265,7 @@
                 
               </p>
               <p class="item-title">
-                <a href="/2020/12/08/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E7%BC%96%E7%A0%81%E4%B9%8BRTMP/" class="title">直播推流全过程：直播推流编码之RTMP（5）</a>
+                <a href="/2020/12/08/rtmppush/5-rtmp/" class="title">直播推流全过程：直播推流编码之RTMP（5）</a>
               </p>
               <p class="item-date">
                 <time datetime="2020-12-08T05:10:30.000Z" itemprop="datePublished">2020-12-08</time>
@@ -280,7 +280,7 @@
                 
               </p>
               <p class="item-title">
-                <a href="/2020/12/07/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E9%9F%B3%E9%A2%91%E7%BC%96%E7%A0%81%E4%B9%8BAAC/" class="title">直播推流全过程：音频编码之AAC（4）</a>
+                <a href="/2020/12/07/rtmppush/4-aac/" class="title">直播推流全过程：音频编码之AAC（4）</a>
               </p>
               <p class="item-date">
                 <time datetime="2020-12-07T14:30:15.000Z" itemprop="datePublished">2020-12-07</time>
@@ -295,7 +295,7 @@
                 
               </p>
               <p class="item-title">
-                <a href="/2020/12/06/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E8%A7%86%E9%A2%91%E7%BC%96%E7%A0%81%E4%B9%8BH264/" class="title">直播推流全过程：视频编码之H.264（3）</a>
+                <a href="/2020/12/06/rtmppush/3-h264/" class="title">直播推流全过程：视频编码之H.264（3）</a>
               </p>
               <p class="item-date">
                 <time datetime="2020-12-06T08:54:50.000Z" itemprop="datePublished">2020-12-06</time>
@@ -310,7 +310,7 @@
                 
               </p>
               <p class="item-title">
-                <a href="/2020/12/04/%E6%88%91%E7%9A%84%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA%E7%AC%94%E8%AE%B0/" class="title">我的博客搭建笔记</a>
+                <a href="/2020/12/04/other/001blog/notes/" class="title">我的博客搭建笔记</a>
               </p>
               <p class="item-date">
                 <time datetime="2020-12-04T14:59:35.000Z" itemprop="datePublished">2020-12-04</time>
@@ -340,7 +340,7 @@
 
 <main class="main" role="main">
   <div class="content">
-  <article id="post-直播推流全过程：视频数据源之YUV" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+  <article id="post-rtmppush/1-yuv" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
     
     <div class="article-header">
       
@@ -355,7 +355,7 @@
       <div class="article-meta">
         <span class="article-date">
     <i class="icon icon-calendar-check"></i>
-	<a href="/2020/12/03/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E8%A7%86%E9%A2%91%E6%95%B0%E6%8D%AE%E6%BA%90%E4%B9%8BYUV/" class="article-date">
+	<a href="/2020/12/03/rtmppush/1-yuv/" class="article-date">
 	  <time datetime="2020-12-03T14:20:51.000Z" itemprop="datePublished">2020-12-03</time>
 	</a>
 </span>
@@ -376,14 +376,14 @@
 	</span>
 
 
-        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2020/12/03/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E8%A7%86%E9%A2%91%E6%95%B0%E6%8D%AE%E6%BA%90%E4%B9%8BYUV/#comments" class="article-comment-link">评论</a></span>
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2020/12/03/rtmppush/1-yuv/#comments" class="article-comment-link">评论</a></span>
         
       </div>
     </div>
     <div class="article-entry marked-body" itemprop="articleBody">
       
         <h3 id="视频基本概念"><a class="markdownIt-Anchor" href="#视频基本概念"></a> 视频基本概念</h3>
-<img src="/2020/12/03/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E8%A7%86%E9%A2%91%E6%95%B0%E6%8D%AE%E6%BA%90%E4%B9%8BYUV/yuv-%E7%BF%BB%E4%B9%A6.gif" class="" title="yuv-翻书">
+<img src="/2020/12/03/rtmppush/1-yuv/yuv-%E7%BF%BB%E4%B9%A6.gif" class="" title="yuv-翻书">
 <p>一个视频简单点理解就是播放一张张画面。我们就从这里面把视频的相关名词扯出来：①一张画面，一张画面也就一<strong>帧</strong>画面；属性为图像的大小或尺寸称<strong>分别率</strong>；画面的成像组成的方式有：<strong>rgb</strong>和<strong>yuv</strong>；跟计算器关联起来还不是用0101的<strong>比特</strong>来表示②当画面遇上了时间，爱的结晶就出来了：<strong>比特率</strong>、<strong>帧率</strong>和<strong>刷新率</strong>。接下来我们简单介绍一下他们的作用：</p>
 <ul>
 <li><strong>视频帧：</strong> 常见有I帧（关键帧，含完整画面，所以数据量大）、P帧（前向参考帧，参考前面I帧编码的图像信息）、B帧（双向预测帧，参考前面I帧、前面P帧和后面I帧编码的图像信息）；我们网上看视频时常常会遇到拖动进度条出现回退一两秒的情况吧？因为那个位置的当前帧不是I帧，没有完整的画面。</li>
@@ -401,7 +401,7 @@
 </ul>
 <h3 id="yuv基本介绍"><a class="markdownIt-Anchor" href="#yuv基本介绍"></a> YUV基本介绍</h3>
 <p>人类视觉系统（HVS）对亮度比彩色更敏感，所以把Y和UV单独抽出来，每一个像素点都有一个Y，4个Y和一组UV（UV数量不定）共同绘制4个像素点，而Y和UV的比例不一样就分了多种 <strong>取样格式</strong>。</p>
-<img src="/2020/12/03/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E8%A7%86%E9%A2%91%E6%95%B0%E6%8D%AE%E6%BA%90%E4%B9%8BYUV/yuv-%E5%8F%96%E6%A0%B7%E6%A0%BC%E5%BC%8F.png" class="" title="yuv-取样格式">
+<img src="/2020/12/03/rtmppush/1-yuv/yuv-%E5%8F%96%E6%A0%B7%E6%A0%BC%E5%BC%8F.png" class="" title="yuv-取样格式">
 <h4 id="yuv与rgb的相互转化"><a class="markdownIt-Anchor" href="#yuv与rgb的相互转化"></a> YUV与RGB的相互转化</h4>
 <ul>
 <li>RGB转YUV：</li>
@@ -421,7 +421,7 @@ G = Y - 0.344U - 0.714V</p>
 </blockquote>
 <h4 id="yuv取样格式"><a class="markdownIt-Anchor" href="#yuv取样格式"></a> YUV取样格式</h4>
 <p>常见的取样格式有以下3种</p>
-<img src="/2020/12/03/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E8%A7%86%E9%A2%91%E6%95%B0%E6%8D%AE%E6%BA%90%E4%B9%8BYUV/yuv-%E5%8F%96%E6%A0%B7.png" class="" title="新一代视频压缩编码标准-H.264_AVC">
+<img src="/2020/12/03/rtmppush/1-yuv/yuv-%E5%8F%96%E6%A0%B7.png" class="" title="新一代视频压缩编码标准-H.264_AVC">
 <ul>
 <li><strong>4：4：4</strong> 每4个素位置都有4个YUV，内存计算：1920 x 1080 = 1920 x 1080 x 3=5.9M；</li>
 <li><strong>4：2：2</strong> 每4个Y像素具有2个U和2个V；内存计算：1920 x 1080 = 1920 x 1080 x (1 + 2/4 + 2/4)=3.9M；</li>
@@ -432,16 +432,16 @@ G = Y - 0.344U - 0.714V</p>
 <ul>
 <li><strong>NV21：</strong> ①先把Y数据全部排序完；②UV数据交替排序完；</li>
 </ul>
-<img src="/2020/12/03/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E8%A7%86%E9%A2%91%E6%95%B0%E6%8D%AE%E6%BA%90%E4%B9%8BYUV/yuv-NV21.png" class="" title="nv21格式">
+<img src="/2020/12/03/rtmppush/1-yuv/yuv-NV21.png" class="" title="nv21格式">
 <ul>
 <li><strong>I420：</strong> ①先把Y数据全部排序完；②U数据排序完；③V数据排序完；</li>
 </ul>
-<img src="/2020/12/03/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E8%A7%86%E9%A2%91%E6%95%B0%E6%8D%AE%E6%BA%90%E4%B9%8BYUV/yuv-I420.png" class="" title="i420格式">
+<img src="/2020/12/03/rtmppush/1-yuv/yuv-I420.png" class="" title="i420格式">
 <h3 id="yuv初步实战"><a class="markdownIt-Anchor" href="#yuv初步实战"></a> YUV初步实战</h3>
 <h4 id="手写分离yuv分量以及对其进行播放"><a class="markdownIt-Anchor" href="#手写分离yuv分量以及对其进行播放"></a> 手写分离YUV分量以及对其进行播放</h4>
 <p>请前往 <a target="_blank" rel="noopener" href="https://blog.csdn.net/leixiaohua1020/article/details/50534150">视音频数据处理入门：RGB、YUV像素数据处理</a> 进行学习。对“前人种树，后人乘凉”感触颇深，只是太可惜了！</p>
 <h4 id="yuv数据源的采集android端"><a class="markdownIt-Anchor" href="#yuv数据源的采集android端"></a> YUV数据源的采集（Android端）</h4>
-<img src="/2020/12/03/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E8%A7%86%E9%A2%91%E6%95%B0%E6%8D%AE%E6%BA%90%E4%B9%8BYUV/image-20201204082214045.png" class="" title="image-20201204082214045">
+<img src="/2020/12/03/rtmppush/1-yuv/image-20201204082214045.png" class="" title="image-20201204082214045">
 <pre class="highlight"><code class="java"><span class="hljs-comment">//1.相机权限</span>
 
 <span class="hljs-comment">//2.获取相机，有后置摄像头：Camera.CameraInfo.CAMERA_FACING_BACK和前置摄像头：Camera.CameraInfo.CAMERA_FACING_FRONT</span>
@@ -467,7 +467,7 @@ camera.startPreview();
 </code></pre>
 <h4 id="nv21数据旋转"><a class="markdownIt-Anchor" href="#nv21数据旋转"></a> NV21数据旋转</h4>
 <p>比如NV21数据以及顺时针旋转90度后的对比：</p>
-<img src="/2020/12/03/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E8%A7%86%E9%A2%91%E6%95%B0%E6%8D%AE%E6%BA%90%E4%B9%8BYUV/yuv-%E6%97%8B%E8%BD%AC%E5%89%8D%E5%90%8E.png" class="" title="nv21顺时针旋转">
+<img src="/2020/12/03/rtmppush/1-yuv/yuv-%E6%97%8B%E8%BD%AC%E5%89%8D%E5%90%8E.png" class="" title="nv21顺时针旋转">
 <p>实现顺时针和逆时针旋转90度的代码：</p>
 <pre class="highlight"><code class="c"><span class="hljs-comment">/**
  *yuv_n21_rotation("assets/yuv_nv21_800x480_back.yuv",800,480,90,"output/out_nv21_480x800_back.yuv");
@@ -569,7 +569,7 @@ camera.startPreview();
     
     <li class="post-copyright-link hidden-xs">
       <strong>本文链接：</strong>
-      <a href="http://qincji.gitee.io/2020/12/03/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E8%A7%86%E9%A2%91%E6%95%B0%E6%8D%AE%E6%BA%90%E4%B9%8BYUV/" title="直播推流全过程：视频数据源之YUV（1）" target="_blank" rel="external">http://qincji.gitee.io/2020/12/03/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9A%E8%A7%86%E9%A2%91%E6%95%B0%E6%8D%AE%E6%BA%90%E4%B9%8BYUV/</a>
+      <a href="http://qincji.gitee.io/2020/12/03/rtmppush/1-yuv/" title="直播推流全过程：视频数据源之YUV（1）" target="_blank" rel="external">http://qincji.gitee.io/2020/12/03/rtmppush/1-yuv/</a>
     </li>
     
     <li class="post-copyright-license">
@@ -616,7 +616,7 @@ camera.startPreview();
   <ul class="pager pull-left">
     
     <li class="prev">
-      <a href="/2020/12/04/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9AH.264%E6%8F%8F%E8%BF%B0%E7%AC%A6/" title="直播推流全过程：H.264描述符"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;上一篇</span></a>
+      <a href="/2020/12/04/rtmppush/h264-descriptor/" title="直播推流全过程：H.264描述符"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;上一篇</span></a>
     </li>
     
     
