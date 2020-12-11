@@ -33,7 +33,7 @@
 <meta property="og:image" content="http://qincji.gitee.io/2020/12/06/rtmppush/3-h264/h264-pps%E8%A1%A8.png">
 <meta property="og:image" content="http://qincji.gitee.io/2020/12/06/rtmppush/3-h264/h264-x264-as.png">
 <meta property="article:published_time" content="2020-12-06T08:54:50.000Z">
-<meta property="article:modified_time" content="2020-12-08T14:04:24.300Z">
+<meta property="article:modified_time" content="2020-12-11T01:05:56.544Z">
 <meta property="article:author" content="John Doe">
 <meta property="article:tag" content="直播推流全过程">
 <meta name="twitter:card" content="summary">
@@ -398,7 +398,7 @@
 <img src="/2020/12/06/rtmppush/3-h264/h264-flv.png" class="" title="h264-flv">
 <p>所以这篇文章主要学习NALU的基本知识，学会如何去分析一段NALU数据。</p>
 <h4 id="nalunal-单元"><a class="markdownIt-Anchor" href="#nalunal-单元"></a> NALU（NAL 单元）</h4>
-<p>NALU(NAL Unit，NAL 单元)的组成部分如下图。其中，f(0)占1bit，u(2)占2bit，u(5)占5bit，文中如有出现类似描述符请看<a target="_blank" rel="noopener" href="https://xhunmon.github.io/2020/12/04/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9AH.264%E6%8F%8F%E8%BF%B0%E7%AC%A6/">H.264描述符</a>。</p>
+<p>NALU(NAL Unit，NAL 单元)的组成部分如下图。其中，f(0)占1bit，u(2)占2bit，u(5)占5bit，文中如有出现类似描述符请看<a href="https://qincji.gitee.io/2020/12/04/rtmppush/h264-descriptor/">H.264描述符</a>。</p>
 <img src="/2020/12/06/rtmppush/3-h264/h264-nalu%E7%BB%84%E6%88%90.png" class="" title="nalu组成">
 <p>从上图可以看出来，当前NAL单元属于什么样的类型，这取决于RBSP具体是什么样的类型，而RBSP的类型是根据<code>nal_unit_type</code>的值来定义的。<br />
 ①当<code>nal_unit_type</code>为1~5时：RBSP为切片类型（有5种切片类型）；整个NAL单元类型为VCL NAL单元，VCL是上面说的视频编码层，里面有编码后画面数据。<br />
@@ -499,7 +499,7 @@
 </ul>
 <p>下面为从一个只放h.264视频编码文件的一段（SPS）：</p>
 <img src="/2020/12/06/rtmppush/3-h264/h264-sps%E5%88%86%E6%9E%90.png" class="" title="sps分析">
-<p>ue(v)和se(v)的计算公式见 <a target="_blank" rel="noopener" href="https://xhunmon.github.io/2020/12/04/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B%EF%BC%9AH.264%E6%8F%8F%E8%BF%B0%E7%AC%A6/">H.264描述符</a>。</p>
+<p>ue(v)和se(v)的计算公式见 <a href="https://qincji.gitee.io/2020/12/04/rtmppush/h264-descriptor/">H.264描述符</a>。</p>
 <pre class="highlight"><code class="shell"><span class="hljs-meta">#</span><span class="bash"> 00000001 6764001E ACD940A0 2FF96100 00030001 00000300 320F162D 96</span>
 00000001 #起始码
 <span class="hljs-meta">#</span><span class="bash">NAL单元头---0x67 0110 0111 --------------</span>
