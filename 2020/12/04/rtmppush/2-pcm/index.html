@@ -419,103 +419,15 @@ little-endian存储方式：0x2211 0x4433 0x6655  0x8877。</p>
 <ul>
 <li>
 <p>将little-endian_2_44100_16.pcm采样数据进行切割，只保留后面5秒的数据</p>
-<pre class="highlight"><code class="c"><span class="hljs-comment">/**
- * 将little-endian_2_44100_16.pcm采样数据进行切割，只保留后面5秒的数据
- * 1、该类型数据5秒有多长？
- * 2、从哪里开始截取？
- */</span>
-<span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">cut5second</span><span class="hljs-params">(<span class="hljs-keyword">const</span> <span class="hljs-keyword">char</span> *url)</span></span>&#123;
-    FILE *in = fopen(url, <span class="hljs-string">"rb+"</span>);
-    FILE *out = fopen(<span class="hljs-string">"./output/spit5second.pcm"</span>, <span class="hljs-string">"wb+"</span>);
-    <span class="hljs-keyword">long</span> <span class="hljs-keyword">long</span>  data5Length = <span class="hljs-number">44100</span> * (<span class="hljs-number">16</span>/<span class="hljs-number">8</span>) * <span class="hljs-number">2</span> * <span class="hljs-number">5</span>;
-    <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">stat</span> <span class="hljs-title">statbuf</span>;</span>
-    stat(url,&amp;statbuf);
-    <span class="hljs-keyword">long</span> <span class="hljs-keyword">long</span> fileLength = statbuf.st_size;
-    <span class="hljs-keyword">long</span> <span class="hljs-keyword">long</span>  start = fileLength - data5Length;
-    <span class="hljs-keyword">char</span> *simple = (<span class="hljs-keyword">char</span> *)<span class="hljs-built_in">malloc</span>(data5Length);
-    <span class="hljs-comment">//把指针位置移动到start位置开始读取</span>
-    fseek(in,start,<span class="hljs-number">1</span>);
-    <span class="hljs-comment">//每次从in文件中读取1组data5Length个长度数据的到simple中</span>
-    fread(simple,data5Length,<span class="hljs-number">1</span>,in);
-    fwrite(simple,data5Length,<span class="hljs-number">1</span>,out);
-    fclose(in);
-    fclose(out);
-    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
-&#125;
-
-</code></pre>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 将little-endian_2_44100_16.pcm采样数据进行切割，只保留后面5秒的数据</span></span><br><span class="line"><span class="comment"> * 1、该类型数据5秒有多长？</span></span><br><span class="line"><span class="comment"> * 2、从哪里开始截取？</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">cut5second</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *url)</span></span>&#123;</span><br><span class="line">    FILE *in = fopen(url, <span class="string">&quot;rb+&quot;</span>);</span><br><span class="line">    FILE *out = fopen(<span class="string">&quot;./output/spit5second.pcm&quot;</span>, <span class="string">&quot;wb+&quot;</span>);</span><br><span class="line">    <span class="keyword">long</span> <span class="keyword">long</span>  data5Length = <span class="number">44100</span> * (<span class="number">16</span>/<span class="number">8</span>) * <span class="number">2</span> * <span class="number">5</span>;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">stat</span> <span class="title">statbuf</span>;</span></span><br><span class="line">    stat(url,&amp;statbuf);</span><br><span class="line">    <span class="keyword">long</span> <span class="keyword">long</span> fileLength = statbuf.st_size;</span><br><span class="line">    <span class="keyword">long</span> <span class="keyword">long</span>  start = fileLength - data5Length;</span><br><span class="line">    <span class="keyword">char</span> *simple = (<span class="keyword">char</span> *)<span class="built_in">malloc</span>(data5Length);</span><br><span class="line">    <span class="comment">//把指针位置移动到start位置开始读取</span></span><br><span class="line">    fseek(in,start,<span class="number">1</span>);</span><br><span class="line">    <span class="comment">//每次从in文件中读取1组data5Length个长度数据的到simple中</span></span><br><span class="line">    fread(simple,data5Length,<span class="number">1</span>,in);</span><br><span class="line">    fwrite(simple,data5Length,<span class="number">1</span>,out);</span><br><span class="line">    fclose(in);</span><br><span class="line">    fclose(out);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 </li>
 <li>
 <p>分离各声道的数据：把各个声道的采集点数据分开存储。</p>
-<pre class="highlight"><code class="c"><span class="hljs-comment">/**
- * 将little-endian_2_44100_16.pcm 分离各声道的数据，即把各个声道的采集点数据分开存储。
- */</span>
-<span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">separateLR</span><span class="hljs-params">(<span class="hljs-keyword">const</span> <span class="hljs-keyword">char</span> *url)</span></span>&#123;
-    FILE *in = fopen(url, <span class="hljs-string">"rb+"</span>);
-    FILE *outL = fopen(<span class="hljs-string">"./output/l.pcm"</span>, <span class="hljs-string">"wb+"</span>);
-    FILE *outR = fopen(<span class="hljs-string">"./output/r.pcm"</span>, <span class="hljs-string">"wb+"</span>);
-    <span class="hljs-keyword">int</span> simpleLength = <span class="hljs-number">16</span> / <span class="hljs-number">8</span> * <span class="hljs-number">2</span>;
-    <span class="hljs-keyword">char</span> *simple = (<span class="hljs-keyword">char</span> *)<span class="hljs-built_in">malloc</span>(simpleLength);
-    <span class="hljs-keyword">while</span> (<span class="hljs-number">1</span>)&#123;
-        <span class="hljs-comment">//每次从in文件中读取1组4个长度数据的到simple中</span>
-        fread(simple,<span class="hljs-number">4</span>,<span class="hljs-number">1</span>,in);
-        <span class="hljs-keyword">if</span>(feof(in))&#123;
-            <span class="hljs-keyword">break</span>;
-        &#125;
-        <span class="hljs-comment">//l(0声道)：1-2</span>
-        fwrite(simple,<span class="hljs-number">2</span>,<span class="hljs-number">1</span>,outL);
-        <span class="hljs-comment">//r(1声道)：3-4</span>
-        fwrite(simple+<span class="hljs-number">2</span>,<span class="hljs-number">2</span>,<span class="hljs-number">1</span>,outR);
-    &#125;
-    fclose(in);
-    fclose(outL);
-    fclose(outR);
-    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
-&#125;
-</code></pre>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 将little-endian_2_44100_16.pcm 分离各声道的数据，即把各个声道的采集点数据分开存储。</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">separateLR</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *url)</span></span>&#123;</span><br><span class="line">    FILE *in = fopen(url, <span class="string">&quot;rb+&quot;</span>);</span><br><span class="line">    FILE *outL = fopen(<span class="string">&quot;./output/l.pcm&quot;</span>, <span class="string">&quot;wb+&quot;</span>);</span><br><span class="line">    FILE *outR = fopen(<span class="string">&quot;./output/r.pcm&quot;</span>, <span class="string">&quot;wb+&quot;</span>);</span><br><span class="line">    <span class="keyword">int</span> simpleLength = <span class="number">16</span> / <span class="number">8</span> * <span class="number">2</span>;</span><br><span class="line">    <span class="keyword">char</span> *simple = (<span class="keyword">char</span> *)<span class="built_in">malloc</span>(simpleLength);</span><br><span class="line">    <span class="keyword">while</span> (<span class="number">1</span>)&#123;</span><br><span class="line">        <span class="comment">//每次从in文件中读取1组4个长度数据的到simple中</span></span><br><span class="line">        fread(simple,<span class="number">4</span>,<span class="number">1</span>,in);</span><br><span class="line">        <span class="keyword">if</span>(feof(in))&#123;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//l(0声道)：1-2</span></span><br><span class="line">        fwrite(simple,<span class="number">2</span>,<span class="number">1</span>,outL);</span><br><span class="line">        <span class="comment">//r(1声道)：3-4</span></span><br><span class="line">        fwrite(simple+<span class="number">2</span>,<span class="number">2</span>,<span class="number">1</span>,outR);</span><br><span class="line">    &#125;</span><br><span class="line">    fclose(in);</span><br><span class="line">    fclose(outL);</span><br><span class="line">    fclose(outR);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 </li>
 <li>
 <p>音量调节：把每个采集点数据的值 x 调节比例。注意：需要注意的是可调节范围，如：8位有无符号时最大是多少。</p>
-<pre class="highlight"><code class="c"><span class="hljs-comment">/**
- * 将little-endian_2_44100_16.pcm 调节音量 比例
- * 1、little-endian排序的值是如何排序的？真正的值是多少？
- * 2、little-endian转成真正的值之后再进行计算，得到的结果再反转little-endian。
- * 如：原始pcm数据：0xaa 0x01(左声道采样点数据)，当scale=2：
- * -&gt; 值：0x01aa * 2 = 0x0354
- * -&gt; 转回little-endian再进行存储：0x5403（缩放后的值）
- */</span>
-<span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">volumeAdjustment</span><span class="hljs-params">(<span class="hljs-keyword">const</span> <span class="hljs-keyword">char</span> *url, <span class="hljs-keyword">float</span> scale)</span></span>&#123;
-    FILE *in = fopen(url, <span class="hljs-string">"rb+"</span>);
-    FILE *out = fopen(<span class="hljs-string">"./output/volume_adjustment.pcm"</span>, <span class="hljs-string">"wb+"</span>);
-    <span class="hljs-keyword">char</span> *simple = (<span class="hljs-keyword">char</span> *)<span class="hljs-built_in">malloc</span>(<span class="hljs-number">4</span>);
-    <span class="hljs-keyword">while</span> (<span class="hljs-number">1</span>)&#123;
-        <span class="hljs-comment">//每次从in文件中读取1组4个长度数据的到simple中</span>
-        fread(simple, <span class="hljs-number">4</span>, <span class="hljs-number">1</span>, in);
-        <span class="hljs-keyword">if</span>(feof(in))&#123;
-            <span class="hljs-keyword">break</span>;
-        &#125;
-        short *simple8bitTemp = (short *)<span class="hljs-built_in">malloc</span>(<span class="hljs-number">2</span>);
-
-        <span class="hljs-comment">//l(0声道)：</span>
-        simple8bitTemp[<span class="hljs-number">0</span>] = (simple[<span class="hljs-number">0</span>] + (simple[<span class="hljs-number">1</span>] &lt;&lt; <span class="hljs-number">8</span>)) * scale;
-        <span class="hljs-comment">//r(1声道)：</span>
-        simple8bitTemp[<span class="hljs-number">1</span>] = (simple[<span class="hljs-number">2</span>] + (simple[<span class="hljs-number">3</span>] &lt;&lt; <span class="hljs-number">8</span>)) * scale;
-
-        simple[<span class="hljs-number">0</span>] = simple8bitTemp[<span class="hljs-number">0</span>] &amp; <span class="hljs-number">0x00FF</span>;
-        simple[<span class="hljs-number">1</span>] = simple8bitTemp[<span class="hljs-number">0</span>] &gt;&gt; <span class="hljs-number">8</span>;
-
-        simple[<span class="hljs-number">2</span>] = simple8bitTemp[<span class="hljs-number">1</span>] &amp; <span class="hljs-number">0x00FF</span>;
-        simple[<span class="hljs-number">3</span>] = simple8bitTemp[<span class="hljs-number">1</span>] &gt;&gt; <span class="hljs-number">8</span>;
-        <span class="hljs-keyword">for</span>(<span class="hljs-keyword">int</span> i=<span class="hljs-number">0</span>; i&lt;<span class="hljs-number">4</span>; i++)&#123;
-            <span class="hljs-built_in">printf</span>(<span class="hljs-string">"simple[%d]=%d\n"</span>,i,simple[i]);
-        &#125;
-        fwrite(simple, <span class="hljs-number">4</span>, <span class="hljs-number">1</span>, out);
-    &#125;
-    fclose(in);
-    fclose(out);
-    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
-&#125;
-</code></pre>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 将little-endian_2_44100_16.pcm 调节音量 比例</span></span><br><span class="line"><span class="comment"> * 1、little-endian排序的值是如何排序的？真正的值是多少？</span></span><br><span class="line"><span class="comment"> * 2、little-endian转成真正的值之后再进行计算，得到的结果再反转little-endian。</span></span><br><span class="line"><span class="comment"> * 如：原始pcm数据：0xaa 0x01(左声道采样点数据)，当scale=2：</span></span><br><span class="line"><span class="comment"> * -&gt; 值：0x01aa * 2 = 0x0354</span></span><br><span class="line"><span class="comment"> * -&gt; 转回little-endian再进行存储：0x5403（缩放后的值）</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">volumeAdjustment</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *url, <span class="keyword">float</span> scale)</span></span>&#123;</span><br><span class="line">    FILE *in = fopen(url, <span class="string">&quot;rb+&quot;</span>);</span><br><span class="line">    FILE *out = fopen(<span class="string">&quot;./output/volume_adjustment.pcm&quot;</span>, <span class="string">&quot;wb+&quot;</span>);</span><br><span class="line">    <span class="keyword">char</span> *simple = (<span class="keyword">char</span> *)<span class="built_in">malloc</span>(<span class="number">4</span>);</span><br><span class="line">    <span class="keyword">while</span> (<span class="number">1</span>)&#123;</span><br><span class="line">        <span class="comment">//每次从in文件中读取1组4个长度数据的到simple中</span></span><br><span class="line">        fread(simple, <span class="number">4</span>, <span class="number">1</span>, in);</span><br><span class="line">        <span class="keyword">if</span>(feof(in))&#123;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">short</span> *simple8bitTemp = (<span class="keyword">short</span> *)<span class="built_in">malloc</span>(<span class="number">2</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//l(0声道)：</span></span><br><span class="line">        simple8bitTemp[<span class="number">0</span>] = (simple[<span class="number">0</span>] + (simple[<span class="number">1</span>] &lt;&lt; <span class="number">8</span>)) * scale;</span><br><span class="line">        <span class="comment">//r(1声道)：</span></span><br><span class="line">        simple8bitTemp[<span class="number">1</span>] = (simple[<span class="number">2</span>] + (simple[<span class="number">3</span>] &lt;&lt; <span class="number">8</span>)) * scale;</span><br><span class="line"></span><br><span class="line">        simple[<span class="number">0</span>] = simple8bitTemp[<span class="number">0</span>] &amp; <span class="number">0x00FF</span>;</span><br><span class="line">        simple[<span class="number">1</span>] = simple8bitTemp[<span class="number">0</span>] &gt;&gt; <span class="number">8</span>;</span><br><span class="line"></span><br><span class="line">        simple[<span class="number">2</span>] = simple8bitTemp[<span class="number">1</span>] &amp; <span class="number">0x00FF</span>;</span><br><span class="line">        simple[<span class="number">3</span>] = simple8bitTemp[<span class="number">1</span>] &gt;&gt; <span class="number">8</span>;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;<span class="number">4</span>; i++)&#123;</span><br><span class="line">            <span class="built_in">printf</span>(<span class="string">&quot;simple[%d]=%d\n&quot;</span>,i,simple[i]);</span><br><span class="line">        &#125;</span><br><span class="line">        fwrite(simple, <span class="number">4</span>, <span class="number">1</span>, out);</span><br><span class="line">    &#125;</span><br><span class="line">    fclose(in);</span><br><span class="line">    fclose(out);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 </li>
 <li>
 <p>播放速度：按照比例丢弃（或插入0）采集点的数据即可。（涉及到不是整数倍不单单是这么处理，我也不懂）</p>
@@ -528,49 +440,11 @@ little-endian存储方式：0x2211 0x4433 0x6655  0x8877。</p>
 <ul>
 <li>1、关于采集的主要api介绍</li>
 </ul>
-<pre class="highlight"><code class="java"><span class="hljs-comment">/** 
-* <span class="hljs-doctag">@param</span> audioSource 音频来源&#123;<span class="hljs-doctag">@link</span> MediaRecorder.AudioSource&#125;；如指定麦克风：MediaRecorder.AudioSource.MIC
-* <span class="hljs-doctag">@param</span> sampleRateInHz 采样率&#123;<span class="hljs-doctag">@link</span> AudioFormat#SAMPLE_RATE_UNSPECIFIED&#125;，单位Hz；安卓支持所有的设备是：44100Hz
-* <span class="hljs-doctag">@param</span> channelConfig 声道数&#123;<span class="hljs-doctag">@link</span> AudioFormat#CHANNEL_IN_MONO&#125;；
-* <span class="hljs-doctag">@param</span> audioFormat 位宽&#123;<span class="hljs-doctag">@link</span> AudioFormat#ENCODING_PCM_8BIT&#125;
-* <span class="hljs-doctag">@param</span> bufferSizeInBytes 采集期间缓存区的大小
-*/</span>
-<span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">AudioRecord</span><span class="hljs-params">(<span class="hljs-keyword">int</span> audioSource, <span class="hljs-keyword">int</span> sampleRateInHz, <span class="hljs-keyword">int</span> channelConfig, <span class="hljs-keyword">int</span> audioFormat,
-            <span class="hljs-keyword">int</span> bufferSizeInBytes)</span>
-  
-<span class="hljs-comment">//获取最小缓存区，参数跟AudioRecord保持一致</span>
-<span class="hljs-keyword">int</span> <span class="hljs-title">getMinBufferSize</span><span class="hljs-params">(<span class="hljs-keyword">int</span> sampleRateInHz, <span class="hljs-keyword">int</span> channelConfig, <span class="hljs-keyword">int</span> audioFormat)</span> </span>&#123;&#125;
-</code></pre>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/** </span></span><br><span class="line"><span class="comment">* <span class="doctag">@param</span> audioSource 音频来源&#123;<span class="doctag">@link</span> MediaRecorder.AudioSource&#125;；如指定麦克风：MediaRecorder.AudioSource.MIC</span></span><br><span class="line"><span class="comment">* <span class="doctag">@param</span> sampleRateInHz 采样率&#123;<span class="doctag">@link</span> AudioFormat#SAMPLE_RATE_UNSPECIFIED&#125;，单位Hz；安卓支持所有的设备是：44100Hz</span></span><br><span class="line"><span class="comment">* <span class="doctag">@param</span> channelConfig 声道数&#123;<span class="doctag">@link</span> AudioFormat#CHANNEL_IN_MONO&#125;；</span></span><br><span class="line"><span class="comment">* <span class="doctag">@param</span> audioFormat 位宽&#123;<span class="doctag">@link</span> AudioFormat#ENCODING_PCM_8BIT&#125;</span></span><br><span class="line"><span class="comment">* <span class="doctag">@param</span> bufferSizeInBytes 采集期间缓存区的大小</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">AudioRecord</span><span class="params">(<span class="keyword">int</span> audioSource, <span class="keyword">int</span> sampleRateInHz, <span class="keyword">int</span> channelConfig, <span class="keyword">int</span> audioFormat,</span></span></span><br><span class="line"><span class="function"><span class="params">            <span class="keyword">int</span> bufferSizeInBytes)</span></span></span><br><span class="line"><span class="function">  </span></span><br><span class="line"><span class="function"><span class="comment">//获取最小缓存区，参数跟AudioRecord保持一致</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">getMinBufferSize</span><span class="params">(<span class="keyword">int</span> sampleRateInHz, <span class="keyword">int</span> channelConfig, <span class="keyword">int</span> audioFormat)</span> </span>&#123;&#125;</span><br></pre></td></tr></table></figure>
 <ul>
 <li>2、实现采集的伪代码</li>
 </ul>
-<pre class="highlight"><code class="java"><span class="hljs-comment">//1、申请权限</span>
-
-<span class="hljs-comment">//2、获取最小缓存大小（根据api介绍，应该取要比预期大的缓冲区大小），这个大小其实也可以取①和②计算得来的大小</span>
-<span class="hljs-keyword">int</span> minBufferSize = AudioRecord.getMinBufferSize(<span class="hljs-number">44100</span>, AudioFormat.CHANNEL_IN_STEREO, AudioFormat.ENCODING_PCM_16BIT) * <span class="hljs-number">2</span>;
-
-<span class="hljs-comment">//3、初始化AudioRecord对象</span>
-AudioRecord audioRecord = <span class="hljs-keyword">new</span> AudioRecord(MediaRecorder.AudioSource.MIC, <span class="hljs-number">44100</span>, AudioFormat.CHANNEL_IN_STEREO, AudioFormat.ENCODING_PCM_16BIT, minBufferSize);
-
-<span class="hljs-comment">//4、开始在子线程中进行采集数据</span>
-<span class="hljs-keyword">new</span> Thread(<span class="hljs-keyword">new</span> Runnable() &#123;
-  <span class="hljs-meta">@Override</span>
-  <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">run</span><span class="hljs-params">()</span> </span>&#123;
-    audioRecord.startRecording();
-    <span class="hljs-keyword">while</span>(isRunning)&#123;
-      <span class="hljs-keyword">byte</span>[] bytes = <span class="hljs-keyword">new</span> <span class="hljs-keyword">byte</span>[minBufferSize];
-    	<span class="hljs-keyword">int</span> len = audioRecord.read(bytes, <span class="hljs-number">0</span>, bytes.length);
-      <span class="hljs-comment">//这里就可以把数据直接写入到sdcard了，如：xxx.pcm；输出排序方式为：little endian。</span>
-    &#125;
-     <span class="hljs-comment">//5、停止录音机</span>
-		audioRecord.stop();
-  &#125;
-&#125;).start();
-
-
-<span class="hljs-comment">//6、最后释放资源</span>
-audioRecord.release();
-</code></pre>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//1、申请权限</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//2、获取最小缓存大小（根据api介绍，应该取要比预期大的缓冲区大小），这个大小其实也可以取①和②计算得来的大小</span></span><br><span class="line"><span class="keyword">int</span> minBufferSize = AudioRecord.getMinBufferSize(<span class="number">44100</span>, AudioFormat.CHANNEL_IN_STEREO, AudioFormat.ENCODING_PCM_16BIT) * <span class="number">2</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">//3、初始化AudioRecord对象</span></span><br><span class="line">AudioRecord audioRecord = <span class="keyword">new</span> AudioRecord(MediaRecorder.AudioSource.MIC, <span class="number">44100</span>, AudioFormat.CHANNEL_IN_STEREO, AudioFormat.ENCODING_PCM_16BIT, minBufferSize);</span><br><span class="line"></span><br><span class="line"><span class="comment">//4、开始在子线程中进行采集数据</span></span><br><span class="line"><span class="keyword">new</span> Thread(<span class="keyword">new</span> Runnable() &#123;</span><br><span class="line">  <span class="meta">@Override</span></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    audioRecord.startRecording();</span><br><span class="line">    <span class="keyword">while</span>(isRunning)&#123;</span><br><span class="line">      <span class="keyword">byte</span>[] bytes = <span class="keyword">new</span> <span class="keyword">byte</span>[minBufferSize];</span><br><span class="line">    	<span class="keyword">int</span> len = audioRecord.read(bytes, <span class="number">0</span>, bytes.length);</span><br><span class="line">      <span class="comment">//这里就可以把数据直接写入到sdcard了，如：xxx.pcm；输出排序方式为：little endian。</span></span><br><span class="line">    &#125;</span><br><span class="line">     <span class="comment">//5、停止录音机</span></span><br><span class="line">		audioRecord.stop();</span><br><span class="line">  &#125;</span><br><span class="line">&#125;).start();</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">//6、最后释放资源</span></span><br><span class="line">audioRecord.release();</span><br></pre></td></tr></table></figure>
 <h3 id="播放pcm原始数据"><a class="markdownIt-Anchor" href="#播放pcm原始数据"></a> 播放pcm原始数据</h3>
 <ul>
 <li>ffmpeg：</li>

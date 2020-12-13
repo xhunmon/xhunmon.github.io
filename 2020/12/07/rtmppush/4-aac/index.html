@@ -438,96 +438,18 @@
 <p>下图为一个ADTS格式的文件开头部分</p>
 <img src="/2020/12/07/rtmppush/4-aac/aac-adts%E4%BE%8B%E5%AD%90.png" class="" title="adts例子">
 <p>我们来数一个第一个frame的header</p>
-<pre class="highlight"><code class="shell"><span class="hljs-meta">#</span><span class="bash"><span class="hljs-comment">###adts_fixed_header()</span></span>
-<span class="hljs-meta">#</span><span class="bash">-------FFF1---------</span>
-1111 1111 1111 .... #0xFFF; syncword的值
-.... .... .... 0... #ID=0;使用MPEG-4
-.... .... .... .00. #layer
-.... .... .... ...0 #protection_absent，不使用error_check()
-<span class="hljs-meta">#</span><span class="bash">-------4C80---------</span>
-01.. .... .... .... #Profile_ObjectType=AAC MAIN
-..00 11.. .... .... #sampling_frequency_index=3,采样率为48000
-.... ..0. .... .... #private_bit
-.... ...0 10.. .... #channel_configuration=2（声道数）
-.... .... ..0. .... #original_copy
-.... .... ...0 .... #home
-<span class="hljs-meta">#</span><span class="bash"><span class="hljs-comment">###adts_variable_header()</span></span>
-<span class="hljs-meta">#</span><span class="bash">-------(4C8)0---------</span>
-.... .... .... 0... #copyright_identification_bit
-.... .... .... .0.. #copyright_identification_start
-<span class="hljs-meta">#</span><span class="bash">-------(4C8)0 223F--------</span>
-..00 0010 0010 001. .... #aac_frame_length=0x111=273字节--&gt;下一帧到上图的FFF14C
-<span class="hljs-meta">#</span><span class="bash">-------(22)3F FC--------</span>
-...1 1111 1111 11.. #adts_buffer_fullness=0x7FF
-<span class="hljs-meta">#</span><span class="bash">-------(F)C--------</span>
-..00 #number_of_raw_data_blocks_in_frame
-</code></pre>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"><span class="comment">###adts_fixed_header()</span></span></span><br><span class="line"><span class="meta">#</span><span class="bash">-------FFF1---------</span></span><br><span class="line">1111 1111 1111 .... #0xFFF; syncword的值</span><br><span class="line">.... .... .... 0... #ID=0;使用MPEG-4</span><br><span class="line">.... .... .... .00. #layer</span><br><span class="line">.... .... .... ...0 #protection_absent，不使用error_check()</span><br><span class="line"><span class="meta">#</span><span class="bash">-------4C80---------</span></span><br><span class="line">01.. .... .... .... #Profile_ObjectType=AAC MAIN</span><br><span class="line">..00 11.. .... .... #sampling_frequency_index=3,采样率为48000</span><br><span class="line">.... ..0. .... .... #private_bit</span><br><span class="line">.... ...0 10.. .... #channel_configuration=2（声道数）</span><br><span class="line">.... .... ..0. .... #original_copy</span><br><span class="line">.... .... ...0 .... #home</span><br><span class="line"><span class="meta">#</span><span class="bash"><span class="comment">###adts_variable_header()</span></span></span><br><span class="line"><span class="meta">#</span><span class="bash">-------(4C8)0---------</span></span><br><span class="line">.... .... .... 0... #copyright_identification_bit</span><br><span class="line">.... .... .... .0.. #copyright_identification_start</span><br><span class="line"><span class="meta">#</span><span class="bash">-------(4C8)0 223F--------</span></span><br><span class="line">..00 0010 0010 001. .... #aac_frame_length=0x111=273字节--&gt;下一帧到上图的FFF14C</span><br><span class="line"><span class="meta">#</span><span class="bash">-------(22)3F FC--------</span></span><br><span class="line">...1 1111 1111 11.. #adts_buffer_fullness=0x7FF</span><br><span class="line"><span class="meta">#</span><span class="bash">-------(F)C--------</span></span><br><span class="line">..00 #number_of_raw_data_blocks_in_frame</span><br></pre></td></tr></table></figure>
 <h3 id="faac开源库"><a class="markdownIt-Anchor" href="#faac开源库"></a> faac开源库</h3>
 <p>（1）下载</p>
 <p><a target="_blank" rel="noopener" href="https://nchc.dl.sourceforge.net/project/faac/faac-src/faac-1.29/faac-1.29.9.2.tar.gz">https://nchc.dl.sourceforge.net/project/faac/faac-src/faac-1.29/faac-1.29.9.2.tar.gz</a></p>
 <p>（2）编译生成静态库（这里是android的交叉编译脚本，ndk21，平台mac）</p>
-<pre class="highlight"><code class="shell"><span class="hljs-meta">#</span><span class="bash">!/bin/bash</span>
-
-PREFIX=`pwd`/android/armeabi-v7a
-NDK_ROOT=/Users/Qincji/Desktop/develop/android/source/sdk/ndk/android-ndk-r21
-<span class="hljs-meta">#</span><span class="bash"> 注意：Mac为darwin-x86_64，linux为linux-x86_64；一定要确保路径真实有效</span>
-TOOLCHAIN=$NDK_ROOT/toolchains/llvm/prebuilt/darwin-x86_64
-CROSS_COMPILE=$TOOLCHAIN/bin/arm-linux-androideabi
-<span class="hljs-meta">
-#</span><span class="bash">在android studio中新建一个NDK项目，并且保持NDK版本与这里的一致。该FLAGS从build.ninja文件中拷贝。</span>
-FLAGS="-g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -march=armv7-a -mthumb -Wformat -Werror=format-security   -Oz -DNDEBUG  -fPIC"
-
-export CC=$TOOLCHAIN/bin/armv7a-linux-androideabi21-clang
-export CXX=$TOOLCHAIN/bin/armv7a-linux-androideabi21-clang++
-export CFLAGS="$FLAGS"
-export PATH=$PATH:$TOOLCHAIN/bin
-	
-
-./configure \
---prefix=$PREFIX \
---host=arm-linux-androideabi \
---with-pic \
---enable-shared=no  
-
-make clean
-make install
-</code></pre>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">!/bin/bash</span></span><br><span class="line"></span><br><span class="line">PREFIX=`pwd`/android/armeabi-v7a</span><br><span class="line">NDK_ROOT=/Users/Qincji/Desktop/develop/android/source/sdk/ndk/android-ndk-r21</span><br><span class="line"><span class="meta">#</span><span class="bash"> 注意：Mac为darwin-x86_64，linux为linux-x86_64；一定要确保路径真实有效</span></span><br><span class="line">TOOLCHAIN=$NDK_ROOT/toolchains/llvm/prebuilt/darwin-x86_64</span><br><span class="line">CROSS_COMPILE=$TOOLCHAIN/bin/arm-linux-androideabi</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash">在android studio中新建一个NDK项目，并且保持NDK版本与这里的一致。该FLAGS从build.ninja文件中拷贝。</span></span><br><span class="line">FLAGS=&quot;-g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -march=armv7-a -mthumb -Wformat -Werror=format-security   -Oz -DNDEBUG  -fPIC&quot;</span><br><span class="line"></span><br><span class="line">export CC=$TOOLCHAIN/bin/armv7a-linux-androideabi21-clang</span><br><span class="line">export CXX=$TOOLCHAIN/bin/armv7a-linux-androideabi21-clang++</span><br><span class="line">export CFLAGS=&quot;$FLAGS&quot;</span><br><span class="line">export PATH=$PATH:$TOOLCHAIN/bin</span><br><span class="line">	</span><br><span class="line"></span><br><span class="line">./configure \</span><br><span class="line">--prefix=$PREFIX \</span><br><span class="line">--host=arm-linux-androideabi \</span><br><span class="line">--with-pic \</span><br><span class="line">--enable-shared=no  </span><br><span class="line"></span><br><span class="line">make clean</span><br><span class="line">make install</span><br></pre></td></tr></table></figure>
 <p>（3）移入项目中</p>
 <img src="/2020/12/07/rtmppush/4-aac/aac-faac-as.png" class="" title="faac-as">
 <p>并且配置CMakeList.txt文件</p>
-<pre class="highlight"><code class="cmake">...
-<span class="hljs-keyword">include_directories</span>(<span class="hljs-keyword">include</span>)
-...
-<span class="hljs-keyword">target_link_libraries</span>(
-        ...
-        faac
-        )
-</code></pre>
+<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line"><span class="keyword">include_directories</span>(<span class="keyword">include</span>)</span><br><span class="line">...</span><br><span class="line"><span class="keyword">target_link_libraries</span>(</span><br><span class="line">        ...</span><br><span class="line">        faac</span><br><span class="line">        )</span><br></pre></td></tr></table></figure>
 <p>（4）API简单使用</p>
-<pre class="highlight"><code class="c++"><span class="hljs-comment">//1.打开编码器，获取inputSamples和maxOutputBytes的值，用于后面编码</span>
-<span class="hljs-comment">//1：采样率；2：声道数；3：单次输入的样本数；4：输出数据最大字节数</span>
-faacEncOpen(<span class="hljs-keyword">unsigned</span> <span class="hljs-keyword">long</span> sampleRate,<span class="hljs-keyword">unsigned</span> <span class="hljs-keyword">int</span> numChannels,<span class="hljs-keyword">unsigned</span> <span class="hljs-keyword">long</span> *inputSamples,<span class="hljs-keyword">unsigned</span> <span class="hljs-keyword">long</span> *maxOutputBytes);
-
-<span class="hljs-comment">//2.设置编码器参数</span>
-faacEncConfigurationPtr <span class="hljs-built_in">config</span> = faacEncGetCurrentConfiguration(faacEncHandle hEncoder);
-<span class="hljs-comment">//指定mpeg4编码标准</span>
-<span class="hljs-built_in">config</span>-&gt;mpegVersion = MPEG4;
-<span class="hljs-comment">//config-&gt;mpegVersion = MPEG2;</span>
-<span class="hljs-comment">//lc 标准</span>
-<span class="hljs-built_in">config</span>-&gt;aacObjectType = <span class="hljs-literal">LOW</span>;
-<span class="hljs-comment">//16位</span>
-<span class="hljs-built_in">config</span>-&gt;inputFormat = FAAC_INPUT_16BIT;
-<span class="hljs-comment">// 编码出原始数据；0 = Raw; 1 = ADTS</span>
-<span class="hljs-built_in">config</span>-&gt;outputFormat = <span class="hljs-number">1</span>;
-faacEncSetConfiguration(faacEncHandle hEncoder, <span class="hljs-built_in">config</span>);
-
-<span class="hljs-comment">//3.进行编码</span>
-<span class="hljs-comment">//1：FAAC的handle；2：采集的pcm的原始数据；3：从faacEncOpen获取的inputSamples；4：至少有从faacEncOpen获取maxOutputBytes大小的缓冲区；5：从faacEncOpen获取maxOutputBytes</span>
-<span class="hljs-comment">//返回值为编码后数据字节的长度</span>
-<span class="hljs-keyword">int</span> encodeLenght = faacEncEncode(faacEncHandle hEncoder, <span class="hljs-keyword">int32_t</span> * inputBuffer, <span class="hljs-keyword">unsigned</span> <span class="hljs-keyword">int</span> samplesInput,
-			 <span class="hljs-keyword">unsigned</span> <span class="hljs-keyword">char</span> *outputBuffer,
-			 <span class="hljs-keyword">unsigned</span> <span class="hljs-keyword">int</span> bufferSize);
-</code></pre>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//1.打开编码器，获取inputSamples和maxOutputBytes的值，用于后面编码</span></span><br><span class="line"><span class="comment">//1：采样率；2：声道数；3：单次输入的样本数；4：输出数据最大字节数</span></span><br><span class="line">faacEncOpen(<span class="keyword">unsigned</span> <span class="keyword">long</span> sampleRate,<span class="keyword">unsigned</span> <span class="keyword">int</span> numChannels,<span class="keyword">unsigned</span> <span class="keyword">long</span> *inputSamples,<span class="keyword">unsigned</span> <span class="keyword">long</span> *maxOutputBytes);</span><br><span class="line"></span><br><span class="line"><span class="comment">//2.设置编码器参数</span></span><br><span class="line">faacEncConfigurationPtr config = faacEncGetCurrentConfiguration(faacEncHandle hEncoder);</span><br><span class="line"><span class="comment">//指定mpeg4编码标准</span></span><br><span class="line">config-&gt;mpegVersion = MPEG4;</span><br><span class="line"><span class="comment">//config-&gt;mpegVersion = MPEG2;</span></span><br><span class="line"><span class="comment">//lc 标准</span></span><br><span class="line">config-&gt;aacObjectType = LOW;</span><br><span class="line"><span class="comment">//16位</span></span><br><span class="line">config-&gt;inputFormat = FAAC_INPUT_16BIT;</span><br><span class="line"><span class="comment">// 编码出原始数据；0 = Raw; 1 = ADTS</span></span><br><span class="line">config-&gt;outputFormat = <span class="number">1</span>;</span><br><span class="line">faacEncSetConfiguration(faacEncHandle hEncoder, config);</span><br><span class="line"></span><br><span class="line"><span class="comment">//3.进行编码</span></span><br><span class="line"><span class="comment">//1：FAAC的handle；2：采集的pcm的原始数据；3：从faacEncOpen获取的inputSamples；4：至少有从faacEncOpen获取maxOutputBytes大小的缓冲区；5：从faacEncOpen获取maxOutputBytes</span></span><br><span class="line"><span class="comment">//返回值为编码后数据字节的长度</span></span><br><span class="line"><span class="keyword">int</span> encodeLenght = faacEncEncode(faacEncHandle hEncoder, <span class="keyword">int32_t</span> * inputBuffer, <span class="keyword">unsigned</span> <span class="keyword">int</span> samplesInput,</span><br><span class="line">			 <span class="keyword">unsigned</span> <span class="keyword">char</span> *outputBuffer,</span><br><span class="line">			 <span class="keyword">unsigned</span> <span class="keyword">int</span> bufferSize);</span><br></pre></td></tr></table></figure>
 <h3 id="参考"><a class="markdownIt-Anchor" href="#参考"></a> 参考</h3>
 <ul>
 <li><a target="_blank" rel="noopener" href="https://blog.csdn.net/leixiaohua1020/article/details/11822537">AAC格式简介</a></li>

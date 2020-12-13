@@ -486,24 +486,9 @@
 <p>（2）把源码导入到as中，如下图所示：</p>
 <img src="/2020/12/08/rtmppush/5-rtmp/rtmp-as-lib.jpg" class="" title="rtmp-as-lib">
 <p>librtmp/CMakeLists.txt文件配置：</p>
-<pre class="highlight"><code class="cmake"><span class="hljs-keyword">cmake_minimum_required</span>(VERSION <span class="hljs-number">3.4</span>.<span class="hljs-number">1</span>)
-<span class="hljs-comment">#预编译宏</span>
-<span class="hljs-keyword">set</span>(CMAKE_C_FLAGS <span class="hljs-string">"$&#123;CMAKE_C_FLAGS&#125; -DNO_CRYPTO"</span>  )
-<span class="hljs-comment">#所有源文件放入 rtmp_source 变量</span>
-<span class="hljs-keyword">file</span>(GLOB rtmp_source *.c)
-<span class="hljs-comment">#编译静态库</span>
-<span class="hljs-keyword">add_library</span>(rtmp STATIC <span class="hljs-variable">$&#123;rtmp_source&#125;</span> )
-</code></pre>
+<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">cmake_minimum_required</span>(VERSION <span class="number">3.4</span>.<span class="number">1</span>)</span><br><span class="line"><span class="comment">#预编译宏</span></span><br><span class="line"><span class="keyword">set</span>(CMAKE_C_FLAGS <span class="string">&quot;$&#123;CMAKE_C_FLAGS&#125; -DNO_CRYPTO&quot;</span>  )</span><br><span class="line"><span class="comment">#所有源文件放入 rtmp_source 变量</span></span><br><span class="line"><span class="keyword">file</span>(GLOB rtmp_source *.c)</span><br><span class="line"><span class="comment">#编译静态库</span></span><br><span class="line"><span class="keyword">add_library</span>(rtmp STATIC <span class="variable">$&#123;rtmp_source&#125;</span> )</span><br></pre></td></tr></table></figure>
 <p>项目的CMakeLists.txt文件引用编译生成的静态库</p>
-<pre class="highlight"><code class="cmake">...
-<span class="hljs-comment"># 引入指定目录下的CMakeLists.txt</span>
-<span class="hljs-keyword">add_subdirectory</span>(<span class="hljs-variable">$&#123;CMAKE_SOURCE_DIR&#125;</span>/librtmp)
-...
-<span class="hljs-comment">#4、链接到库文件，jni/c/c++可以引入链接到</span>
-<span class="hljs-keyword">target_link_libraries</span>(
-        rtmp
-        ...)
-</code></pre>
+<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line"><span class="comment"># 引入指定目录下的CMakeLists.txt</span></span><br><span class="line"><span class="keyword">add_subdirectory</span>(<span class="variable">$&#123;CMAKE_SOURCE_DIR&#125;</span>/librtmp)</span><br><span class="line">...</span><br><span class="line"><span class="comment">#4、链接到库文件，jni/c/c++可以引入链接到</span></span><br><span class="line"><span class="keyword">target_link_libraries</span>(</span><br><span class="line">        rtmp</span><br><span class="line">        ...)</span><br></pre></td></tr></table></figure>
 <h3 id="参考"><a class="markdownIt-Anchor" href="#参考"></a> 参考</h3>
 <p>（1）<a target="_blank" rel="noopener" href="https://wwwimages2.adobe.com/content/dam/acom/en/devnet/rtmp/pdf/rtmp_specification_1.0.pdf">rtmp_specification_1.0</a><br />
 （2）<a target="_blank" rel="noopener" href="https://www.cnblogs.com/Kingfans/p/7083100.html">https://www.cnblogs.com/Kingfans/p/7083100.html</a><br />

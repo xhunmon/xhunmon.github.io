@@ -500,39 +500,7 @@
 <p>下面为从一个只放h.264视频编码文件的一段（SPS）：</p>
 <img src="/2020/12/06/rtmppush/3-h264/h264-sps%E5%88%86%E6%9E%90.png" class="" title="sps分析">
 <p>ue(v)和se(v)的计算公式见 <a href="https://qincji.gitee.io/2020/12/04/rtmppush/h264-descriptor/">H.264描述符</a>。</p>
-<pre class="highlight"><code class="shell"><span class="hljs-meta">#</span><span class="bash"> 00000001 6764001E ACD940A0 2FF96100 00030001 00000300 320F162D 96</span>
-00000001 #起始码
-<span class="hljs-meta">#</span><span class="bash">NAL单元头---0x67 0110 0111 --------------</span>
-0... .... # forbidden_zero_bit --&gt;u(1)
-.11. .... # nal_ref_idc --&gt;u(2) --&gt;HIGHEST
-...0 0111 # nal_unit_type --&gt;u(5) --&gt;SPS
-64 # profile_idc=103 --&gt;u(8) 
-<span class="hljs-meta">#</span><span class="bash">---0x00 0000 0000 --------------</span>
-0... .... #constraint_set0_flag
-.0.. .... #constraint_set1_flag
-..0. .... #constraint_set2_flag
-...0 .... #constraint_set3_flag
-.... 0000 #reserved_zero_4bits
-1E # level_idc --&gt;u(8) --&gt; 30
-<span class="hljs-meta">#</span><span class="bash">-----------0xAC 1010 1100 --------------</span>
-1... .... # seq_parameter_set_id --&gt; ue(v) --&gt; 0
-.010 .... # log2_max_frame_num_minus4 --&gt; ue(v) --&gt; 1
-.... 1... # pic_order_cnt_type --&gt; ue(v) --&gt;1 执行else if( pic_order_cnt_type == 1 )
-.... .1..#delta_pic_order_always_zero_flag --&gt;u(1)
-<span class="hljs-meta">#</span><span class="bash">----------0xACD9 (1010 11)00 1101 1001 ====== 括号里面的bit上面已使用</span>
-.... ..00 110. .... #offset_for_non_ref_pic --&gt;se(v)-&gt;codeNum=5-&gt;value=3
-.... .... ...1 .... #offset_for_top_to_bottom_field --&gt;se(v)-&gt;codeNum=0-&gt;value=0
-.... .... .... 1... #num_ref_frames_in_pic_order_cnt_cycle --&gt;ue(v)-&gt;0
-<span class="hljs-meta">#</span><span class="bash">----------0xD940 (1101 1)001 0100 0000 ====== 括号里面的bit上面已使用</span>
-.... .001 01.. .... #num_ref_frames --&gt;ue(v)-&gt;4
-.... .... ..0. .... #gaps_in_frame_num_value_allowed_flag --&gt;u(1)-&gt;0
-<span class="hljs-meta">#</span><span class="bash">----------0x40A0 (010)0 0000 1010 0000 ====== 括号里面的bit上面已使用</span>
-...0 0000 1010 00.. #pic_width_in_mbs_minus1 --&gt;ue(v)-&gt;32-1+8=39
-<span class="hljs-meta">#</span><span class="bash">----------0xA02F (1010 00)00 0010 1111 ====== 括号里面的bit上面已使用</span>
-.... ..00 0010 111. #pic_height_in_map_units_minus1 --&gt;ue(v)-&gt;16-1+7=22
-…………就到这里了，偷个懒，有兴趣大家自己分析下去，哈哈
-
-</code></pre>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 00000001 6764001E ACD940A0 2FF96100 00030001 00000300 320F162D 96</span></span><br><span class="line">00000001 #起始码</span><br><span class="line"><span class="meta">#</span><span class="bash">NAL单元头---0x67 0110 0111 --------------</span></span><br><span class="line">0... .... # forbidden_zero_bit --&gt;u(1)</span><br><span class="line">.11. .... # nal_ref_idc --&gt;u(2) --&gt;HIGHEST</span><br><span class="line">...0 0111 # nal_unit_type --&gt;u(5) --&gt;SPS</span><br><span class="line">64 # profile_idc=103 --&gt;u(8) </span><br><span class="line"><span class="meta">#</span><span class="bash">---0x00 0000 0000 --------------</span></span><br><span class="line">0... .... #constraint_set0_flag</span><br><span class="line">.0.. .... #constraint_set1_flag</span><br><span class="line">..0. .... #constraint_set2_flag</span><br><span class="line">...0 .... #constraint_set3_flag</span><br><span class="line">.... 0000 #reserved_zero_4bits</span><br><span class="line">1E # level_idc --&gt;u(8) --&gt; 30</span><br><span class="line"><span class="meta">#</span><span class="bash">-----------0xAC 1010 1100 --------------</span></span><br><span class="line">1... .... # seq_parameter_set_id --&gt; ue(v) --&gt; 0</span><br><span class="line">.010 .... # log2_max_frame_num_minus4 --&gt; ue(v) --&gt; 1</span><br><span class="line">.... 1... # pic_order_cnt_type --&gt; ue(v) --&gt;1 执行else if( pic_order_cnt_type == 1 )</span><br><span class="line">.... .1..#delta_pic_order_always_zero_flag --&gt;u(1)</span><br><span class="line"><span class="meta">#</span><span class="bash">----------0xACD9 (1010 11)00 1101 1001 ====== 括号里面的bit上面已使用</span></span><br><span class="line">.... ..00 110. .... #offset_for_non_ref_pic --&gt;se(v)-&gt;codeNum=5-&gt;value=3</span><br><span class="line">.... .... ...1 .... #offset_for_top_to_bottom_field --&gt;se(v)-&gt;codeNum=0-&gt;value=0</span><br><span class="line">.... .... .... 1... #num_ref_frames_in_pic_order_cnt_cycle --&gt;ue(v)-&gt;0</span><br><span class="line"><span class="meta">#</span><span class="bash">----------0xD940 (1101 1)001 0100 0000 ====== 括号里面的bit上面已使用</span></span><br><span class="line">.... .001 01.. .... #num_ref_frames --&gt;ue(v)-&gt;4</span><br><span class="line">.... .... ..0. .... #gaps_in_frame_num_value_allowed_flag --&gt;u(1)-&gt;0</span><br><span class="line"><span class="meta">#</span><span class="bash">----------0x40A0 (010)0 0000 1010 0000 ====== 括号里面的bit上面已使用</span></span><br><span class="line">...0 0000 1010 00.. #pic_width_in_mbs_minus1 --&gt;ue(v)-&gt;32-1+8=39</span><br><span class="line"><span class="meta">#</span><span class="bash">----------0xA02F (1010 00)00 0010 1111 ====== 括号里面的bit上面已使用</span></span><br><span class="line">.... ..00 0010 111. #pic_height_in_map_units_minus1 --&gt;ue(v)-&gt;16-1+7=22</span><br><span class="line">…………就到这里了，偷个懒，有兴趣大家自己分析下去，哈哈</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 <h3 id="pps图像参数集"><a class="markdownIt-Anchor" href="#pps图像参数集"></a> PPS（图像参数集）</h3>
 <p>PPS全称<code>picture parameter set</code>(图像参数集)，当<code>nal_unit_type</code>=8时，RBSP就是PPS类型，也可以说NAL单元为SPS的NAL单元。一个序列中某一幅图像或者某几幅图像，其参数如标识符pic_parameter_set_id、可选的seq_parameter_set_id、熵编码模式选择标识、片组数目、初始量化参数和去方块滤波系数调整标识等；详见下表 <em>图像参数集RBSP 语法</em>：</p>
 <img src="/2020/12/06/rtmppush/3-h264/h264-pps%E8%A1%A8.png" class="" title="pps表">
@@ -540,147 +508,13 @@
 <p>这是国际好评的H.264协议标准的编码工具，这里简单介绍一下如何使用。</p>
 <p>（1）下载：<a target="_blank" rel="noopener" href="https://www.videolan.org/developers/x264.html">https://www.videolan.org/developers/x264.html</a></p>
 <p>（2）编译（android的交叉编译，平台：Mac）</p>
-<pre class="highlight"><code class="shell"><span class="hljs-meta">#</span><span class="bash">!/bin/sh</span>
-<span class="hljs-meta">#</span><span class="bash"><span class="hljs-comment">#########脚本忘记是参考哪位大神的了##########</span></span>
-<span class="hljs-meta">#</span><span class="bash">ndk的路径</span>
-NDK=/Users/Qincji/Desktop/develop/android/source/sdk/ndk/android-ndk-r17c
-API=17 #最低支持Android版本
-<span class="hljs-meta">#</span><span class="bash">编译平台darwin-x86_64为mac，linux-x86_64为linux</span>
-HOST_PLATFORM=darwin-x86_64
-function build_x264 &#123; 
-  OUTPUT=$(pwd)/"android"/"$CPU"
-  ./configure \
-  --prefix=$OUTPUT \
-  --cross-prefix=$CROSS_PREFIX \
-  --sysroot=$SYSROOT \
-  --host=$HOST \
-  --disable-asm \
-  --disable-shared \
-	--enable-static \
-  --disable-opencl \
-  --enable-pic \
-  --disable-cli \
-  --extra-cflags="$EXTRA_CFLAGS" \
-  --extra-ldflags="$EXTRA_LDFLAGS" 
-   make clean 
-   make install
-   echo "编译结束，路径如下："
-   echo "$OUTPUT"     
- &#125;
- 
-CPU="armeabi-v7a"
-CROSS_PREFIX=$NDK/toolchains/arm-linux-androideabi-4.9/prebuilt/darwin-x86_64/bin/arm-linux-androideabi-
-SYSROOT=$NDK/platforms/android-$API/arch-arm/
-EXTRA_CFLAGS="-D__ANDROID_API__=$API -isysroot $NDK/sysroot -I$NDK/sysroot/usr/include/arm-linux-androideabi -Os -fPIC -marm"
-EXTRA_LDFLAGS="-marm"
-HOST=arm-linux
-build_x264
-</code></pre>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">!/bin/sh</span></span><br><span class="line"><span class="meta">#</span><span class="bash"><span class="comment">#########脚本忘记是参考哪位大神的了##########</span></span></span><br><span class="line"><span class="meta">#</span><span class="bash">ndk的路径</span></span><br><span class="line">NDK=/Users/Qincji/Desktop/develop/android/source/sdk/ndk/android-ndk-r17c</span><br><span class="line">API=17 #最低支持Android版本</span><br><span class="line"><span class="meta">#</span><span class="bash">编译平台darwin-x86_64为mac，linux-x86_64为linux</span></span><br><span class="line">HOST_PLATFORM=darwin-x86_64</span><br><span class="line">function build_x264 &#123; </span><br><span class="line">  OUTPUT=$(pwd)/&quot;android&quot;/&quot;$CPU&quot;</span><br><span class="line">  ./configure \</span><br><span class="line">  --prefix=$OUTPUT \</span><br><span class="line">  --cross-prefix=$CROSS_PREFIX \</span><br><span class="line">  --sysroot=$SYSROOT \</span><br><span class="line">  --host=$HOST \</span><br><span class="line">  --disable-asm \</span><br><span class="line">  --disable-shared \</span><br><span class="line">	--enable-static \</span><br><span class="line">  --disable-opencl \</span><br><span class="line">  --enable-pic \</span><br><span class="line">  --disable-cli \</span><br><span class="line">  --extra-cflags=&quot;$EXTRA_CFLAGS&quot; \</span><br><span class="line">  --extra-ldflags=&quot;$EXTRA_LDFLAGS&quot; </span><br><span class="line">   make clean </span><br><span class="line">   make install</span><br><span class="line">   echo &quot;编译结束，路径如下：&quot;</span><br><span class="line">   echo &quot;$OUTPUT&quot;     </span><br><span class="line"> &#125;</span><br><span class="line"> </span><br><span class="line">CPU=&quot;armeabi-v7a&quot;</span><br><span class="line">CROSS_PREFIX=$NDK/toolchains/arm-linux-androideabi-4.9/prebuilt/darwin-x86_64/bin/arm-linux-androideabi-</span><br><span class="line">SYSROOT=$NDK/platforms/android-$API/arch-arm/</span><br><span class="line">EXTRA_CFLAGS=&quot;-D__ANDROID_API__=$API -isysroot $NDK/sysroot -I$NDK/sysroot/usr/include/arm-linux-androideabi -Os -fPIC -marm&quot;</span><br><span class="line">EXTRA_LDFLAGS=&quot;-marm&quot;</span><br><span class="line">HOST=arm-linux</span><br><span class="line">build_x264</span><br></pre></td></tr></table></figure>
 <p>（3）把编译生成的静态库移入android studio</p>
 <img src="/2020/12/06/rtmppush/3-h264/h264-x264-as.png" class="" title="as导入">
 <p>在CMakeList.txt文件中添加：</p>
-<pre class="highlight"><code class="cmake">...
-<span class="hljs-keyword">include_directories</span>(<span class="hljs-keyword">include</span>)
-...
-<span class="hljs-keyword">target_link_libraries</span>(
-        ...
-        x264
-        )
-</code></pre>
+<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line"><span class="keyword">include_directories</span>(<span class="keyword">include</span>)</span><br><span class="line">...</span><br><span class="line"><span class="keyword">target_link_libraries</span>(</span><br><span class="line">        ...</span><br><span class="line">        x264</span><br><span class="line">        )</span><br></pre></td></tr></table></figure>
 <p>（4）API简单使用</p>
-<pre class="highlight"><code class="c++"><span class="hljs-comment">/**
-关键步骤，来自雷神：https://blog.csdn.net/leixiaohua1020/article/details/42078645
-x264_param_default()：设置参数集结构体x264_param_t的缺省值。
-x264_picture_alloc()：为图像结构体x264_picture_t分配内存。
-x264_encoder_open()：打开编码器。
-x264_encoder_encode()：编码一帧图像。
-x264_encoder_close()：关闭编码器。
-x264_picture_clean()：释放x264_picture_alloc()申请的资源。
- 
-存储数据的结构体如下所示。
-x264_picture_t：存储压缩编码前的像素数据。
-x264_nal_t：存储压缩编码后的码流数据。
-*/</span>
-<span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">X264Rtmp::encode</span><span class="hljs-params">(<span class="hljs-keyword">const</span> <span class="hljs-keyword">char</span> *url, <span class="hljs-keyword">int</span> <span class="hljs-built_in">width</span>, <span class="hljs-keyword">int</span> <span class="hljs-built_in">height</span>, <span class="hljs-keyword">int</span> bitRate, <span class="hljs-keyword">int</span> fps)</span> </span>&#123;
-    <span class="hljs-comment">//计算一帧等信息</span>
-    <span class="hljs-keyword">int</span> ySize = <span class="hljs-built_in">width</span> * <span class="hljs-built_in">height</span>;
-    <span class="hljs-keyword">int</span> uvSize = ySize / <span class="hljs-number">4</span>;
-    FILE *fp_src = fopen(url, <span class="hljs-string">"rb"</span>);
-
-    <span class="hljs-comment">//初始化VLC图片编码层的参数</span>
-    <span class="hljs-keyword">x264_picture_t</span> *pic_in = (<span class="hljs-keyword">x264_picture_t</span> *) <span class="hljs-built_in">malloc</span>(<span class="hljs-keyword">sizeof</span>(<span class="hljs-keyword">x264_picture_t</span>));
-    <span class="hljs-keyword">x264_t</span> *videoCodec = <span class="hljs-number">0</span>;
-
-    <span class="hljs-keyword">x264_param_t</span> param;
-    x264_param_default(&amp;param);
-    <span class="hljs-comment">//根据应用场景设置编码速度，以及编码质量。2：x264_preset_names，3：x264_tune_names</span>
-    x264_param_default_preset(&amp;param, x264_preset_names[<span class="hljs-number">0</span>], x264_tune_names[<span class="hljs-number">7</span>]);
-    <span class="hljs-comment">//输入数据格式， yuv 4:2:0</span>
-    param.i_csp = X264_CSP_I420;
-    param.i_width = <span class="hljs-built_in">width</span>;
-    param.i_height = <span class="hljs-built_in">height</span>;
-
-    <span class="hljs-comment">//base_line 3.2 编码规格，影响网络带宽，图像分辨率等。 -- https://en.wikipedia.org/wiki/Advanced_Video_Coding</span>
-    param.i_level_idc = <span class="hljs-number">32</span>;
-    <span class="hljs-comment">//两张参考图片间b帧的数量</span>
-    param.i_bframe = <span class="hljs-number">0</span>;
-    <span class="hljs-comment">//参数i_rc_method表示码率控制，CQP(恒定质量)，CRF(恒定码率)，ABR(平均码率)</span>
-    param.rc.i_rc_method = X264_RC_ABR;
-    <span class="hljs-comment">//比特率(码率, 单位Kbps)</span>
-    param.rc.i_bitrate = bitRate / <span class="hljs-number">1000</span>;
-    <span class="hljs-comment">//瞬时最大码率</span>
-    param.rc.i_vbv_max_bitrate = bitRate / <span class="hljs-number">1000</span> * <span class="hljs-number">1.2</span>;
-    <span class="hljs-comment">//设置了i_vbv_max_bitrate必须设置此参数，码率控制区大小,单位kbps</span>
-    param.rc.i_vbv_buffer_size = bitRate / <span class="hljs-number">1000</span>;
-    <span class="hljs-comment">//帧率（每秒显示多少张画面）</span>
-    param.i_fps_num = fps;
-    param.i_fps_den = <span class="hljs-number">1</span>;
-    param.i_timebase_den = param.i_fps_num;
-    param.i_timebase_num = param.i_fps_den;
-<span class="hljs-comment">//    param.pf_log = x264_log_default2;</span>
-    <span class="hljs-comment">//用fps而不是时间戳来计算帧间距离</span>
-    param.b_vfr_input = <span class="hljs-number">0</span>;
-    <span class="hljs-comment">//帧距离(关键帧)  2s一个关键帧</span>
-    param.i_keyint_max = fps * <span class="hljs-number">2</span>;
-    <span class="hljs-comment">// 是否复制sps和pps放在每个关键帧的前面 该参数设置是让每个关键帧(I帧)都附带sps/pps。</span>
-    param.b_repeat_headers = <span class="hljs-number">1</span>;
-    <span class="hljs-comment">//多线程</span>
-    param.i_threads = <span class="hljs-number">1</span>;
-
-    x264_param_apply_profile(&amp;param, <span class="hljs-string">"baseline"</span>);
-    <span class="hljs-comment">//打开编码器</span>
-    videoCodec = x264_encoder_open(&amp;param);
-
-    x264_picture_alloc(pic_in, X264_CSP_I420, <span class="hljs-built_in">width</span>, <span class="hljs-built_in">height</span>);
-
-    <span class="hljs-comment">//编码：h264码流</span>
-    <span class="hljs-keyword">while</span> (!feof(fp_src)) &#123;
-        <span class="hljs-comment">//y数据</span>
-        fread(pic_in-&gt;img.plane[<span class="hljs-number">0</span>], ySize, <span class="hljs-number">1</span>, fp_src);         <span class="hljs-comment">//Y</span>
-        fread(pic_in-&gt;img.plane[<span class="hljs-number">1</span>], uvSize, <span class="hljs-number">1</span>, fp_src);     <span class="hljs-comment">//U</span>
-        fread(pic_in-&gt;img.plane[<span class="hljs-number">2</span>], uvSize, <span class="hljs-number">1</span>, fp_src);     <span class="hljs-comment">//V</span>
-        <span class="hljs-comment">//编码出来的数据  （帧数据）</span>
-        <span class="hljs-keyword">x264_nal_t</span> *pp_nal;
-        <span class="hljs-comment">//编码出来有几个数据 （多少帧）</span>
-        <span class="hljs-keyword">int</span> pi_nal;
-        <span class="hljs-keyword">x264_picture_t</span> pic_out;
-        x264_encoder_encode(videoCodec, &amp;pp_nal, &amp;pi_nal, pic_in, &amp;pic_out);
-        <span class="hljs-comment">//如果是关键帧 3</span>
-        <span class="hljs-keyword">int</span> sps_len;
-        <span class="hljs-keyword">int</span> pps_len;
-        <span class="hljs-keyword">uint8_t</span> sps[<span class="hljs-number">100</span>];
-        <span class="hljs-keyword">uint8_t</span> pps[<span class="hljs-number">100</span>];
-        <span class="hljs-comment">// chroma_format_idc</span>
-        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>; i &lt; pi_nal; ++i) &#123;
-            <span class="hljs-keyword">x264_nal_t</span> &amp;nal = pp_nal[i];
-            <span class="hljs-keyword">if</span> (nal.i_type == NAL_SPS) &#123;
-            &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (nal.i_type == NAL_PPS) &#123;
-            &#125; <span class="hljs-keyword">else</span> &#123;
-            &#125;
-        &#125;
-    &#125;
-&#125;
-</code></pre>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">关键步骤，来自雷神：https://blog.csdn.net/leixiaohua1020/article/details/42078645</span></span><br><span class="line"><span class="comment">x264_param_default()：设置参数集结构体x264_param_t的缺省值。</span></span><br><span class="line"><span class="comment">x264_picture_alloc()：为图像结构体x264_picture_t分配内存。</span></span><br><span class="line"><span class="comment">x264_encoder_open()：打开编码器。</span></span><br><span class="line"><span class="comment">x264_encoder_encode()：编码一帧图像。</span></span><br><span class="line"><span class="comment">x264_encoder_close()：关闭编码器。</span></span><br><span class="line"><span class="comment">x264_picture_clean()：释放x264_picture_alloc()申请的资源。</span></span><br><span class="line"><span class="comment"> </span></span><br><span class="line"><span class="comment">存储数据的结构体如下所示。</span></span><br><span class="line"><span class="comment">x264_picture_t：存储压缩编码前的像素数据。</span></span><br><span class="line"><span class="comment">x264_nal_t：存储压缩编码后的码流数据。</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">X264Rtmp::encode</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *url, <span class="keyword">int</span> width, <span class="keyword">int</span> height, <span class="keyword">int</span> bitRate, <span class="keyword">int</span> fps)</span> </span>&#123;</span><br><span class="line">    <span class="comment">//计算一帧等信息</span></span><br><span class="line">    <span class="keyword">int</span> ySize = width * height;</span><br><span class="line">    <span class="keyword">int</span> uvSize = ySize / <span class="number">4</span>;</span><br><span class="line">    FILE *fp_src = fopen(url, <span class="string">&quot;rb&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">//初始化VLC图片编码层的参数</span></span><br><span class="line">    <span class="keyword">x264_picture_t</span> *pic_in = (<span class="keyword">x264_picture_t</span> *) <span class="built_in">malloc</span>(<span class="keyword">sizeof</span>(<span class="keyword">x264_picture_t</span>));</span><br><span class="line">    <span class="keyword">x264_t</span> *videoCodec = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">x264_param_t</span> param;</span><br><span class="line">    x264_param_default(&amp;param);</span><br><span class="line">    <span class="comment">//根据应用场景设置编码速度，以及编码质量。2：x264_preset_names，3：x264_tune_names</span></span><br><span class="line">    x264_param_default_preset(&amp;param, x264_preset_names[<span class="number">0</span>], x264_tune_names[<span class="number">7</span>]);</span><br><span class="line">    <span class="comment">//输入数据格式， yuv 4:2:0</span></span><br><span class="line">    param.i_csp = X264_CSP_I420;</span><br><span class="line">    param.i_width = width;</span><br><span class="line">    param.i_height = height;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//base_line 3.2 编码规格，影响网络带宽，图像分辨率等。 -- https://en.wikipedia.org/wiki/Advanced_Video_Coding</span></span><br><span class="line">    param.i_level_idc = <span class="number">32</span>;</span><br><span class="line">    <span class="comment">//两张参考图片间b帧的数量</span></span><br><span class="line">    param.i_bframe = <span class="number">0</span>;</span><br><span class="line">    <span class="comment">//参数i_rc_method表示码率控制，CQP(恒定质量)，CRF(恒定码率)，ABR(平均码率)</span></span><br><span class="line">    param.rc.i_rc_method = X264_RC_ABR;</span><br><span class="line">    <span class="comment">//比特率(码率, 单位Kbps)</span></span><br><span class="line">    param.rc.i_bitrate = bitRate / <span class="number">1000</span>;</span><br><span class="line">    <span class="comment">//瞬时最大码率</span></span><br><span class="line">    param.rc.i_vbv_max_bitrate = bitRate / <span class="number">1000</span> * <span class="number">1.2</span>;</span><br><span class="line">    <span class="comment">//设置了i_vbv_max_bitrate必须设置此参数，码率控制区大小,单位kbps</span></span><br><span class="line">    param.rc.i_vbv_buffer_size = bitRate / <span class="number">1000</span>;</span><br><span class="line">    <span class="comment">//帧率（每秒显示多少张画面）</span></span><br><span class="line">    param.i_fps_num = fps;</span><br><span class="line">    param.i_fps_den = <span class="number">1</span>;</span><br><span class="line">    param.i_timebase_den = param.i_fps_num;</span><br><span class="line">    param.i_timebase_num = param.i_fps_den;</span><br><span class="line"><span class="comment">//    param.pf_log = x264_log_default2;</span></span><br><span class="line">    <span class="comment">//用fps而不是时间戳来计算帧间距离</span></span><br><span class="line">    param.b_vfr_input = <span class="number">0</span>;</span><br><span class="line">    <span class="comment">//帧距离(关键帧)  2s一个关键帧</span></span><br><span class="line">    param.i_keyint_max = fps * <span class="number">2</span>;</span><br><span class="line">    <span class="comment">// 是否复制sps和pps放在每个关键帧的前面 该参数设置是让每个关键帧(I帧)都附带sps/pps。</span></span><br><span class="line">    param.b_repeat_headers = <span class="number">1</span>;</span><br><span class="line">    <span class="comment">//多线程</span></span><br><span class="line">    param.i_threads = <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">    x264_param_apply_profile(&amp;param, <span class="string">&quot;baseline&quot;</span>);</span><br><span class="line">    <span class="comment">//打开编码器</span></span><br><span class="line">    videoCodec = x264_encoder_open(&amp;param);</span><br><span class="line"></span><br><span class="line">    x264_picture_alloc(pic_in, X264_CSP_I420, width, height);</span><br><span class="line"></span><br><span class="line">    <span class="comment">//编码：h264码流</span></span><br><span class="line">    <span class="keyword">while</span> (!feof(fp_src)) &#123;</span><br><span class="line">        <span class="comment">//y数据</span></span><br><span class="line">        fread(pic_in-&gt;img.plane[<span class="number">0</span>], ySize, <span class="number">1</span>, fp_src);         <span class="comment">//Y</span></span><br><span class="line">        fread(pic_in-&gt;img.plane[<span class="number">1</span>], uvSize, <span class="number">1</span>, fp_src);     <span class="comment">//U</span></span><br><span class="line">        fread(pic_in-&gt;img.plane[<span class="number">2</span>], uvSize, <span class="number">1</span>, fp_src);     <span class="comment">//V</span></span><br><span class="line">        <span class="comment">//编码出来的数据  （帧数据）</span></span><br><span class="line">        <span class="keyword">x264_nal_t</span> *pp_nal;</span><br><span class="line">        <span class="comment">//编码出来有几个数据 （多少帧）</span></span><br><span class="line">        <span class="keyword">int</span> pi_nal;</span><br><span class="line">        <span class="keyword">x264_picture_t</span> pic_out;</span><br><span class="line">        x264_encoder_encode(videoCodec, &amp;pp_nal, &amp;pi_nal, pic_in, &amp;pic_out);</span><br><span class="line">        <span class="comment">//如果是关键帧 3</span></span><br><span class="line">        <span class="keyword">int</span> sps_len;</span><br><span class="line">        <span class="keyword">int</span> pps_len;</span><br><span class="line">        <span class="keyword">uint8_t</span> sps[<span class="number">100</span>];</span><br><span class="line">        <span class="keyword">uint8_t</span> pps[<span class="number">100</span>];</span><br><span class="line">        <span class="comment">// chroma_format_idc</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; pi_nal; ++i) &#123;</span><br><span class="line">            <span class="keyword">x264_nal_t</span> &amp;nal = pp_nal[i];</span><br><span class="line">            <span class="keyword">if</span> (nal.i_type == NAL_SPS) &#123;</span><br><span class="line">            &#125; <span class="keyword">else</span> <span class="keyword">if</span> (nal.i_type == NAL_PPS) &#123;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h3 id="参考"><a class="markdownIt-Anchor" href="#参考"></a> 参考</h3>
 <ul>
 <li><a target="_blank" rel="noopener" href="https://blog.csdn.net/leixiaohua1020/article/details/84483343">视频编码标准汇总及比较</a></li>

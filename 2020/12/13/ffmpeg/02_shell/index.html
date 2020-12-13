@@ -373,18 +373,11 @@
 ……</li>
 </ul>
 <p>其中，bash由于易用和免费，被广泛使用。每种<code>Shell</code>程序都有其对应的<code>解释器</code>，在脚本文件第一行会告诉系统当前程序属于那种类型，如：</p>
-<pre class="highlight"><code class="shell"><span class="hljs-meta">#</span><span class="bash">!/bin/bash</span>
-echo "这是bash类型的shell程序"
-</code></pre>
+<figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">!/bin/bash</span></span><br><span class="line">echo &quot;这是bash类型的shell程序&quot;</span><br></pre></td></tr></table></figure>
 <p>本文主要介绍bash类型的<code>Shell</code>脚本的基本使用。</p>
 <h3 id="shell脚本权限"><a class="markdownIt-Anchor" href="#shell脚本权限"></a> Shell脚本权限</h3>
 <p><code>Shell</code>脚本被执行前需要可执行权限。如刚创建的<code>test.sh</code>脚本，需<code>chmod +x test.sh</code>方能执行：</p>
-<pre class="highlight"><code class="shell">qincji:giteeblog mac$ ./test.sh
--bash: ./test.sh: Permission denied
-qincji:giteeblog mac$ chmod +x test.sh 
-qincji:giteeblog mac$ ./test.sh 
-Hellow Shell
-</code></pre>
+<figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">qincji:giteeblog mac$ ./test.sh</span><br><span class="line">-bash: ./test.sh: Permission denied</span><br><span class="line">qincji:giteeblog mac$ chmod +x test.sh </span><br><span class="line">qincji:giteeblog mac$ ./test.sh </span><br><span class="line">Hellow Shell</span><br></pre></td></tr></table></figure>
 <p>注：执行脚本文件的命令使用<code>sh</code>或<code>.</code>，如<code>sh test.sh</code>或<code>./test.sh</code>。</p>
 <h3 id="shell基本语法"><a class="markdownIt-Anchor" href="#shell基本语法"></a> Shell基本语法</h3>
 <h4 id="注释"><a class="markdownIt-Anchor" href="#注释"></a> 注释</h4>
@@ -393,41 +386,14 @@ Hellow Shell
 <li>多行注释 - 以 <code>:&lt;&lt;EOF</code> 开头，到 <code>EOF</code> 结束。</li>
 </ul>
 <p>如编辑<code>test.s</code>h脚本文件</p>
-<pre class="highlight"><code class="shell"><span class="hljs-meta">#</span><span class="bash">!/bin/bash     </span>
-echo "Hellow Shell"
-<span class="hljs-meta">#</span><span class="bash"><span class="hljs-built_in">echo</span> <span class="hljs-string">"使用#单行注释了，不能输出"</span></span>
-   
-:&lt;&lt;EOF
-echo "EOF里面111"
-echo "EOF里面222" 
-EOF  
-</code></pre>
+<figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">!/bin/bash</span>     </span><br><span class="line">echo &quot;Hellow Shell&quot;</span><br><span class="line"><span class="meta">#</span><span class="bash"><span class="built_in">echo</span> <span class="string">&quot;使用#单行注释了，不能输出&quot;</span></span></span><br><span class="line">   </span><br><span class="line">:&lt;&lt;EOF</span><br><span class="line">echo &quot;EOF里面111&quot;</span><br><span class="line">echo &quot;EOF里面222&quot; </span><br><span class="line">EOF  </span><br></pre></td></tr></table></figure>
 <p>执行<code>sh test.sh</code>查看输出：</p>
-<pre class="highlight"><code class="shell">qincji:giteeblog mac$ sh test.sh 
-Hellow Shell
-</code></pre>
+<figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">qincji:giteeblog mac$ sh test.sh </span><br><span class="line">Hellow Shell</span><br></pre></td></tr></table></figure>
 <h4 id="echo输出"><a class="markdownIt-Anchor" href="#echo输出"></a> echo输出</h4>
 <p><code>echo</code>用于字符串的输出。编辑<code>test.sh</code>进行介绍：</p>
-<pre class="highlight"><code class="shell"><span class="hljs-meta">#</span><span class="bash">!/bin/bash                   </span>
-echo "1-You" #1.输出普通字符串
-echo "2-You \"are\"" #2.输出使用\转义
-age=18
-echo "3-You \"are\" $&#123;age&#125;" #3.使用$&#123;变量名&#125;输出包含变量的字符串
-echo "4-You \"are\" "$age"" #4.使用"$变量名"输出包含变量的字符串"
-echo -e "5-YES\nNO" #5.使用 -e 开启（对\n）转义
-echo "6-test" &gt; test.txt #6.输出重定向至文件
-</code></pre>
+<figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">!/bin/bash</span>                   </span><br><span class="line">echo &quot;1-You&quot; #1.输出普通字符串</span><br><span class="line">echo &quot;2-You \&quot;are\&quot;&quot; #2.输出使用\转义</span><br><span class="line">age=18</span><br><span class="line">echo &quot;3-You \&quot;are\&quot; $&#123;age&#125;&quot; #3.使用$&#123;变量名&#125;输出包含变量的字符串</span><br><span class="line">echo &quot;4-You \&quot;are\&quot; &quot;$age&quot;&quot; #4.使用&quot;$变量名&quot;输出包含变量的字符串&quot;</span><br><span class="line">echo -e &quot;5-YES\nNO&quot; #5.使用 -e 开启（对\n）转义</span><br><span class="line">echo &quot;6-test&quot; &gt; test.txt #6.输出重定向至文件</span><br></pre></td></tr></table></figure>
 <p>执行后输出结果：</p>
-<pre class="highlight"><code class="shell">qincji:giteeblog mac$ ./test.sh 
-1-You
-2-You "are"
-3-You "are" 18
-4-You "are" 18
-5-YES
-NO
-qincji:giteeblog mac$ cat test.txt
-6-test
-</code></pre>
+<figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">qincji:giteeblog mac$ ./test.sh </span><br><span class="line">1-You</span><br><span class="line">2-You &quot;are&quot;</span><br><span class="line">3-You &quot;are&quot; 18</span><br><span class="line">4-You &quot;are&quot; 18</span><br><span class="line">5-YES</span><br><span class="line">NO</span><br><span class="line">qincji:giteeblog mac$ cat test.txt</span><br><span class="line">6-test</span><br></pre></td></tr></table></figure>
 <h4 id="变量"><a class="markdownIt-Anchor" href="#变量"></a> 变量</h4>
 <p>Bash 中没有数据类型，bash 中的变量可以保存一个数字、一个字符、一个字符串等等。定义变量名的规则：</p>
 <ul>
@@ -437,28 +403,9 @@ qincji:giteeblog mac$ cat test.txt
 <li>4.不能使用 bash 里的关键字（可用 help 命令查看保留关键字）。</li>
 </ul>
 <p>如，编辑<code>test.sh</code>如下：</p>
-<pre class="highlight"><code class="shell"><span class="hljs-meta">#</span><span class="bash">!/bin/bash</span>
-<span class="hljs-meta">#</span><span class="bash">有效变量名</span>
-var="0 字符串"
-VAR=1
-_var=2
-_var2=3
-_3var=4
-<span class="hljs-meta">#</span><span class="bash">以下为无效变量名</span>
-4var=5
-?var=6
-var*2=7
-<span class="hljs-meta">#</span><span class="bash">使用表达式命令赋值，输出看看命令的结果</span>
-files=`du -sh .`
-echo $&#123;files&#125;
-</code></pre>
+<figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">!/bin/bash</span></span><br><span class="line"><span class="meta">#</span><span class="bash">有效变量名</span></span><br><span class="line">var=&quot;0 字符串&quot;</span><br><span class="line">VAR=1</span><br><span class="line">_var=2</span><br><span class="line">_var2=3</span><br><span class="line">_3var=4</span><br><span class="line"><span class="meta">#</span><span class="bash">以下为无效变量名</span></span><br><span class="line">4var=5</span><br><span class="line">?var=6</span><br><span class="line">var*2=7</span><br><span class="line"><span class="meta">#</span><span class="bash">使用表达式命令赋值，输出看看命令的结果</span></span><br><span class="line">files=`du -sh .`</span><br><span class="line">echo $&#123;files&#125;</span><br></pre></td></tr></table></figure>
 <p>执行输出结果：</p>
-<pre class="highlight"><code class="shell">qincji:giteeblog mac$ ./test.sh 
-./test.sh: line 9: 4var=5: command not found
-./test.sh: line 10: ?var=6: command not found
-./test.sh: line 11: var*2=7: command not found
-138M .
-</code></pre>
+<figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">qincji:giteeblog mac$ ./test.sh </span><br><span class="line">./test.sh: line 9: 4var=5: command not found</span><br><span class="line">./test.sh: line 10: ?var=6: command not found</span><br><span class="line">./test.sh: line 11: var*2=7: command not found</span><br><span class="line">138M .</span><br></pre></td></tr></table></figure>
 <h4 id="字符串"><a class="markdownIt-Anchor" href="#字符串"></a> 字符串</h4>
 <p>使用<code>'</code>或者<code>&quot;</code>来定义字符串，也可以不用引号。但是<code>'</code>中不能使用变量和转义符。所以记住用<code>&quot;</code>就行了。字符串常规操作，有：</p>
 <ul>
@@ -467,22 +414,9 @@ echo $&#123;files&#125;
 <li>3.截取字符串，格式<code>$&#123;串:2:3&#125;</code>，其中2为起点，3为截取的个数。</li>
 </ul>
 <p>编辑<code>test.sh</code>如下：</p>
-<pre class="highlight"><code class="shell"><span class="hljs-meta">#</span><span class="bash">!/bin/bash</span>
-name="123456"
-full1='1-hello，'$&#123;name&#125;'' #1.单引号字符串拼接
-full2="1-hello，$&#123;name&#125;" #1.双引号字符串拼接
-echo $&#123;full1&#125;
-echo $&#123;full2&#125;
-echo "2-长度：$&#123;#name&#125;"  #2.获取字符串长度
-echo "3-截取：$&#123;name:2:3&#125;"  #3.截取字符串
-</code></pre>
+<figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">!/bin/bash</span></span><br><span class="line">name=&quot;123456&quot;</span><br><span class="line">full1=&#x27;1-hello，&#x27;$&#123;name&#125;&#x27;&#x27; #1.单引号字符串拼接</span><br><span class="line">full2=&quot;1-hello，$&#123;name&#125;&quot; #1.双引号字符串拼接</span><br><span class="line">echo $&#123;full1&#125;</span><br><span class="line">echo $&#123;full2&#125;</span><br><span class="line">echo &quot;2-长度：$&#123;#name&#125;&quot;  #2.获取字符串长度</span><br><span class="line">echo &quot;3-截取：$&#123;name:2:3&#125;&quot;  #3.截取字符串</span><br></pre></td></tr></table></figure>
 <p>执行输出结果：</p>
-<pre class="highlight"><code class="shell">qincji:giteeblog mac$ ./test.sh 
-1-hello，123456
-1-hello，123456
-2-长度：6
-3-截取：345
-</code></pre>
+<figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">qincji:giteeblog mac$ ./test.sh </span><br><span class="line">1-hello，123456</span><br><span class="line">1-hello，123456</span><br><span class="line">2-长度：6</span><br><span class="line">3-截取：345</span><br></pre></td></tr></table></figure>
 <h4 id="数组"><a class="markdownIt-Anchor" href="#数组"></a> 数组</h4>
 <p>Bash只支持一维数组，下标从 0 开始，下标可以是整数或算术表达式，其值应大于或等于 0。数组常规操作，有：</p>
 <ul>
@@ -493,22 +427,9 @@ echo "3-截取：$&#123;name:2:3&#125;"  #3.截取字符串
 <li>5.删除元素，格式：<code>unset array[0]</code>。</li>
 </ul>
 <p>编辑<code>test.sh</code>如下：</p>
-<pre class="highlight"><code class="shell"><span class="hljs-meta">#</span><span class="bash">!/bin/bash</span>
-array=([1]=1 [0]="a" [3]="￥")  #1.创建数组
-echo "2-访问：v1=$&#123;array[1]&#125;，v2=$&#123;array[@]&#125;" #2.访问元素
-echo "3-获取：len1=$&#123;#array[@]&#125;，len2=$&#123;#array[*]&#125;" #3.取得个数
-array=("NO" "$&#123;array[@]&#125;" 33) #4.增加元素
-echo "4-增加：$&#123;array[@]&#125;"
-unset array[0] #5.删除元素
-echo "5-删除：$&#123;array[@]&#125;"
-</code></pre>
+<figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">!/bin/bash</span></span><br><span class="line">array=([1]=1 [0]=&quot;a&quot; [3]=&quot;￥&quot;)  #1.创建数组</span><br><span class="line">echo &quot;2-访问：v1=$&#123;array[1]&#125;，v2=$&#123;array[@]&#125;&quot; #2.访问元素</span><br><span class="line">echo &quot;3-获取：len1=$&#123;#array[@]&#125;，len2=$&#123;#array[*]&#125;&quot; #3.取得个数</span><br><span class="line">array=(&quot;NO&quot; &quot;$&#123;array[@]&#125;&quot; 33) #4.增加元素</span><br><span class="line">echo &quot;4-增加：$&#123;array[@]&#125;&quot;</span><br><span class="line">unset array[0] #5.删除元素</span><br><span class="line">echo &quot;5-删除：$&#123;array[@]&#125;&quot;</span><br></pre></td></tr></table></figure>
 <p>执行输出结果：</p>
-<pre class="highlight"><code class="shell">qincji:giteeblog mac$ ./test.sh 
-2-访问：v1=1，v2=a 1 ￥
-3-获取：len1=3，len2=3
-4-增加：NO a 1 ￥ 33
-5-删除：a 1 ￥ 33
-</code></pre>
+<figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">qincji:giteeblog mac$ ./test.sh </span><br><span class="line">2-访问：v1=1，v2=a 1 ￥</span><br><span class="line">3-获取：len1=3，len2=3</span><br><span class="line">4-增加：NO a 1 ￥ 33</span><br><span class="line">5-删除：a 1 ￥ 33</span><br></pre></td></tr></table></figure>
 <h4 id="运算符"><a class="markdownIt-Anchor" href="#运算符"></a> 运算符</h4>
 <h5 id="算术运算符"><a class="markdownIt-Anchor" href="#算术运算符"></a> 算术运算符</h5>
 <ul>
@@ -518,39 +439,11 @@ echo "5-删除：$&#123;array[@]&#125;"
 <li>!=（比较不相等），格式：<code>[ value1 != value2 ]</code>，如<code>[ 2 != 5 ]</code>，返回true。<br />
 注意：<code>[ value1 != 'value2' ]</code>是带空格的，如错误写法：<code>[value1!='value2']</code>。在循环体测试中使用<code>[]</code>不起作用，需要用<code>(())</code>，如：</li>
 </ul>
-<pre class="highlight"><code class="shell">a=1
-while (($a &lt; 10)); do
-<span class="hljs-meta">#</span><span class="bash"> <span class="hljs-keyword">if</span> [ a == 2 ] <span class="hljs-comment">#不起作用</span></span>
-  if ((a == 2)); then
-    echo "while语句：continue"
-    let "a++"
-    continue
-  elif ((a == 4)); then
-    echo "while语句：break"
-    break
-  fi
-  echo "while语句：$a"
-  let "a++"
-done
-</code></pre>
+<figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">a=1</span><br><span class="line">while (($a &lt; 10)); do</span><br><span class="line"><span class="meta">#</span><span class="bash"> <span class="keyword">if</span> [ a == 2 ] <span class="comment">#不起作用</span></span></span><br><span class="line">  if ((a == 2)); then</span><br><span class="line">    echo &quot;while语句：continue&quot;</span><br><span class="line">    let &quot;a++&quot;</span><br><span class="line">    continue</span><br><span class="line">  elif ((a == 4)); then</span><br><span class="line">    echo &quot;while语句：break&quot;</span><br><span class="line">    break</span><br><span class="line">  fi</span><br><span class="line">  echo &quot;while语句：$a&quot;</span><br><span class="line">  let &quot;a++&quot;</span><br><span class="line">done</span><br></pre></td></tr></table></figure>
 <p>编辑<code>test.sh</code>如下：</p>
-<pre class="highlight"><code class="shell"><span class="hljs-meta">#</span><span class="bash">!/bin/bash</span>
-a=3
-b=3
-o1=`expr $&#123;a&#125; \* $&#123;b&#125;`
-echo "o1=$&#123;o1&#125;"
-if [ $a == $b ]
-then
-   echo "a 等于 b"
-else
-   echo "a 不等于 b"
-fi
-</code></pre>
+<figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">!/bin/bash</span></span><br><span class="line">a=3</span><br><span class="line">b=3</span><br><span class="line">o1=`expr $&#123;a&#125; \* $&#123;b&#125;`</span><br><span class="line">echo &quot;o1=$&#123;o1&#125;&quot;</span><br><span class="line">if [ $a == $b ]</span><br><span class="line">then</span><br><span class="line">   echo &quot;a 等于 b&quot;</span><br><span class="line">else</span><br><span class="line">   echo &quot;a 不等于 b&quot;</span><br><span class="line">fi</span><br></pre></td></tr></table></figure>
 <p>执行输出结果：</p>
-<pre class="highlight"><code class="shell">qincji:giteeblog mac$ ./test.sh 
-o1=9
-a 等于 b
-</code></pre>
+<figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">qincji:giteeblog mac$ ./test.sh </span><br><span class="line">o1=9</span><br><span class="line">a 等于 b</span><br></pre></td></tr></table></figure>
 <h5 id="关系运算符"><a class="markdownIt-Anchor" href="#关系运算符"></a> 关系运算符</h5>
 <p>通用格式为：<code>[ value1 符号 value2 ]</code>，用于比较结构中，同上<code>==</code>和<code>!=</code>用法一样。</p>
 <ul>
@@ -588,120 +481,28 @@ a 等于 b
 <li>-e 文件/目录存在，格式：同上。</li>
 </ul>
 <p>编辑<code>test.sh</code>如下：</p>
-<pre class="highlight"><code class="shell"><span class="hljs-meta">#</span><span class="bash">!/bin/bash</span>
-if [ -d "./" ]
-then
-   echo "1-输出为true"
-else
-   echo "1-输出为false"
-fi
-if [ -w "./test.sh" ]
-then
-   echo "2-输出为true"
-else
-   echo "2-输出为false"
-fi
-</code></pre>
+<figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">!/bin/bash</span></span><br><span class="line">if [ -d &quot;./&quot; ]</span><br><span class="line">then</span><br><span class="line">   echo &quot;1-输出为true&quot;</span><br><span class="line">else</span><br><span class="line">   echo &quot;1-输出为false&quot;</span><br><span class="line">fi</span><br><span class="line">if [ -w &quot;./test.sh&quot; ]</span><br><span class="line">then</span><br><span class="line">   echo &quot;2-输出为true&quot;</span><br><span class="line">else</span><br><span class="line">   echo &quot;2-输出为false&quot;</span><br><span class="line">fi</span><br></pre></td></tr></table></figure>
 <p>执行输出结果：</p>
-<pre class="highlight"><code class="shell">qincji:giteeblog mac$ ./test.sh 
-1-输出为true
-2-输出为true
-</code></pre>
+<figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">qincji:giteeblog mac$ ./test.sh </span><br><span class="line">1-输出为true</span><br><span class="line">2-输出为true</span><br></pre></td></tr></table></figure>
 <h4 id="流程控制"><a class="markdownIt-Anchor" href="#流程控制"></a> 流程控制</h4>
 <ul>
 <li>条件语句：<br />
 ①<code>if..elif..else</code>，使用<code>then..fi</code>来控制命中的范围。单行格式：<code>if [ 条件1 ]; then 执行体1; elif [ 条件2 ]; then 执行体2; else 执行体2; fi</code>，多行格式：直接<code>;</code>去掉即可。<br />
 ②<code>case</code>，在<code>exec..esac</code>范围内。格式如下</li>
 </ul>
-<pre class="highlight"><code class="shell">exec
-case 输入 in
-条件1) 执行体1;;
-条件2) 执行体2;;
-*) 其他执行体;;
-esac
-</code></pre>
+<figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">exec</span><br><span class="line">case 输入 in</span><br><span class="line">条件1) 执行体1;;</span><br><span class="line">条件2) 执行体2;;</span><br><span class="line">*) 其他执行体;;</span><br><span class="line">esac</span><br></pre></td></tr></table></figure>
 <ul>
 <li>循环语句：<code>for</code>、<code>while</code>和<code>until</code>。循环体在<code>do..done</code>范围内，在循环中遇到<code>continue</code>会进入下个循环，遇到<code>break</code>跳出循环。</li>
 </ul>
 <p>编辑<code>test.sh</code>如下：</p>
-<pre class="highlight"><code class="shell"><span class="hljs-meta">#</span><span class="bash">!/bin/bash</span>
-<span class="hljs-meta">#</span><span class="bash">1.注意单行的写法需要用 ； 把语句段落隔开</span>
-if [ "111" = "abc" ]; then
-  echo "输出if-1"
-elif [ "abc" = "abc" ]; then
-  echo "输出elif-1"
-else
-  echo "输出else-1"
-fi
-<span class="hljs-meta">#</span><span class="bash">2.注意单行的写法需要用 ； 把语句段落隔开</span>
-if [ "111" = "abc" ]; then echo "输出if-2"; elif [ "abc2" = "abc" ]; then echo "输出elif-2"; else echo "输出else-2"; fi
-<span class="hljs-meta">
-#</span><span class="bash">3.case语句</span>
-exec
-case "4" in
-"a") echo "case输出a" ;;
-"b") echo "case输出b" ;;
-*) echo "case输出*" ;;
-esac
-<span class="hljs-meta">
-#</span><span class="bash">4.for语句</span>
-for var in "red" 2 "yes"; do echo "for语句：$&#123;var&#125;"; done
-<span class="hljs-meta">
-#</span><span class="bash">5.while语句</span>
-a=1
-<span class="hljs-meta">#</span><span class="bash"><span class="hljs-keyword">while</span> [ <span class="hljs-variable">$a</span> -le 10 ]</span>
-while (($a &lt; 10)); do
-<span class="hljs-meta">  #</span><span class="bash"> <span class="hljs-keyword">if</span> [ a == 2 ] <span class="hljs-comment">#不起作用</span></span>
-  if ((a == 2)); then
-    echo "while语句：continue"
-    let "a++"
-    continue
-  elif ((a == 4)); then
-    echo "while语句：break"
-    break
-  fi
-  echo "while语句：$a"
-  let "a++"
-done
-<span class="hljs-meta">
-#</span><span class="bash">6.until语句</span>
-until (($a &gt;= 6)); do
-  echo "until语句：$a"
-  let "a++"
-done
-</code></pre>
+<figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">!/bin/bash</span></span><br><span class="line"><span class="meta">#</span><span class="bash">1.注意单行的写法需要用 ； 把语句段落隔开</span></span><br><span class="line">if [ &quot;111&quot; = &quot;abc&quot; ]; then</span><br><span class="line">  echo &quot;输出if-1&quot;</span><br><span class="line">elif [ &quot;abc&quot; = &quot;abc&quot; ]; then</span><br><span class="line">  echo &quot;输出elif-1&quot;</span><br><span class="line">else</span><br><span class="line">  echo &quot;输出else-1&quot;</span><br><span class="line">fi</span><br><span class="line"><span class="meta">#</span><span class="bash">2.注意单行的写法需要用 ； 把语句段落隔开</span></span><br><span class="line">if [ &quot;111&quot; = &quot;abc&quot; ]; then echo &quot;输出if-2&quot;; elif [ &quot;abc2&quot; = &quot;abc&quot; ]; then echo &quot;输出elif-2&quot;; else echo &quot;输出else-2&quot;; fi</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash">3.case语句</span></span><br><span class="line">exec</span><br><span class="line">case &quot;4&quot; in</span><br><span class="line">&quot;a&quot;) echo &quot;case输出a&quot; ;;</span><br><span class="line">&quot;b&quot;) echo &quot;case输出b&quot; ;;</span><br><span class="line">*) echo &quot;case输出*&quot; ;;</span><br><span class="line">esac</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash">4.for语句</span></span><br><span class="line">for var in &quot;red&quot; 2 &quot;yes&quot;; do echo &quot;for语句：$&#123;var&#125;&quot;; done</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash">5.while语句</span></span><br><span class="line">a=1</span><br><span class="line"><span class="meta">#</span><span class="bash"><span class="keyword">while</span> [ <span class="variable">$a</span> -le 10 ]</span></span><br><span class="line">while (($a &lt; 10)); do</span><br><span class="line"><span class="meta">  #</span><span class="bash"> <span class="keyword">if</span> [ a == 2 ] <span class="comment">#不起作用</span></span></span><br><span class="line">  if ((a == 2)); then</span><br><span class="line">    echo &quot;while语句：continue&quot;</span><br><span class="line">    let &quot;a++&quot;</span><br><span class="line">    continue</span><br><span class="line">  elif ((a == 4)); then</span><br><span class="line">    echo &quot;while语句：break&quot;</span><br><span class="line">    break</span><br><span class="line">  fi</span><br><span class="line">  echo &quot;while语句：$a&quot;</span><br><span class="line">  let &quot;a++&quot;</span><br><span class="line">done</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash">6.until语句</span></span><br><span class="line">until (($a &gt;= 6)); do</span><br><span class="line">  echo &quot;until语句：$a&quot;</span><br><span class="line">  let &quot;a++&quot;</span><br><span class="line">done</span><br></pre></td></tr></table></figure>
 <p>执行输出结果：</p>
-<pre class="highlight"><code class="shell">qincji:giteeblog mac$ ./test.sh 
-输出elif-1
-输出else-2
-case输出*
-for语句：red
-for语句：2
-for语句：yes
-while语句：1
-while语句：continue
-while语句：3
-while语句：break
-until语句：4
-until语句：5
-</code></pre>
+<figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">qincji:giteeblog mac$ ./test.sh </span><br><span class="line">输出elif-1</span><br><span class="line">输出else-2</span><br><span class="line">case输出*</span><br><span class="line">for语句：red</span><br><span class="line">for语句：2</span><br><span class="line">for语句：yes</span><br><span class="line">while语句：1</span><br><span class="line">while语句：continue</span><br><span class="line">while语句：3</span><br><span class="line">while语句：break</span><br><span class="line">until语句：4</span><br><span class="line">until语句：5</span><br></pre></td></tr></table></figure>
 <h4 id="函数"><a class="markdownIt-Anchor" href="#函数"></a> 函数</h4>
 <p>编辑<code>test.sh</code>如下：</p>
-<pre class="highlight"><code class="shell"><span class="hljs-meta">#</span><span class="bash">!/bin/bash</span>
-<span class="hljs-meta">#</span><span class="bash"><span class="hljs-keyword">function</span>关键字可省了，fun_name随便定的函数名称。</span>
-function fun_name()&#123;
-    echo $0 #$0：文件名称
-    echo $1 #$1：传递的第一个参数
-    echo $2 #$2：传递的第二个参数
-&#125;
-fun_name 1 "Yes"
-</code></pre>
+<figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">!/bin/bash</span></span><br><span class="line"><span class="meta">#</span><span class="bash"><span class="keyword">function</span>关键字可省了，fun_name随便定的函数名称。</span></span><br><span class="line">function fun_name()&#123;</span><br><span class="line">    echo $0 #$0：文件名称</span><br><span class="line">    echo $1 #$1：传递的第一个参数</span><br><span class="line">    echo $2 #$2：传递的第二个参数</span><br><span class="line">&#125;</span><br><span class="line">fun_name 1 &quot;Yes&quot;</span><br></pre></td></tr></table></figure>
 <p>执行输出结果：</p>
-<pre class="highlight"><code class="shell">qincji:giteeblog mac$ ./test.sh 
-./test.sh
-1
-Yes
-</code></pre>
+<figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">qincji:giteeblog mac$ ./test.sh </span><br><span class="line">./test.sh</span><br><span class="line">1</span><br><span class="line">Yes</span><br></pre></td></tr></table></figure>
 <h3 id="参考"><a class="markdownIt-Anchor" href="#参考"></a> 参考</h3>
 <ul>
 <li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/jingmoxukong/p/7867397.html">https://www.cnblogs.com/jingmoxukong/p/7867397.html</a></li>
