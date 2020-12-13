@@ -26,7 +26,7 @@
 <meta property="og:description" content="简介 Shell脚本（Shell Script）是一种为Shell编写的脚本程序。而Shell是一个用C语言编写的程序，它是用户使用Linux的桥梁。在Linux中Shell程序又有很多种，如：  sh - 即 Bourne Shell。sh 是 Unix 标准默认的 shell。 bash - 即 Bourne Again Shell。bash 是 Linux 标准默认的 shell。 ……">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2020-12-13T06:30:35.000Z">
-<meta property="article:modified_time" content="2020-12-13T13:23:19.027Z">
+<meta property="article:modified_time" content="2020-12-13T14:10:35.641Z">
 <meta property="article:author" content="John Doe">
 <meta property="article:tag" content="ffmpeg">
 <meta name="twitter:card" content="summary">
@@ -321,6 +321,15 @@
 
   
   
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">文章目录</h3>
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%AE%80%E4%BB%8B"><span class="toc-number">1.</span> <span class="toc-text"> 简介</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#shell%E8%84%9A%E6%9C%AC%E6%9D%83%E9%99%90"><span class="toc-number">2.</span> <span class="toc-text"> Shell脚本权限</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#shell%E5%9F%BA%E6%9C%AC%E8%AF%AD%E6%B3%95"><span class="toc-number">3.</span> <span class="toc-text"> Shell基本语法</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%B3%A8%E9%87%8A"><span class="toc-number">3.1.</span> <span class="toc-text"> 注释</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#echo%E8%BE%93%E5%87%BA"><span class="toc-number">3.2.</span> <span class="toc-text"> echo输出</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8F%98%E9%87%8F"><span class="toc-number">3.3.</span> <span class="toc-text"> 变量</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AD%97%E7%AC%A6%E4%B8%B2"><span class="toc-number">3.4.</span> <span class="toc-text"> 字符串</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%95%B0%E7%BB%84"><span class="toc-number">3.5.</span> <span class="toc-text"> 数组</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%BF%90%E7%AE%97%E7%AC%A6"><span class="toc-number">3.6.</span> <span class="toc-text"> 运算符</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E7%AE%97%E6%9C%AF%E8%BF%90%E7%AE%97%E7%AC%A6"><span class="toc-number">3.6.1.</span> <span class="toc-text"> 算术运算符</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%85%B3%E7%B3%BB%E8%BF%90%E7%AE%97%E7%AC%A6"><span class="toc-number">3.6.2.</span> <span class="toc-text"> 关系运算符</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%B8%83%E5%B0%94%E8%BF%90%E7%AE%97%E7%AC%A6"><span class="toc-number">3.6.3.</span> <span class="toc-text"> 布尔运算符</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E9%80%BB%E8%BE%91%E8%BF%90%E7%AE%97%E7%AC%A6"><span class="toc-number">3.6.4.</span> <span class="toc-text"> 逻辑运算符</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%AD%97%E7%AC%A6%E4%B8%B2%E8%BF%90%E7%AE%97%E7%AC%A6"><span class="toc-number">3.6.5.</span> <span class="toc-text"> 字符串运算符</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%96%87%E4%BB%B6%E8%BF%90%E7%AE%97%E7%AC%A6"><span class="toc-number">3.6.6.</span> <span class="toc-text"> 文件运算符</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%B5%81%E7%A8%8B%E6%8E%A7%E5%88%B6"><span class="toc-number">3.7.</span> <span class="toc-text"> 流程控制</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%87%BD%E6%95%B0"><span class="toc-number">3.8.</span> <span class="toc-text"> 函数</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%82%E8%80%83"><span class="toc-number">4.</span> <span class="toc-text"> 参考</span></a></li></ol>
+    </nav>
+  </div>
+</aside>
+
 <main class="main" role="main">
   <div class="content">
   <article id="post-ffmpeg/02_shell" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
@@ -567,6 +576,15 @@
       <a href="/2020/12/12/ffmpeg/01_configure_help/" title="ffmpeg configure配置选项 (转载)"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
     </li>
     
+    
+    <li class="toggle-toc">
+      <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="文章目录" role="button">
+        <span>[&nbsp;</span><span>文章目录</span>
+        <i class="text-collapsed icon icon-anchor"></i>
+        <i class="text-in icon icon-close"></i>
+        <span>]</span>
+      </a>
+    </li>
     
   </ul>
   
