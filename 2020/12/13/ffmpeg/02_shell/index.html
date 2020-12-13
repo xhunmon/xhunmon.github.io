@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>Shell脚本 | 秦城季</title>
+  <meta name="description" content="简介 Shell脚本（Shell Script）是一种为Shell编写的脚本程序。而Shell是一个用C语言编写的程序，它是用户使用Linux的桥梁。在Linux中Shell程序又有很多种，如：  sh - 即 Bourne Shell。sh 是 Unix 标准默认的 shell。 bash - 即 Bourne Again Shell。bash 是 Linux 标准默认的 shell。 ……">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Shell脚本">
+<meta property="og:url" content="http://qincji.gitee.io/2020/12/13/ffmpeg/02_shell/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="简介 Shell脚本（Shell Script）是一种为Shell编写的脚本程序。而Shell是一个用C语言编写的程序，它是用户使用Linux的桥梁。在Linux中Shell程序又有很多种，如：  sh - 即 Bourne Shell。sh 是 Unix 标准默认的 shell。 bash - 即 Bourne Again Shell。bash 是 Linux 标准默认的 shell。 ……">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-12-13T06:30:35.000Z">
+<meta property="article:modified_time" content="2020-12-13T13:23:19.027Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="ffmpeg">
+<meta name="twitter:card" content="summary">
+  <!-- Canonical links -->
+  <link rel="canonical" href="http://qincji.gitee.io/2020/12/13/ffmpeg/02_shell/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 5.2.0"></head>
+
+
+<body class="main-center" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://qincji.gitee.io" target="_blank">
+          <img class="img-circle img-rotate" src="/images/avatar.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">秦城季</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">Android &amp; 音视频</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> 中国·广州</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav menu-highlight">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">首页</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-life">
+          <a href="/life">
+            
+            <i class="icon icon-book-fill"></i>
+            
+            <span class="menu-title">生活</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">归档</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">标签</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-repository">
+          <a href="/repository">
+            
+            <i class="icon icon-project"></i>
+            
+            <span class="menu-title">项目</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="icon icon-friendship"></i>
+            
+            <span class="menu-title">友链</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/xhunmon" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>5G时代将音视频推向新高度！欢迎共同谈论与学习！</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ffmpeg/" rel="tag">ffmpeg</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%85%B6%E4%BB%96/" rel="tag">其他</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B/" rel="tag">直播推流全过程</a><span class="tag-list-count">7</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/ffmpeg/" style="font-size: 13px;">ffmpeg</a> <a href="/tags/%E5%85%B6%E4%BB%96/" style="font-size: 13px;">其他</a> <a href="/tags/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B/" style="font-size: 14px;">直播推流全过程</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">十二月 2020</a><span class="archive-list-count">11</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2020/12/13/ffmpeg/02_shell/" class="title">Shell脚本</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-12-13T06:30:35.000Z" itemprop="datePublished">2020-12-13</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2020/12/12/ffmpeg/01_configure_help/" class="title">ffmpeg configure配置选项 (转载)</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-12-12T14:59:35.000Z" itemprop="datePublished">2020-12-12</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2020/12/09/other/001blog/myblog/" class="title">本站开源代码</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-12-09T00:29:36.000Z" itemprop="datePublished">2020-12-09</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2020/12/08/rtmppush/outline/" class="title">直播推流全过程：总纲</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-12-08T05:30:20.000Z" itemprop="datePublished">2020-12-08</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2020/12/08/rtmppush/5-rtmp/" class="title">直播推流全过程：直播推流编码之RTMP（5）</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-12-08T05:10:30.000Z" itemprop="datePublished">2020-12-08</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-ffmpeg/02_shell" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Shell脚本
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2020/12/13/ffmpeg/02_shell/" class="article-date">
+	  <time datetime="2020-12-13T06:30:35.000Z" itemprop="datePublished">2020-12-13</time>
+	</a>
+</span>
+        
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link-link" href="/tags/ffmpeg/" rel="tag">ffmpeg</a>
+  </span>
+
+
+        
+	<span class="article-read hidden-xs">
+	    <i class="icon icon-eye-fill" aria-hidden="true"></i>
+	    <span id="busuanzi_container_page_pv">
+			<span id="busuanzi_value_page_pv">0</span>
+		</span>
+	</span>
+
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2020/12/13/ffmpeg/02_shell/#comments" class="article-comment-link">评论</a></span>
+        
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <h3 id="简介"><a class="markdownIt-Anchor" href="#简介"></a> 简介</h3>
+<p><code>Shell</code>脚本（Shell Script）是一种为<code>Shell</code>编写的脚本程序。而<code>Shell</code>是一个用<code>C</code>语言编写的程序，它是用户使用<code>Linux</code>的桥梁。在<code>Linux</code>中<code>Shell</code>程序又有很多种，如：</p>
+<ul>
+<li>sh - 即 Bourne Shell。sh 是 Unix 标准默认的 shell。</li>
+<li>bash - 即 Bourne Again Shell。bash 是 Linux 标准默认的 shell。<br />
+……</li>
+</ul>
+<p>其中，bash由于易用和免费，被广泛使用。每种<code>Shell</code>程序都有其对应的<code>解释器</code>，在脚本文件第一行会告诉系统当前程序属于那种类型，如：</p>
+<pre class="highlight"><code class="shell"><span class="hljs-meta">#</span><span class="bash">!/bin/bash</span>
+echo "这是bash类型的shell程序"
+</code></pre>
+<p>本文主要介绍bash类型的<code>Shell</code>脚本的基本使用。</p>
+<h3 id="shell脚本权限"><a class="markdownIt-Anchor" href="#shell脚本权限"></a> Shell脚本权限</h3>
+<p><code>Shell</code>脚本被执行前需要可执行权限。如刚创建的<code>test.sh</code>脚本，需<code>chmod +x test.sh</code>方能执行：</p>
+<pre class="highlight"><code class="shell">qincji:giteeblog mac$ ./test.sh
+-bash: ./test.sh: Permission denied
+qincji:giteeblog mac$ chmod +x test.sh 
+qincji:giteeblog mac$ ./test.sh 
+Hellow Shell
+</code></pre>
+<p>注：执行脚本文件的命令使用<code>sh</code>或<code>.</code>，如<code>sh test.sh</code>或<code>./test.sh</code>。</p>
+<h3 id="shell基本语法"><a class="markdownIt-Anchor" href="#shell基本语法"></a> Shell基本语法</h3>
+<h4 id="注释"><a class="markdownIt-Anchor" href="#注释"></a> 注释</h4>
+<ul>
+<li>单行注释 - 以 <code>#</code> 开头，到行尾结束。</li>
+<li>多行注释 - 以 <code>:&lt;&lt;EOF</code> 开头，到 <code>EOF</code> 结束。</li>
+</ul>
+<p>如编辑<code>test.s</code>h脚本文件</p>
+<pre class="highlight"><code class="shell"><span class="hljs-meta">#</span><span class="bash">!/bin/bash     </span>
+echo "Hellow Shell"
+<span class="hljs-meta">#</span><span class="bash"><span class="hljs-built_in">echo</span> <span class="hljs-string">"使用#单行注释了，不能输出"</span></span>
+   
+:&lt;&lt;EOF
+echo "EOF里面111"
+echo "EOF里面222" 
+EOF  
+</code></pre>
+<p>执行<code>sh test.sh</code>查看输出：</p>
+<pre class="highlight"><code class="shell">qincji:giteeblog mac$ sh test.sh 
+Hellow Shell
+</code></pre>
+<h4 id="echo输出"><a class="markdownIt-Anchor" href="#echo输出"></a> echo输出</h4>
+<p><code>echo</code>用于字符串的输出。编辑<code>test.sh</code>进行介绍：</p>
+<pre class="highlight"><code class="shell"><span class="hljs-meta">#</span><span class="bash">!/bin/bash                   </span>
+echo "1-You" #1.输出普通字符串
+echo "2-You \"are\"" #2.输出使用\转义
+age=18
+echo "3-You \"are\" $&#123;age&#125;" #3.使用$&#123;变量名&#125;输出包含变量的字符串
+echo "4-You \"are\" "$age"" #4.使用"$变量名"输出包含变量的字符串"
+echo -e "5-YES\nNO" #5.使用 -e 开启（对\n）转义
+echo "6-test" &gt; test.txt #6.输出重定向至文件
+</code></pre>
+<p>执行后输出结果：</p>
+<pre class="highlight"><code class="shell">qincji:giteeblog mac$ ./test.sh 
+1-You
+2-You "are"
+3-You "are" 18
+4-You "are" 18
+5-YES
+NO
+qincji:giteeblog mac$ cat test.txt
+6-test
+</code></pre>
+<h4 id="变量"><a class="markdownIt-Anchor" href="#变量"></a> 变量</h4>
+<p>Bash 中没有数据类型，bash 中的变量可以保存一个数字、一个字符、一个字符串等等。定义变量名的规则：</p>
+<ul>
+<li>1.命名只能使用英文字母，数字和下划线，首个字符不能以数字开头。</li>
+<li>2.中间不能有空格，可以使用下划线（_）。</li>
+<li>3.不能使用标点符号。</li>
+<li>4.不能使用 bash 里的关键字（可用 help 命令查看保留关键字）。</li>
+</ul>
+<p>如，编辑<code>test.sh</code>如下：</p>
+<pre class="highlight"><code class="shell"><span class="hljs-meta">#</span><span class="bash">!/bin/bash</span>
+<span class="hljs-meta">#</span><span class="bash">有效变量名</span>
+var="0 字符串"
+VAR=1
+_var=2
+_var2=3
+_3var=4
+<span class="hljs-meta">#</span><span class="bash">以下为无效变量名</span>
+4var=5
+?var=6
+var*2=7
+<span class="hljs-meta">#</span><span class="bash">使用表达式命令赋值，输出看看命令的结果</span>
+files=`du -sh .`
+echo $&#123;files&#125;
+</code></pre>
+<p>执行输出结果：</p>
+<pre class="highlight"><code class="shell">qincji:giteeblog mac$ ./test.sh 
+./test.sh: line 9: 4var=5: command not found
+./test.sh: line 10: ?var=6: command not found
+./test.sh: line 11: var*2=7: command not found
+138M .
+</code></pre>
+<h4 id="字符串"><a class="markdownIt-Anchor" href="#字符串"></a> 字符串</h4>
+<p>使用<code>'</code>或者<code>&quot;</code>来定义字符串，也可以不用引号。但是<code>'</code>中不能使用变量和转义符。所以记住用<code>&quot;</code>就行了。字符串常规操作，有：</p>
+<ul>
+<li>1.字符串拼接，格式：<code>'hello，'$&#123;串&#125;''</code>或<code>&quot;hello，$&#123;串&#125;&quot;</code>。</li>
+<li>2.获取字符串长度，格式：<code>$&#123;#串&#125;</code>。</li>
+<li>3.截取字符串，格式<code>$&#123;串:2:3&#125;</code>，其中2为起点，3为截取的个数。</li>
+</ul>
+<p>编辑<code>test.sh</code>如下：</p>
+<pre class="highlight"><code class="shell"><span class="hljs-meta">#</span><span class="bash">!/bin/bash</span>
+name="123456"
+full1='1-hello，'$&#123;name&#125;'' #1.单引号字符串拼接
+full2="1-hello，$&#123;name&#125;" #1.双引号字符串拼接
+echo $&#123;full1&#125;
+echo $&#123;full2&#125;
+echo "2-长度：$&#123;#name&#125;"  #2.获取字符串长度
+echo "3-截取：$&#123;name:2:3&#125;"  #3.截取字符串
+</code></pre>
+<p>执行输出结果：</p>
+<pre class="highlight"><code class="shell">qincji:giteeblog mac$ ./test.sh 
+1-hello，123456
+1-hello，123456
+2-长度：6
+3-截取：345
+</code></pre>
+<h4 id="数组"><a class="markdownIt-Anchor" href="#数组"></a> 数组</h4>
+<p>Bash只支持一维数组，下标从 0 开始，下标可以是整数或算术表达式，其值应大于或等于 0。数组常规操作，有：</p>
+<ul>
+<li>1.创建数组，格式：<code>array=(value0 value1 value2)</code>或指定下标<code>array=([1]=value0 [1]=value1 [2]=value2)</code>。</li>
+<li>2.访问元素，格式：获取单个：<code>&quot;$&#123;array[下标]&#125;&quot;</code>；获取所有：<code>&quot;$&#123;array[@]&#125;&quot;</code>。</li>
+<li>3.取得个数，格式：<code>&quot;$&#123;#array[@]&#125;&quot;</code>或<code>&quot;$&#123;#array[*]&#125;&quot;</code>。</li>
+<li>4.增加元素，格式：<code>array=(value3 &quot;$&#123;array[@]&#125;&quot; value4)</code>。</li>
+<li>5.删除元素，格式：<code>unset array[0]</code>。</li>
+</ul>
+<p>编辑<code>test.sh</code>如下：</p>
+<pre class="highlight"><code class="shell"><span class="hljs-meta">#</span><span class="bash">!/bin/bash</span>
+array=([1]=1 [0]="a" [3]="￥")  #1.创建数组
+echo "2-访问：v1=$&#123;array[1]&#125;，v2=$&#123;array[@]&#125;" #2.访问元素
+echo "3-获取：len1=$&#123;#array[@]&#125;，len2=$&#123;#array[*]&#125;" #3.取得个数
+array=("NO" "$&#123;array[@]&#125;" 33) #4.增加元素
+echo "4-增加：$&#123;array[@]&#125;"
+unset array[0] #5.删除元素
+echo "5-删除：$&#123;array[@]&#125;"
+</code></pre>
+<p>执行输出结果：</p>
+<pre class="highlight"><code class="shell">qincji:giteeblog mac$ ./test.sh 
+2-访问：v1=1，v2=a 1 ￥
+3-获取：len1=3，len2=3
+4-增加：NO a 1 ￥ 33
+5-删除：a 1 ￥ 33
+</code></pre>
+<h4 id="运算符"><a class="markdownIt-Anchor" href="#运算符"></a> 运算符</h4>
+<h5 id="算术运算符"><a class="markdownIt-Anchor" href="#算术运算符"></a> 算术运算符</h5>
+<ul>
+<li>+ - * / %（加减乘除取余），格式：<code>expr value0 符号 value1</code>，特殊符号需要转义，如<code>expr 3 \* 4</code>结果为12。</li>
+<li>=（赋值），格式：<code>value=value1</code>，把value1赋值给value。</li>
+<li>==（比较相等），格式：<code>[ value1 == value2 ]</code>，如<code>[ 2 == 5 ]</code>，返回false。</li>
+<li>!=（比较不相等），格式：<code>[ value1 != value2 ]</code>，如<code>[ 2 != 5 ]</code>，返回true。<br />
+注意：<code>[ value1 != 'value2' ]</code>是带空格的，如错误写法：<code>[value1!='value2']</code>。在循环体测试中使用<code>[]</code>不起作用，需要用<code>(())</code>，如：</li>
+</ul>
+<pre class="highlight"><code class="shell">a=1
+while (($a &lt; 10)); do
+<span class="hljs-meta">#</span><span class="bash"> <span class="hljs-keyword">if</span> [ a == 2 ] <span class="hljs-comment">#不起作用</span></span>
+  if ((a == 2)); then
+    echo "while语句：continue"
+    let "a++"
+    continue
+  elif ((a == 4)); then
+    echo "while语句：break"
+    break
+  fi
+  echo "while语句：$a"
+  let "a++"
+done
+</code></pre>
+<p>编辑<code>test.sh</code>如下：</p>
+<pre class="highlight"><code class="shell"><span class="hljs-meta">#</span><span class="bash">!/bin/bash</span>
+a=3
+b=3
+o1=`expr $&#123;a&#125; \* $&#123;b&#125;`
+echo "o1=$&#123;o1&#125;"
+if [ $a == $b ]
+then
+   echo "a 等于 b"
+else
+   echo "a 不等于 b"
+fi
+</code></pre>
+<p>执行输出结果：</p>
+<pre class="highlight"><code class="shell">qincji:giteeblog mac$ ./test.sh 
+o1=9
+a 等于 b
+</code></pre>
+<h5 id="关系运算符"><a class="markdownIt-Anchor" href="#关系运算符"></a> 关系运算符</h5>
+<p>通用格式为：<code>[ value1 符号 value2 ]</code>，用于比较结构中，同上<code>==</code>和<code>!=</code>用法一样。</p>
+<ul>
+<li>-eq 是否相等，格式：<code>[ value1 -eq value2 ]</code>，如<code>[ 2 -eq 5 ]</code>，返回false。</li>
+<li>-ne 是否不相等，格式：同上。</li>
+<li>-gt &gt;，格式：同上。</li>
+<li>-lt &lt;，格式：同上。</li>
+<li>-ge &gt;=，格式：同上。</li>
+<li>-le &lt;=，格式：同上。</li>
+</ul>
+<h5 id="布尔运算符"><a class="markdownIt-Anchor" href="#布尔运算符"></a> 布尔运算符</h5>
+<ul>
+<li>! 非，格式：<code>[ ! 表达式 ]</code>。与表示式结果相反。。如<code>[ ! 1 == 1 ]</code>返回 false。</li>
+<li>-o 或 (与逻辑运算符<code>||</code>相同)，格式：<code>[ 表达式1 -o 表达式2 ]</code>。有一个表达式为 true 则返回 true。如<code>[ 1 == 1 -o 2 != 2 ]</code>返回 true。</li>
+<li>-a 与 (与逻辑运算符<code>&amp;&amp;</code>相同)，格式：<code>[ 表达式1 -o 表达式2 ]</code>。两个表达式都为 true 才返回 true。如<code>[ 1 == 1 -a 2 != 2 ]</code>返回 false。</li>
+</ul>
+<h5 id="逻辑运算符"><a class="markdownIt-Anchor" href="#逻辑运算符"></a> 逻辑运算符</h5>
+<p><code>||</code>和<code>&amp;&amp;</code>参考<code>布尔运算符</code>。</p>
+<h5 id="字符串运算符"><a class="markdownIt-Anchor" href="#字符串运算符"></a> 字符串运算符</h5>
+<ul>
+<li>= 字符串相等，格式：<code>[ value1 = value2 ]</code>，如a=“a”,b=“b”，<code>[ $&#123;a&#125; = $&#123;b&#125; ]</code>，返回true。</li>
+<li>!= 字符串不相等，格式：<code>[ value1 != value2 ]</code>，如a=“a”,b=“b”，<code>[ $&#123;a&#125; != $&#123;b&#125; ]</code>，返回false。</li>
+<li>-z 字符串长度为0为true，格式：<code>[ -z value ]</code>，如a=“a”，<code>[ -z $&#123;a&#125; ]</code>，返回false。</li>
+<li>-n 字符串长度不为0为true， 格式：<code>[ -n = value ]</code>，如a=“a”，<code>[ -n = $&#123;a&#125; ]</code>，返回true。</li>
+</ul>
+<h5 id="文件运算符"><a class="markdownIt-Anchor" href="#文件运算符"></a> 文件运算符</h5>
+<p>通用格式为：<code>[符号 文件路径 ]</code>，用于检查文件的属性，如何符合为true。</p>
+<ul>
+<li>-d 目录存在为true，格式：<code>[ -d filePath ]</code>，如<code>[ -d &quot;./&quot; ]</code>，为true。</li>
+<li>-f 文件存在为true，格式：<code>[ -f filePath ]</code>，如<code>[ -f &quot;./test.sh&quot; ]</code>，为true。</li>
+<li>-r 可读为true，格式：同上。</li>
+<li>-w 可写为true，格式：同上。</li>
+<li>-x 可执行 可执行为true，格式：同上。</li>
+<li>-s 文件不为空(有内容) true，格式：同上。</li>
+<li>-e 文件/目录存在，格式：同上。</li>
+</ul>
+<p>编辑<code>test.sh</code>如下：</p>
+<pre class="highlight"><code class="shell"><span class="hljs-meta">#</span><span class="bash">!/bin/bash</span>
+if [ -d "./" ]
+then
+   echo "1-输出为true"
+else
+   echo "1-输出为false"
+fi
+if [ -w "./test.sh" ]
+then
+   echo "2-输出为true"
+else
+   echo "2-输出为false"
+fi
+</code></pre>
+<p>执行输出结果：</p>
+<pre class="highlight"><code class="shell">qincji:giteeblog mac$ ./test.sh 
+1-输出为true
+2-输出为true
+</code></pre>
+<h4 id="流程控制"><a class="markdownIt-Anchor" href="#流程控制"></a> 流程控制</h4>
+<ul>
+<li>条件语句：<br />
+①<code>if..elif..else</code>，使用<code>then..fi</code>来控制命中的范围。单行格式：<code>if [ 条件1 ]; then 执行体1; elif [ 条件2 ]; then 执行体2; else 执行体2; fi</code>，多行格式：直接<code>;</code>去掉即可。<br />
+②<code>case</code>，在<code>exec..esac</code>范围内。格式如下</li>
+</ul>
+<pre class="highlight"><code class="shell">exec
+case 输入 in
+条件1) 执行体1;;
+条件2) 执行体2;;
+*) 其他执行体;;
+esac
+</code></pre>
+<ul>
+<li>循环语句：<code>for</code>、<code>while</code>和<code>until</code>。循环体在<code>do..done</code>范围内，在循环中遇到<code>continue</code>会进入下个循环，遇到<code>break</code>跳出循环。</li>
+</ul>
+<p>编辑<code>test.sh</code>如下：</p>
+<pre class="highlight"><code class="shell"><span class="hljs-meta">#</span><span class="bash">!/bin/bash</span>
+<span class="hljs-meta">#</span><span class="bash">1.注意单行的写法需要用 ； 把语句段落隔开</span>
+if [ "111" = "abc" ]; then
+  echo "输出if-1"
+elif [ "abc" = "abc" ]; then
+  echo "输出elif-1"
+else
+  echo "输出else-1"
+fi
+<span class="hljs-meta">#</span><span class="bash">2.注意单行的写法需要用 ； 把语句段落隔开</span>
+if [ "111" = "abc" ]; then echo "输出if-2"; elif [ "abc2" = "abc" ]; then echo "输出elif-2"; else echo "输出else-2"; fi
+<span class="hljs-meta">
+#</span><span class="bash">3.case语句</span>
+exec
+case "4" in
+"a") echo "case输出a" ;;
+"b") echo "case输出b" ;;
+*) echo "case输出*" ;;
+esac
+<span class="hljs-meta">
+#</span><span class="bash">4.for语句</span>
+for var in "red" 2 "yes"; do echo "for语句：$&#123;var&#125;"; done
+<span class="hljs-meta">
+#</span><span class="bash">5.while语句</span>
+a=1
+<span class="hljs-meta">#</span><span class="bash"><span class="hljs-keyword">while</span> [ <span class="hljs-variable">$a</span> -le 10 ]</span>
+while (($a &lt; 10)); do
+<span class="hljs-meta">  #</span><span class="bash"> <span class="hljs-keyword">if</span> [ a == 2 ] <span class="hljs-comment">#不起作用</span></span>
+  if ((a == 2)); then
+    echo "while语句：continue"
+    let "a++"
+    continue
+  elif ((a == 4)); then
+    echo "while语句：break"
+    break
+  fi
+  echo "while语句：$a"
+  let "a++"
+done
+<span class="hljs-meta">
+#</span><span class="bash">6.until语句</span>
+until (($a &gt;= 6)); do
+  echo "until语句：$a"
+  let "a++"
+done
+</code></pre>
+<p>执行输出结果：</p>
+<pre class="highlight"><code class="shell">qincji:giteeblog mac$ ./test.sh 
+输出elif-1
+输出else-2
+case输出*
+for语句：red
+for语句：2
+for语句：yes
+while语句：1
+while语句：continue
+while语句：3
+while语句：break
+until语句：4
+until语句：5
+</code></pre>
+<h4 id="函数"><a class="markdownIt-Anchor" href="#函数"></a> 函数</h4>
+<p>编辑<code>test.sh</code>如下：</p>
+<pre class="highlight"><code class="shell"><span class="hljs-meta">#</span><span class="bash">!/bin/bash</span>
+<span class="hljs-meta">#</span><span class="bash"><span class="hljs-keyword">function</span>关键字可省了，fun_name随便定的函数名称。</span>
+function fun_name()&#123;
+    echo $0 #$0：文件名称
+    echo $1 #$1：传递的第一个参数
+    echo $2 #$2：传递的第二个参数
+&#125;
+fun_name 1 "Yes"
+</code></pre>
+<p>执行输出结果：</p>
+<pre class="highlight"><code class="shell">qincji:giteeblog mac$ ./test.sh 
+./test.sh
+1
+Yes
+</code></pre>
+<h3 id="参考"><a class="markdownIt-Anchor" href="#参考"></a> 参考</h3>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/jingmoxukong/p/7867397.html">https://www.cnblogs.com/jingmoxukong/p/7867397.html</a></li>
+</ul>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="http://qincji.gitee.io/2020/12/13/ffmpeg/02_shell/" title="Shell脚本" target="_blank" rel="external">http://qincji.gitee.io/2020/12/13/ffmpeg/02_shell/</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://qincji.gitee.io" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/images/avatar.jpg" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://qincji.gitee.io" target="_blank"><span class="text-dark">秦城季</span><small class="ml-1x">Android &amp; 音视频</small></a></h3>
+        <div></div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+      <div id="vcomments"></div>
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    
+    <li class="next">
+      <a href="/2020/12/12/ffmpeg/01_configure_help/" title="ffmpeg configure配置选项 (转载)"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+  </ul>
+  
+  
+  <!-- Button trigger modal -->
+  <button type="button" class="btn btn-fancy btn-donate pop-onhover bg-gradient-warning" data-toggle="modal" data-target="#donateModal"><span>赏</span></button>
+  <!-- <div class="wave-icon wave-icon-danger btn-donate" data-toggle="modal" data-target="#donateModal">
+    <div class="wave-circle"><span class="icon"><i class="icon icon-bill"></i></span></div>
+  </div> -->
+  
+  
+  <div class="bar-right">
+    
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+    
+  </div>
+  </div>
+</nav>
+  
+<!-- Modal -->
+<div class="modal modal-center modal-small modal-xs-full fade" id="donateModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content donate">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      <div class="modal-body">
+        <div class="donate-box">
+          <div class="donate-head">
+            <p>感谢您的支持，我会继续努力的!</p>
+          </div>
+          <div class="tab-content">
+            <div role="tabpanel" class="tab-pane fade active in" id="alipay">
+              <div class="donate-payimg">
+                <img src="/images/donate/alipayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开支付宝扫一扫，即可进行扫码打赏哦</p>
+            </div>
+            <div role="tabpanel" class="tab-pane fade" id="wechatpay">
+              <div class="donate-payimg">
+                <img src="/images/donate/wechatpayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开微信扫一扫，即可进行扫码打赏哦</p>
+            </div>
+          </div>
+          <div class="donate-footer">
+            <ul class="nav nav-tabs nav-justified" role="tablist">
+              <li role="presentation" class="active">
+                <a href="#alipay" id="alipay-tab" role="tab" data-toggle="tab" aria-controls="alipay" aria-expanded="true"><i class="icon icon-alipay"></i> 支付宝</a>
+              </li>
+              <li role="presentation" class="">
+                <a href="#wechatpay" role="tab" id="wechatpay-tab" data-toggle="tab" aria-controls="wechatpay" aria-expanded="false"><i class="icon icon-wepay"></i> 微信支付</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/xhunmon" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+   
+    
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/valine"></script>
+  <script type="text/javascript">
+  var GUEST = ['nick', 'mail', 'link'];
+  var meta = 'nick,mail,link';
+  meta = meta.split(',').filter(function(item) {
+    return GUEST.indexOf(item) > -1;
+  });
+  new Valine({
+    el: '#vcomments',
+    verify: false,
+    notify: false,
+    appId: 'xMemPde6Lax4ffLfLBkuEi9t-gzGzoHsz',
+    appKey: 'jIVEp2lShgotSTy0GalhgIzm',
+    placeholder: 'Just go go',
+    avatar: 'mm',
+    meta: meta,
+    pageSize: '10' || 10,
+    visitor: false
+  });
+  </script>
+
+     
+
+
+
+
+
+
+
+</body>
+</html>
