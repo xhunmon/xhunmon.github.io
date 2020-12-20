@@ -775,8 +775,8 @@ address {
 .container {
   margin-right: auto;
   margin-left: auto;
-  padding-left: 15px;
-  padding-right: 15px;
+  padding-left: 0px;
+  padding-right: 0px;
 }
 
 .container:before,
@@ -5663,7 +5663,7 @@ pre code {
 .main {
   position: relative;
   min-height: 100vh;
-  padding: 15px;
+  padding: 0px;
 }
 
 .main:before,
@@ -7865,14 +7865,14 @@ body.okayNav-loaded {
   }
 
   body.no-sidebar.main-left .main {
-    width: 95.83333333%;
-    margin-right: 4.16667%;
+    width: 100%;
+    margin-left: 0%
   }
 
   body.no-sidebar.main-right .main,
   body.no-sidebar.main-center .main {
-    width: 95.83333333%;
-    margin-left: 4.16667%;
+    width: 100%;
+    margin-left: 0%
   }
 
   .header .navbar-header {
@@ -8162,14 +8162,14 @@ body.okayNav-loaded {
   }
 
   body.no-sidebar.main-left .main {
-    width: 83.33333333%;
-    margin-right: 16.66667%;
+    width: 100%;
+    margin-right: 0%;
   }
 
   body.no-sidebar.main-right .main,
   body.no-sidebar.main-center .main {
-    width: 83.33333333%;
-    margin-left: 16.66667%;
+    width: 100%;
+    margin-left: 0%
   }
 
   .bar.bar-footer:before {
@@ -8216,7 +8216,7 @@ body.okayNav-loaded {
 
 @media (min-width: 1200px) {
   .container {
-    width: 1170px;
+    width: 1200px;
   }
 
   .col-lg-1,
@@ -8511,14 +8511,14 @@ body.okayNav-loaded {
   }
 
   body.no-sidebar.main-left .main {
-    width: 83.33333333%;
-    margin-right: 16.66667%;
+    width: 100%;
+    margin-right: 0%;
   }
 
   body.no-sidebar.main-right .main,
   body.no-sidebar.main-center .main {
-    width: 83.33333333%;
-    margin-left: 16.66667%;
+    width: 100%;
+    margin-left: 0%
   }
 
   .main-nav > li > a {
@@ -8566,14 +8566,14 @@ body.okayNav-loaded {
   }
 
   body.no-sidebar.main-left .main {
-    width: 83.33333333%;
-    margin-right: 16.66667%;
+    width: 100%;
+    margin-right: 0%;
   }
 
   body.no-sidebar.main-right .main,
   body.no-sidebar.main-center .main {
-    width: 83.33333333%;
-    margin-left: 16.66667%;
+    width: 100%;
+    margin-left: 0%
   }
 
   .header #title {
