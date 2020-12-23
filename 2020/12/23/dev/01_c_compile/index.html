@@ -17,21 +17,27 @@
   <meta http-equiv="window-target" content="_top" />
   
   
-  <title>本站开源代码 | 秦城季</title>
-  <meta name="description" content="Gitee page + Hexo {theme：pure 和 图片处理插件：hexo-image-link} + Typory  创建自己仓库，如： （1）github：  自己的项目 https:&#x2F;&#x2F;github.com&#x2F;xhunmon&#x2F; 新建仓库：https:&#x2F;&#x2F;github.com&#x2F;xhunmon&#x2F;xhunmon.github.io 生成的自己博客地址：https:&#x2F;&#x2F;xhunmon.g">
+  <title>初步认识c/c++编译 | 秦城季</title>
+  <meta name="description" content="程序的生命周期 通过了解程序的生命周期，而直到编译所在生命周期的哪一个部分。   编译过程与编译器 编译过程是指编写的源代码通过编译器进行编译，最后生成cpu所能识别的二进制形式存在的源代码的过程。而编译器则是指能够使源代码编译生成二进制形式的工具，根据平台不同，工具也不同，如window是XXX.exe可执行程序，unix系统侧不定后缀名，系统根据文件的头部信息来判断。  例如：在屏幕上输出“">
 <meta property="og:type" content="article">
-<meta property="og:title" content="本站开源代码">
-<meta property="og:url" content="http://qincji.gitee.io/2020/12/09/other/001blog/myblog/index.html">
+<meta property="og:title" content="初步认识c&#x2F;c++编译">
+<meta property="og:url" content="http://qincji.gitee.io/2020/12/23/dev/01_c_compile/index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="Gitee page + Hexo {theme：pure 和 图片处理插件：hexo-image-link} + Typory  创建自己仓库，如： （1）github：  自己的项目 https:&#x2F;&#x2F;github.com&#x2F;xhunmon&#x2F; 新建仓库：https:&#x2F;&#x2F;github.com&#x2F;xhunmon&#x2F;xhunmon.github.io 生成的自己博客地址：https:&#x2F;&#x2F;xhunmon.g">
+<meta property="og:description" content="程序的生命周期 通过了解程序的生命周期，而直到编译所在生命周期的哪一个部分。   编译过程与编译器 编译过程是指编写的源代码通过编译器进行编译，最后生成cpu所能识别的二进制形式存在的源代码的过程。而编译器则是指能够使源代码编译生成二进制形式的工具，根据平台不同，工具也不同，如window是XXX.exe可执行程序，unix系统侧不定后缀名，系统根据文件的头部信息来判断。  例如：在屏幕上输出“">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2020-12-09T00:29:36.000Z">
-<meta property="article:modified_time" content="2020-12-19T04:18:16.715Z">
+<meta property="og:image" content="http://qincji.gitee.io/2020/12/23/dev/01_c_compile/compile-life.png">
+<meta property="og:image" content="http://qincji.gitee.io/2020/12/23/dev/01_c_compile/compile-compile.png">
+<meta property="og:image" content="http://qincji.gitee.io/2020/12/23/dev/01_c_compile/compile-puts.jpg">
+<meta property="og:image" content="http://qincji.gitee.io/2020/12/23/dev/01_c_compile/compile-process.png">
+<meta property="og:image" content="http://qincji.gitee.io/2020/12/23/dev/01_c_compile/compile-lib.png">
+<meta property="article:published_time" content="2020-12-23T14:59:35.000Z">
+<meta property="article:modified_time" content="2020-12-23T13:53:53.404Z">
 <meta property="article:author" content="John Doe">
-<meta property="article:tag" content="其他">
+<meta property="article:tag" content="开发">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://qincji.gitee.io/2020/12/23/dev/01_c_compile/compile-life.png">
   <!-- Canonical links -->
-  <link rel="canonical" href="http://qincji.gitee.io/2020/12/09/other/001blog/myblog/index.html">
+  <link rel="canonical" href="http://qincji.gitee.io/2020/12/23/dev/01_c_compile/index.html">
   
     <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
   
@@ -460,21 +466,21 @@
   <div class="slimContent">
     <nav id="toc" class="article-toc">
       <h3 class="toc-title">文章目录</h3>
-      <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#gitee-page"><span class="toc-number">1.</span> <span class="toc-text"> Gitee page + Hexo {theme：pure 和 图片处理插件：hexo-image-link} + Typory</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%9B%E5%BB%BA%E8%87%AA%E5%B7%B1%E4%BB%93%E5%BA%93%E5%A6%82"><span class="toc-number">2.</span> <span class="toc-text"> 创建自己仓库，如：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%85%8B%E9%9A%86%E6%9C%AC%E9%A1%B9%E7%9B%AE"><span class="toc-number">3.</span> <span class="toc-text"> 克隆本项目</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8ide%E6%89%93%E5%BC%80%E9%A1%B9%E7%9B%AE%E5%A6%82clion%E8%BF%9B%E8%A1%8C%E6%9B%B4%E6%94%B9"><span class="toc-number">4.</span> <span class="toc-text"> 使用IDE打开项目（如：clion），进行更改</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%BB%E9%A2%98%E6%9B%B4%E5%A4%9A%E4%BD%BF%E7%94%A8"><span class="toc-number">5.</span> <span class="toc-text"> 主题更多使用</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%9B%BE%E7%89%87%E5%A4%84%E7%90%86%E6%8F%92%E4%BB%B6%E5%AE%89%E8%A3%85"><span class="toc-number">6.</span> <span class="toc-text"> 图片处理插件安装</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E5%91%BD%E4%BB%A4"><span class="toc-number">7.</span> <span class="toc-text"> 使用命令</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#nmp%E4%BB%A3%E7%90%86%E7%9A%84%E4%B8%A4%E7%A7%8D%E6%96%B9%E5%BC%8F"><span class="toc-number">8.</span> <span class="toc-text"> nmp代理的两种方式</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%85%B6%E4%BB%96"><span class="toc-number">9.</span> <span class="toc-text"> 其他</span></a></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A8%8B%E5%BA%8F%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F"><span class="toc-number">1.</span> <span class="toc-text"> 程序的生命周期</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BC%96%E8%AF%91%E8%BF%87%E7%A8%8B%E4%B8%8E%E7%BC%96%E8%AF%91%E5%99%A8"><span class="toc-number">2.</span> <span class="toc-text"> 编译过程与编译器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#gccg%E7%BC%96%E8%AF%91%E5%99%A8%E6%89%A7%E8%A1%8C%E8%BF%87%E7%A8%8B"><span class="toc-number">3.</span> <span class="toc-text"> gcc&#x2F;g++编译器执行过程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%9D%99%E6%80%81%E5%BA%93%E4%B8%8E%E5%8A%A8%E6%80%81%E5%BA%93linux"><span class="toc-number">4.</span> <span class="toc-text"> 静态库与动态库(Linux)</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%9D%99%E6%80%81%E5%BA%93"><span class="toc-number">4.1.</span> <span class="toc-text"> 静态库</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8A%A8%E6%80%81%E5%BA%93"><span class="toc-number">4.2.</span> <span class="toc-text"> 动态库</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8"><span class="toc-number">4.3.</span> <span class="toc-text"> 简单使用</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%87%8D%E8%A6%81%E5%B7%A5%E5%85%B7"><span class="toc-number">5.</span> <span class="toc-text"> 重要工具</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#gccg%E9%87%8D%E8%A6%81%E5%8F%82%E6%95%B0"><span class="toc-number">6.</span> <span class="toc-text"> gcc&#x2F;g++重要参数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%82%E8%80%83"><span class="toc-number">7.</span> <span class="toc-text"> 参考</span></a></li></ol>
     </nav>
   </div>
 </aside>
 
 <main class="main" role="main">
   <div class="content">
-  <article id="post-other/001blog/myblog" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+  <article id="post-dev/01_c_compile" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
     
     <div class="article-header">
       
         
   
     <h1 class="article-title" itemprop="name">
-      本站开源代码
+      初步认识c/c++编译
     </h1>
   
 
@@ -482,15 +488,15 @@
       <div class="article-meta">
         <span class="article-date">
     <i class="icon icon-calendar-check"></i>
-	<a href="/2020/12/09/other/001blog/myblog/" class="article-date">
-	  <time datetime="2020-12-09T00:29:36.000Z" itemprop="datePublished">2020-12-09</time>
+	<a href="/2020/12/23/dev/01_c_compile/" class="article-date">
+	  <time datetime="2020-12-23T14:59:35.000Z" itemprop="datePublished">2020-12-23</time>
 	</a>
 </span>
         
         
   <span class="article-tag">
     <i class="icon icon-tags"></i>
-	<a class="article-tag-link-link" href="/tags/%E5%85%B6%E4%BB%96/" rel="tag">其他</a>
+	<a class="article-tag-link-link" href="/tags/%E5%BC%80%E5%8F%91/" rel="tag">开发</a>
   </span>
 
 
@@ -503,88 +509,232 @@
 	</span>
 
 
-        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2020/12/09/other/001blog/myblog/#comments" class="article-comment-link">评论</a></span>
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2020/12/23/dev/01_c_compile/#comments" class="article-comment-link">评论</a></span>
         
       </div>
     </div>
     <div class="article-entry marked-body" itemprop="articleBody">
       
-        <h4 id="gitee-page"><a class="markdownIt-Anchor" href="#gitee-page"></a> <a target="_blank" rel="noopener" href="https://gitee.com/">Gitee page</a> + <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a> {theme：pure 和 图片处理插件：hexo-image-link} + <a target="_blank" rel="noopener" href="https://typora.io/">Typory</a></h4>
-<h4 id="创建自己仓库如"><a class="markdownIt-Anchor" href="#创建自己仓库如"></a> 创建自己仓库，如：</h4>
-<p>（1）github：</p>
+        <h3 id="程序的生命周期"><a class="markdownIt-Anchor" href="#程序的生命周期"></a> 程序的生命周期</h3>
+<p>通过了解程序的生命周期，而直到编译所在生命周期的哪一个部分。</p>
+<img src="/2020/12/23/dev/01_c_compile/compile-life.png" class="" title="编译过程">
+<h3 id="编译过程与编译器"><a class="markdownIt-Anchor" href="#编译过程与编译器"></a> 编译过程与编译器</h3>
+<p>编译过程是指编写的源代码通过编译器进行编译，最后生成cpu所能识别的二进制形式存在的源代码的过程。而编译器则是指能够使源代码编译生成二进制形式的工具，根据平台不同，工具也不同，如window是XXX.exe可执行程序，unix系统侧不定后缀名，系统根据文件的头部信息来判断。</p>
+<img src="/2020/12/23/dev/01_c_compile/compile-compile.png" class="" title="编译过程">
+<p>例如：在屏幕上输出“VIP会员”，C语言的写法为：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">puts</span>(<span class="string">&quot;VIP会员&quot;</span>);</span><br></pre></td></tr></table></figure>
+<p>二进制的写法为：</p>
+<img src="/2020/12/23/dev/01_c_compile/compile-puts.jpg" class="" title="二进制">
+<h3 id="gccg编译器执行过程"><a class="markdownIt-Anchor" href="#gccg编译器执行过程"></a> gcc/g++编译器执行过程</h3>
+<p>gcc/g++编译器能把一个源文件生成一个执行文件，这是因为该编译器是集成了各种程序（预处理器、汇编器等），这个过程中的工作如下：</p>
+<img src="/2020/12/23/dev/01_c_compile/compile-process.png" class="" title="执行过程">
+<p>例子：编写 <code>test.c</code> 如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;hello world\n&quot;</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在控制台执行命令(-o：为指定输出文件)：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">qincji:build mac$ ls</span><br><span class="line">test.c</span><br><span class="line">qincji:build mac$ gcc -E test.c -o test.i</span><br><span class="line">qincji:build mac$ ls</span><br><span class="line">test.c	test.i</span><br><span class="line">qincji:build mac$ gcc -S test.i -o test.s</span><br><span class="line">qincji:build mac$ ls</span><br><span class="line">test.c	test.i	test.s</span><br><span class="line">qincji:build mac$ gcc -c test.s -o test.o</span><br><span class="line">qincji:build mac$ ls</span><br><span class="line">test.c	test.i	test.o	test.s</span><br><span class="line">qincji:build mac$ gcc test.o -o test</span><br><span class="line">qincji:build mac$ ls</span><br><span class="line">test	test.c	test.i	test.o	test.s</span><br><span class="line">qincji:build mac$ .&#x2F;test </span><br><span class="line">hello world</span><br><span class="line">qincji:build mac$</span><br></pre></td></tr></table></figure>
+<h3 id="静态库与动态库linux"><a class="markdownIt-Anchor" href="#静态库与动态库linux"></a> 静态库与动态库(Linux)</h3>
+<p>动态库与静态库统称为函数库，根据系统不一样，后缀名标识也不一定，如图：</p>
+<img src="/2020/12/23/dev/01_c_compile/compile-lib.png" class="" title="函数库">
+<h4 id="静态库"><a class="markdownIt-Anchor" href="#静态库"></a> 静态库</h4>
+<p>静态库是指编译链接时，把库文件的代码全部加入到可执行文件中，因此生成的文件比较大，但在运行时也就不再需要库文件了。优点：静态库节省时间，不需要再进行动态链接，需要调用的代码直接就在代码内部。</p>
 <ul>
-<li>自己的项目 <a target="_blank" rel="noopener" href="https://github.com/xhunmon/">https://github.com/xhunmon/</a></li>
-<li>新建仓库：<a target="_blank" rel="noopener" href="https://github.com/xhunmon/xhunmon.github.io">https://github.com/xhunmon/xhunmon.github.io</a></li>
-<li>生成的自己博客地址：<a target="_blank" rel="noopener" href="https://xhunmon.github.io">https://xhunmon.github.io</a></li>
+<li><strong>生成静态库</strong><br />
+首先用gcc编绎该文件，生成.o文件，然后ar(archive)工具生成静态库。<code>-fPIC</code>生成与位置无关代码，不用此选项的话，编译后的代码是位置相关的，所以动态载入时，是通过代码拷贝的方式来满足不同进程的需要，而不能达到真正代码段共享的目的。</li>
 </ul>
-<p>（2）gitee：</p>
-<ul>
-<li>自己的项目：<a target="_blank" rel="noopener" href="https://gitee.com/qincji/">https://gitee.com/qincji/</a></li>
-<li>新建仓库：<a target="_blank" rel="noopener" href="https://gitee.com/qincji/qincji/">https://gitee.com/qincji/qincji/</a></li>
-<li>生成的自己博客地址：<a href="https://qincji.gitee.io">https://qincji.gitee.io</a></li>
-</ul>
-<h4 id="克隆本项目"><a class="markdownIt-Anchor" href="#克隆本项目"></a> 克隆<a target="_blank" rel="noopener" href="https://github.com/xhunmon/pageblog">本项目</a></h4>
 <blockquote>
-<p>git clone <a target="_blank" rel="noopener" href="https://github.com/xhunmon/pageblog.git">https://github.com/xhunmon/pageblog.git</a></p>
+<p>gcc -fPIC -c  test.c -o test.o<br />
+ar r libtest.a test.o</p>
 </blockquote>
-<h4 id="使用ide打开项目如clion进行更改"><a class="markdownIt-Anchor" href="#使用ide打开项目如clion进行更改"></a> 使用IDE打开项目（如：clion），进行更改</h4>
-<p>（1）更换根目录的 <code>_config.yml</code> 相关：</p>
+<h4 id="动态库"><a class="markdownIt-Anchor" href="#动态库"></a> 动态库</h4>
+<p>动态库与之相反，在编译链接时并没有把库文件的代码加入到可执行文件中，而是在程序执行时由运行时链接文件加载库。优点：动态库节省空间，如果一个动态库被两个程序调用,那么这个动态库只需要在内存中。<br />
+首先用gcc编绎该文件，生成.o文件，然后再用gcc指定<code>-shared</code>生成动态库。</p>
+<blockquote>
+<p>gcc -fPIC -c test.c -o test.o<br />
+gcc -shared test.o -o <a target="_blank" rel="noopener" href="http://libtest.so">libtest.so</a><br />
+#或者<br />
+gcc -fPIC -shared test.c -o <a target="_blank" rel="noopener" href="http://libtest.so">libtest.so</a></p>
+</blockquote>
+<h4 id="简单使用"><a class="markdownIt-Anchor" href="#简单使用"></a> 简单使用</h4>
+<p>编辑<code>test.c</code>文件如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">output</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;hello world\n&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>编辑<code>main.c</code>文件如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;test.c&quot;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    output();</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><strong>(1)使用动态库</strong><br />
+首页将<code>test.c</code>编译生成动态库<code>libtest.so</code>，然后执行一下命令生成可执行文件：</li>
+</ul>
+<blockquote>
+<p>gcc main.c -L. -ltest -o main</p>
+</blockquote>
+<p>当编译<code>main.c</code>时，需要链接代码中引入的<code>test.c</code>文件，其中，<code>-L.</code>：是指编译的时候，在当前目录搜索库的路径；<code>-ltest</code>：指编译的时候使用的库（详见gcc/g++重要参数）。</p>
+<p>在控制台中演示：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">qincji:build mac$ ls</span><br><span class="line">libtest.so	main.c		test.c		test.o</span><br><span class="line">qincji:build mac$ gcc main.c -L. -ltest -o main</span><br><span class="line">qincji:build mac$ ls</span><br><span class="line">libtest.a	libtest.so	main		main.c		test.c		test.o</span><br><span class="line">qincji:build mac$ .&#x2F;main </span><br><span class="line">hello world</span><br><span class="line">qincji:build mac$</span><br></pre></td></tr></table></figure>
+<ul>
+<li><strong>(2)强制使用静态库</strong></li>
+</ul>
+<blockquote>
+<p>gcc main.c -L. -Wl,-Bstatic  -ltest -Wl,-Bdynamic -o main</p>
+</blockquote>
+<p>其中：<code>-Wl</code> 表示传递给 ld 链接器的参数，通过<code>ld --help</code>查看 ld 帮助文档时。</p>
+<p>注意：我使用MacOs系统时，在查看ld帮助文档(<code>man ld</code>)发现系统并不支持链接动态库，描述如下：</p>
+<blockquote>
+<p>-static     Produces a mach-o file that does not use the dyld.  Only used building the kernel.</p>
+</blockquote>
+<ul>
+<li><strong>(3)将静态库打包到动态库中</strong></li>
+</ul>
+<blockquote>
+<p>gcc -shared -o <a target="_blank" rel="noopener" href="http://libtest.so">libtest.so</a> -Wl,–whole-archive libtest.a -Wl,–no-whole-archive</p>
+</blockquote>
+<p>其中：<code>--whole-archive</code>: 将未使用的静态库符号(函数实现)也链接进动态库；<code>--no-whole-archive</code>: 默认，未使用不链接进入动态库。</p>
+<h3 id="重要工具"><a class="markdownIt-Anchor" href="#重要工具"></a> 重要工具</h3>
+<ul>
+<li><code>ar</code> : 创建或修改archive文件，或从存档文件中提取。如生成静态库，查看详细参数命令： <code>ar --help</code>。</li>
+<li><code>nm</code> : 列出目标文件中的符号（方法），查看动态库方法等，查看详细参数命令： <code>nm --help</code>。</li>
+<li><code>objcopy</code> : 复制和翻译目标文件，查看详细参数命令： <code>objcopy --help</code>。</li>
+<li><code>objdump</code> : 显示目标文件中的信息，查看详细参数命令： <code>objdump --help</code>。</li>
+<li><code>readelf</code> : 显示可执行和可链接格式的文件的信息，查看详细参数命令： <code>readelf --help</code>。</li>
+</ul>
+<h3 id="gccg重要参数"><a class="markdownIt-Anchor" href="#gccg重要参数"></a> gcc/g++重要参数</h3>
 <ul>
 <li>
-<p>url: <a href="http://qincji.gitee.io">http://qincji.gitee.io</a> 改成上面【生成的自己博客地址】</p>
+<p><strong>通过<code>gcc --help</code>命令查看更多。</strong></p>
 </li>
 <li>
-<p>repo: <a target="_blank" rel="noopener" href="https://gitee.com/qincji/qincji.git">https://gitee.com/qincji/qincji.git</a> 改成自己创建好能克隆的仓库地址</p>
+<p><strong>-E</strong><br />
+只激活预处理,这个不生成文件, 你需要把它重定向到一个输出文件里面。</p>
+</li>
+<li>
+<p><strong>-S</strong><br />
+只激活预处理和编译，就是指把文件编译成为汇编代码。</p>
+</li>
+<li>
+<p><strong>-c</strong><br />
+只激活预处理,编译,和汇编,也就是他只把程序做成obj文件</p>
+</li>
+<li>
+<p><strong>-o</strong><br />
+制定目标名称, 默认的时候, gcc 编译出来的文件是 a.out。</p>
+</li>
+<li>
+<p><strong>-fPIC</strong><br />
+生成与位置无关代码。</p>
+</li>
+<li>
+<p><strong>-shared</strong><br />
+生成动态库，使用例子：</p>
 </li>
 </ul>
-<p>（2）更换 <code>themes/pure/_config.yml</code> 相关：</p>
+<blockquote>
+<p>gcc -fPIC -shared test.c -o <a target="_blank" rel="noopener" href="http://libTest.so">libTest.so</a></p>
+</blockquote>
 <ul>
-<li>所有关于用户信息替换成自己的。</li>
+<li><strong>-include file</strong><br />
+包含某个代码,简单来说,就是便以某个文件,需要另一个文件的时候,就可以用它设定,功能就相当于在代码中使用 <code>#include&lt;filename&gt;</code>。例子：</li>
 </ul>
-<p>（3）更换 <code>themes/pure/languages/zh-CN.yml</code> 相关：</p>
+<blockquote>
+<p>gcc test.c -include xxx.h</p>
+</blockquote>
 <ul>
-<li>把中文的配置文件所有关于用户信息替换成自己的。</li>
+<li>
+<p><strong>-Dmacro</strong><br />
+相当于 C 语言中的 <code>#define macro</code></p>
+</li>
+<li>
+<p><strong>-Dmacro=defn</strong><br />
+相当于 C 语言中的 <code>#define macro=defn</code></p>
+</li>
+<li>
+<p><strong>-Umacro</strong><br />
+相当于 C 语言中的 <code>#undef macro</code></p>
+</li>
+<li>
+<p><strong>-undef</strong><br />
+取消对任何非标准宏的定义</p>
+</li>
+<li>
+<p><strong>-Idir</strong><br />
+在你是用 <code>#include &quot;file&quot;</code> 的时候, gcc/g++ 会先在当前目录查找你所制定的头文件, 如果没有找到, 他回到默认的头文件目录找, 如果使用 -I 制定了目录,他会先在你所制定的目录查找, 然后再按常规的顺序去找。<br />
+对于 #include<file>, gcc/g++ 会到 -I 制定的目录查找, 查找不到, 然后将到系统的默认的头文件目录查找 。</p>
+</li>
+<li>
+<p><strong>-I-</strong><br />
+就是取消前一个参数的功能, 所以一般在 -Idir 之后使用。</p>
+</li>
+<li>
+<p><strong>-idirafter dir</strong><br />
+在 -I 的目录里面查找失败, 讲到这个目录里面查找。</p>
+</li>
+<li>
+<p><strong>-iprefix prefix 、-iwithprefix dir</strong><br />
+一般一起使用, 当 -I 的目录查找失败, 会到 prefix+dir 下查找</p>
+</li>
+<li>
+<p><strong>-M</strong><br />
+生成文件关联的信息。包含目标文件所依赖的所有源代码你可以用 <code>gcc -M test.c</code> 来测试一下，很简单。</p>
+</li>
+<li>
+<p><strong>-MM</strong><br />
+和上面的那个一样，但是它将忽略由 #include<file> 造成的依赖关系。</p>
+</li>
+<li>
+<p><strong>-MD</strong><br />
+和-M相同，但是输出将导入到.d的文件里面</p>
+</li>
+<li>
+<p><strong>-MMD</strong><br />
+和 -MM 相同，但是输出将导入到 .d 的文件里面。</p>
+</li>
+<li>
+<p><strong>-Wa,option</strong><br />
+此选项传递 option 给汇编程序; 如果 option 中间有逗号, 就将 option 分成多个选项, 然 后传递给会汇编程序。</p>
+</li>
+<li>
+<p><strong>-Wl.option</strong><br />
+此选项传递 option 给连接程序; 如果 option 中间有逗号, 就将 option 分成多个选项, 然 后传递给会连接程序。</p>
+</li>
+<li>
+<p><strong>-llibrary</strong><br />
+指编译的时候使用的库，library是指动态库或静态库的名称。如：<a target="_blank" rel="noopener" href="http://liblibrary.xn--aliblibrary-kz8v.so">liblibrary.a或liblibrary.so</a>，系统会自动加上lib前缀和.a(.so)后缀。</p>
+</li>
+<li>
+<p><strong>-Ldir</strong><br />
+指编译的时候，搜索库的路径。比如你自己的库，可以用它指定目录，不然编译器将只在标准库的目录找。这个dir就是目录的名称。</p>
+</li>
+<li>
+<p><strong>-O0 、-O1 、-O2 、-O3</strong><br />
+编译器的优化选项的 4 个级别，-O0 表示没有优化, -O1 为默认值，-O3 优化级别最高。</p>
+</li>
+<li>
+<p><strong>-g</strong><br />
+只是编译器，在编译的时候，产生调试信息。</p>
+</li>
+<li>
+<p><strong>-gstabs</strong><br />
+此选项以 stabs 格式声称调试信息, 但是不包括 gdb 调试信息。</p>
+</li>
+<li>
+<p><strong>-gstabs+</strong><br />
+此选项以 stabs 格式声称调试信息, 并且包含仅供 gdb 使用的额外调试信息。</p>
+</li>
+<li>
+<p><strong>-ggdb</strong><br />
+此选项将尽可能的生成 gdb 的可以使用的调试信息。</p>
+</li>
+<li>
+<p><strong>-static</strong><br />
+此选项将禁止使用动态库，所以，编译出来的东西，一般都很大，也不需要什么动态连接库，就可以运行。</p>
+</li>
+<li>
+<p><strong>-share</strong><br />
+此选项将尽量使用动态库，所以生成文件比较小，但是需要系统由动态库。</p>
+</li>
 </ul>
-<p>（4）更换 <code>themes/pure/source</code> 相关：</p>
+<h3 id="参考"><a class="markdownIt-Anchor" href="#参考"></a> 参考</h3>
 <ul>
-<li>把图片资源换成自己的。</li>
-</ul>
-<h4 id="主题更多使用"><a class="markdownIt-Anchor" href="#主题更多使用"></a> 主题更多使用</h4>
-<p>项目中Hexo theme主题来自 <a target="_blank" rel="noopener" href="https://github.com/cofess/hexo-theme-pure">pure</a> ，<a target="_blank" rel="noopener" href="https://github.com/cofess/hexo-theme-pure/blob/master/README.cn.md">更多配置以及API使用请前往官方文档</a> 。</p>
-<h4 id="图片处理插件安装"><a class="markdownIt-Anchor" href="#图片处理插件安装"></a> <a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/1600295">图片处理插件安装</a></h4>
-<h4 id="使用命令"><a class="markdownIt-Anchor" href="#使用命令"></a> 使用命令</h4>
-<p>（1）删除自动生成的文件</p>
-<blockquote>
-<p>hexo clean</p>
-</blockquote>
-<p>（2）生成网页等文件</p>
-<blockquote>
-<p>hexo g</p>
-</blockquote>
-<p>（3）开启预览服务，浏览器中输入：<a target="_blank" rel="noopener" href="http://localhost:4000/">http://localhost:4000/</a></p>
-<blockquote>
-<p>hexo s</p>
-</blockquote>
-<p>（4）更新到github/gitee仓库</p>
-<blockquote>
-<p>hexo d</p>
-</blockquote>
-<p>（5）如果是gitee仓库必须去当前项目的gitee page页面手动更新</p>
-<h4 id="nmp代理的两种方式"><a class="markdownIt-Anchor" href="#nmp代理的两种方式"></a> nmp代理的两种方式</h4>
-<p>(1）方式一：安装cnpm镜像代理；安装后使用 cnpm命令代替cpm</p>
-<blockquote>
-<p>npm install -g cnpm --registry=https://registry.npm.taobao.org</p>
-</blockquote>
-<blockquote>
-<p>cnpm install -g @angular/cli</p>
-</blockquote>
-<p>（2）方式二：</p>
-<blockquote>
-<p>npm config set registry <a target="_blank" rel="noopener" href="https://registry.npm.taobao.org">https://registry.npm.taobao.org</a></p>
-</blockquote>
-<h4 id="其他"><a class="markdownIt-Anchor" href="#其他"></a> 其他</h4>
-<ul>
-<li>搭建过程请前往：<a href="https://qincji.gitee.io/2020/12/04/other/001blog/notes/">我的博客搭建笔记</a></li>
+<li><a target="_blank" rel="noopener" href="http://c.biancheng.net/view/450.html">http://c.biancheng.net/view/450.html</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.runoob.com/w3cnote/gcc-parameter-detail.html">https://www.runoob.com/w3cnote/gcc-parameter-detail.html</a></li>
+<li><a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/1343895">https://cloud.tencent.com/developer/article/1343895</a></li>
 </ul>
 
       
@@ -595,7 +745,7 @@
     
     <li class="post-copyright-link hidden-xs">
       <strong>本文链接：</strong>
-      <a href="http://qincji.gitee.io/2020/12/09/other/001blog/myblog/" title="本站开源代码" target="_blank" rel="external">http://qincji.gitee.io/2020/12/09/other/001blog/myblog/</a>
+      <a href="http://qincji.gitee.io/2020/12/23/dev/01_c_compile/" title="初步认识c/c++编译" target="_blank" rel="external">http://qincji.gitee.io/2020/12/23/dev/01_c_compile/</a>
     </li>
     
     <li class="post-copyright-license">
@@ -641,13 +791,9 @@
   
   <ul class="pager pull-left">
     
-    <li class="prev">
-      <a href="/2020/12/12/ffmpeg/01_configure_help/" title="ffmpeg configure配置选项 (转载)"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;上一篇</span></a>
-    </li>
-    
     
     <li class="next">
-      <a href="/2020/12/08/rtmppush/outline/" title="直播推流全过程：总纲"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+      <a href="/2020/12/17/ffmpeg/03_build_ffmpeg/" title="编译ffmpeg4.2.2"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
     </li>
     
     
