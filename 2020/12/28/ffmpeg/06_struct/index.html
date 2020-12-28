@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>FFmpeg重要结构体（转自雷神） | 秦城季</title>
+  <meta name="description" content="本文主要整合FFMPEG中最关键的结构体之间的关系 系列文章，以便于后面学习以及资料的查阅。  结构体间联系   a)解协议（http,rtsp,rtmp,mms） AVIOContext，URLProtocol，URLContext主要存储视音频使用的协议的类型以及状态。URLProtocol存储输入视音频使用的封装格式。每种协议都对应一个URLProtocol结构。（注意：FFMPEG中文件也">
+<meta property="og:type" content="article">
+<meta property="og:title" content="FFmpeg重要结构体（转自雷神）">
+<meta property="og:url" content="http://qincji.gitee.io/2020/12/28/ffmpeg/06_struct/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="本文主要整合FFMPEG中最关键的结构体之间的关系 系列文章，以便于后面学习以及资料的查阅。  结构体间联系   a)解协议（http,rtsp,rtmp,mms） AVIOContext，URLProtocol，URLContext主要存储视音频使用的协议的类型以及状态。URLProtocol存储输入视音频使用的封装格式。每种协议都对应一个URLProtocol结构。（注意：FFMPEG中文件也">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://qincji.gitee.io/2020/12/28/ffmpeg/06_struct/struct-relationship.jpeg">
+<meta property="article:published_time" content="2020-12-28T14:20:35.000Z">
+<meta property="article:modified_time" content="2020-12-28T10:08:28.841Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="ffmpeg">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://qincji.gitee.io/2020/12/28/ffmpeg/06_struct/struct-relationship.jpeg">
+  <!-- Canonical links -->
+  <link rel="canonical" href="http://qincji.gitee.io/2020/12/28/ffmpeg/06_struct/index.html">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 5.2.0"></head>
+
+
+<body class="main-center" itemscope itemtype="http://schema.org/WebPage">
+<!-- 如果是life就不要-->
+<!--   <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://qincji.gitee.io" target="_blank">
+          <img class="img-circle img-rotate" src="/images/avatar.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">秦城季</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">Android &amp; 音视频</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> 中国·广州</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav menu-highlight">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">首页</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-life">
+          <a href="/life">
+            
+            <i class="icon icon-book-fill"></i>
+            
+            <span class="menu-title">生活</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">归档</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">标签</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-repository">
+          <a href="/repository">
+            
+            <i class="icon icon-project"></i>
+            
+            <span class="menu-title">项目</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="icon icon-friendship"></i>
+            
+            <span class="menu-title">友链</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/xhunmon" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+ -->
+  
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://qincji.gitee.io" target="_blank">
+          <img class="img-circle img-rotate" src="/images/avatar.jpg" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">秦城季</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">Android &amp; 音视频</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> 中国·广州</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="搜索" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="想要查找什么..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav menu-highlight">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">首页</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-life">
+          <a href="/life">
+            
+            <i class="icon icon-book-fill"></i>
+            
+            <span class="menu-title">生活</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">归档</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">标签</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-repository">
+          <a href="/repository">
+            
+            <i class="icon icon-project"></i>
+            
+            <span class="menu-title">项目</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="icon icon-friendship"></i>
+            
+            <span class="menu-title">友链</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">关于</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/xhunmon" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">公告</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>5G时代将音视频推向新高度！欢迎共同谈论与学习！</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ffmpeg/" rel="tag">ffmpeg</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%85%B6%E4%BB%96/" rel="tag">其他</a><span class="tag-list-count">2</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%BC%80%E5%8F%91/" rel="tag">开发</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B/" rel="tag">直播推流全过程</a><span class="tag-list-count">7</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/ffmpeg/" style="font-size: 13.67px;">ffmpeg</a> <a href="/tags/%E5%85%B6%E4%BB%96/" style="font-size: 13.33px;">其他</a> <a href="/tags/%E5%BC%80%E5%8F%91/" style="font-size: 13px;">开发</a> <a href="/tags/%E7%9B%B4%E6%92%AD%E6%8E%A8%E6%B5%81%E5%85%A8%E8%BF%87%E7%A8%8B/" style="font-size: 14px;">直播推流全过程</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">十二月 2020</a><span class="archive-list-count">16</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2020/12/28/ffmpeg/06_struct/" class="title">FFmpeg重要结构体（转自雷神）</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-12-28T14:20:35.000Z" itemprop="datePublished">2020-12-28</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2020/12/27/ffmpeg/05_source/" class="title">使用Clion阅读FFmpeg源码（支持跳转）</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-12-27T13:20:35.000Z" itemprop="datePublished">2020-12-27</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2020/12/24/ffmpeg/04_import_ffmpeg/" class="title">FFmpeg导入到Clion（MacOS）</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-12-24T05:30:35.000Z" itemprop="datePublished">2020-12-24</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2020/12/23/dev/01_c_compile/" class="title">初步认识c/c++编译</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-12-23T14:59:35.000Z" itemprop="datePublished">2020-12-23</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                
+              </p>
+              <p class="item-title">
+                <a href="/2020/12/17/ffmpeg/03_build_ffmpeg/" class="title">编译ffmpeg4.2.2</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-12-17T05:30:35.000Z" itemprop="datePublished">2020-12-17</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">文章目录</h3>
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BB%93%E6%9E%84%E4%BD%93%E9%97%B4%E8%81%94%E7%B3%BB"><span class="toc-number">1.</span> <span class="toc-text"> 结构体间联系</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#a%E8%A7%A3%E5%8D%8F%E8%AE%AEhttprtsprtmpmms"><span class="toc-number">1.1.</span> <span class="toc-text"> a)解协议（http,rtsp,rtmp,mms）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#b%E8%A7%A3%E5%B0%81%E8%A3%85flvavirmvbmp4"><span class="toc-number">1.2.</span> <span class="toc-text"> b)解封装（flv,avi,rmvb,mp4）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#c%E8%A7%A3%E7%A0%81h264mpeg2aacmp3"><span class="toc-number">1.3.</span> <span class="toc-text"> c)解码（h264,mpeg2,aac,mp3）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#d%E5%AD%98%E6%95%B0%E6%8D%AE"><span class="toc-number">1.4.</span> <span class="toc-text"> d)存数据</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#avframe-libavutilframeh"><span class="toc-number">2.</span> <span class="toc-text"> AVFrame （libavutil&#x2F;frame.h）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#avformatcontext-libavformatavformath"><span class="toc-number">3.</span> <span class="toc-text"> AVFormatContext （libavformat&#x2F;avformat.h）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#avstream-libavformatavformath"><span class="toc-number">4.</span> <span class="toc-text"> AVStream （libavformat&#x2F;avformat.h）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#aviocontext-libavformatavioh"><span class="toc-number">5.</span> <span class="toc-text"> AVIOContext （libavformat&#x2F;avio.h）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#avcodeccontext-libavcodecavcodech"><span class="toc-number">6.</span> <span class="toc-text"> AVCodecContext （libavcodec&#x2F;avcodec.h）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#avcodec-libavcodecavcodech"><span class="toc-number">7.</span> <span class="toc-text"> AVCodec （libavcodec&#x2F;avcodec.h）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#avpacket-libavcodecavcodech"><span class="toc-number">8.</span> <span class="toc-text"> AVPacket （libavcodec&#x2F;avcodec.h）</span></a></li></ol>
+    </nav>
+  </div>
+</aside>
+
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-ffmpeg/06_struct" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      FFmpeg重要结构体（转自雷神）
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2020/12/28/ffmpeg/06_struct/" class="article-date">
+	  <time datetime="2020-12-28T14:20:35.000Z" itemprop="datePublished">2020-12-28</time>
+	</a>
+</span>
+        
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link-link" href="/tags/ffmpeg/" rel="tag">ffmpeg</a>
+  </span>
+
+
+        
+	<span class="article-read hidden-xs">
+	    <i class="icon icon-eye-fill" aria-hidden="true"></i>
+	    <span id="busuanzi_container_page_pv">
+			<span id="busuanzi_value_page_pv">0</span>
+		</span>
+	</span>
+
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2020/12/28/ffmpeg/06_struct/#comments" class="article-comment-link">评论</a></span>
+        
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <p>本文主要整合<a target="_blank" rel="noopener" href="https://blog.csdn.net/leixiaohua1020/article/details/11693997">FFMPEG中最关键的结构体之间的关系</a> 系列文章，以便于后面学习以及资料的查阅。</p>
+<h3 id="结构体间联系"><a class="markdownIt-Anchor" href="#结构体间联系"></a> 结构体间联系</h3>
+<img src="/2020/12/28/ffmpeg/06_struct/struct-relationship.jpeg" class="" title="结构体间联系">
+<h4 id="a解协议httprtsprtmpmms"><a class="markdownIt-Anchor" href="#a解协议httprtsprtmpmms"></a> a)解协议（http,rtsp,rtmp,mms）</h4>
+<p>AVIOContext，URLProtocol，URLContext主要存储视音频使用的协议的类型以及状态。URLProtocol存储输入视音频使用的封装格式。每种协议都对应一个URLProtocol结构。（注意：FFMPEG中文件也被当做一种协议“file”）</p>
+<h4 id="b解封装flvavirmvbmp4"><a class="markdownIt-Anchor" href="#b解封装flvavirmvbmp4"></a> b)解封装（flv,avi,rmvb,mp4）</h4>
+<p>AVFormatContext主要存储视音频封装格式中包含的信息；AVInputFormat存储输入视音频使用的封装格式。每种视音频封装格式都对应一个AVInputFormat 结构。</p>
+<h4 id="c解码h264mpeg2aacmp3"><a class="markdownIt-Anchor" href="#c解码h264mpeg2aacmp3"></a> c)解码（h264,mpeg2,aac,mp3）</h4>
+<p>每个AVStream存储一个视频/音频流的相关数据；每个AVStream对应一个AVCodecContext，存储该视频/音频流使用解码方式的相关数据；每个AVCodecContext中对应一个AVCodec，包含该视频/音频对应的解码器。每种解码器都对应一个AVCodec结构。</p>
+<h4 id="d存数据"><a class="markdownIt-Anchor" href="#d存数据"></a> d)存数据</h4>
+<p>视频的话，每个结构一般是存一帧；音频可能有好几帧;<br />
+解码前数据：AVPacket<br />
+解码后数据：AVFrame</p>
+<h3 id="avframe-libavutilframeh"><a class="markdownIt-Anchor" href="#avframe-libavutilframeh"></a> AVFrame （libavutil/frame.h）</h3>
+<p>AVFrame是包含码流参数较多的结构体。AVFrame结构体一般用于存储原始数据（即非压缩数据，例如对视频来说是YUV，RGB，对音频来说是PCM），此外还包含了一些相关的信息。比如说，解码的时候存储了宏块类型表，QP表，运动矢量表等数据。编码的时候也存储了相关的数据。因此在使用FFMPEG进行码流分析的时候，AVFrame是一个很重要的结构体。</p>
+<ul>
+<li><code>#define AV_NUM_DATA_POINTERS 8</code></li>
+<li><strong>uint8_t *data[AV_NUM_DATA_POINTERS]</strong>：解码后原始数据（对视频来说是YUV、RGB，对音频来说是PCM）</li>
+<li><strong>int linesize[AV_NUM_DATA_POINTERS]</strong>：data中“一行”数据的大小。注意：未必等于图像的宽，一般大于图像的宽。</li>
+<li><strong>int width, height</strong>：视频帧宽和高（1920x1080,1280x720…）</li>
+<li><strong>int nb_samples</strong>：音频的一个AVFrame中可能包含多个音频帧，在此标记包含了几个</li>
+<li><strong>int format</strong>：解码后原始数据类型（YUV420，YUV422，RGB24…），未知或未设置为-1。</li>
+<li><strong>int key_frame</strong>：是否是关键帧</li>
+<li><strong>enum AVPictureType pict_type</strong>：帧类型（I,B,P…）</li>
+<li><strong>AVRational sample_aspect_ratio</strong>：宽高比（16:9，4:3…）</li>
+<li><strong>int64_t pts</strong>：显示时间戳</li>
+<li><strong>int coded_picture_number</strong>：编码帧序号</li>
+<li><strong>int display_picture_number</strong>：显示帧序号</li>
+<li><strong>int8_t *qscale_table</strong>：QP表</li>
+<li><strong>int channels</strong>：音频通道数</li>
+<li><strong>int interlaced_frame</strong>：是否是隔行扫描</li>
+</ul>
+<p>其中，sample_aspect_ratio宽高比是一个分数，<strong>AVRational</strong>结构体：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">AVRational</span>&#123;</span></span><br><span class="line">    <span class="keyword">int</span> num; <span class="comment">///&lt; Numerator 分子</span></span><br><span class="line">    <span class="keyword">int</span> den; <span class="comment">///&lt; Denominator 分母</span></span><br><span class="line">&#125; AVRational;</span><br></pre></td></tr></table></figure>
+<p>QP表 <strong>qscale_table</strong> :<br />
+QP表指向一块内存，里面存储的是每个宏块的QP值。宏块的标号是从左往右，一行一行的来的。每个宏块对应1个QP。qscale_table[0]就是第1行第1列宏块的QP值；qscale_table[1]就是第1行第2列宏块的QP值；qscale_table[2]就是第1行第3列宏块的QP值。以此类推…<br />
+宏块的个数用下式计算(注：宏块大小是16x16的)，每行宏块数：</p>
+<blockquote>
+<p>int mb_stride = pCodecCtx-&gt;width/16+1</p>
+</blockquote>
+<p>宏块的总数：</p>
+<blockquote>
+<p>int mb_sum = ((pCodecCtx-&gt;height+15)&gt;&gt;4)*(pCodecCtx-&gt;width/16+1)</p>
+</blockquote>
+<h3 id="avformatcontext-libavformatavformath"><a class="markdownIt-Anchor" href="#avformatcontext-libavformatavformath"></a> AVFormatContext （libavformat/avformat.h）</h3>
+<p>在使用FFMPEG进行开发的时候，AVFormatContext是一个贯穿始终的数据结构，很多函数都要用到它作为参数。它是FFMPEG解封装（flv，mp4，rmvb，avi）功能的结构体。（在这里考虑解码的情况）</p>
+<ul>
+<li><strong>AVInputFormat *iformat</strong>：输入容器格式数据</li>
+<li><strong>AVOutputFormat *oformat</strong>：输出容器格式数据</li>
+<li><strong>AVIOContext *pb</strong>：输入数据的缓存</li>
+<li><strong>AVIOContext *pb</strong>：输入数据的缓存</li>
+<li><strong>unsigned int nb_streams</strong>：视音频流的个数</li>
+<li><strong>AVStream **streams</strong>：视音频流</li>
+<li><strong>char filename[1024]</strong>：文件名</li>
+<li><strong>char *url</strong>：输入/输出URL</li>
+<li><strong>int64_t duration</strong>：时长（单位：微秒us，转换为秒需要除以1000000）</li>
+<li><strong>int bit_rate</strong>：比特率（单位bps，转换为kbps需要除以1000）</li>
+<li><strong>int packet_size</strong>：packet的长度</li>
+<li><strong>AVDictionary *metadata</strong>：元数据</li>
+</ul>
+<p>其中，通过av_dict_get()函数获得视频的元数据。封装在了AVDictionary和AVDictionaryEntry：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">AVDictionary</span> &#123;</span></span><br><span class="line">    <span class="keyword">int</span> count;</span><br><span class="line">    AVDictionaryEntry *elems;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">AVDictionaryEntry</span> &#123;</span></span><br><span class="line">    <span class="keyword">char</span> *key;</span><br><span class="line">    <span class="keyword">char</span> *value;</span><br><span class="line">&#125; AVDictionaryEntry;</span><br></pre></td></tr></table></figure>
+<h3 id="avstream-libavformatavformath"><a class="markdownIt-Anchor" href="#avstream-libavformatavformath"></a> AVStream （libavformat/avformat.h）</h3>
+<p>AVStream是存储每一个视频/音频流信息的结构体。</p>
+<ul>
+<li><strong>int index</strong>：标识该视频/音频流(AVFormatContext中)</li>
+<li><strong>AVCodecContext *codec</strong>：指向该视频/音频流的AVCodecContext（它们是一一对应的关系）</li>
+<li><strong>AVRational time_base</strong>：时基。通过该值可以把PTS，DTS转化为真正的时间。FFMPEG其他结构体中也有这个字段，但是根据我的经验，只有AVStream中的time_base是可用的。PTS*time_base=真正的时间</li>
+<li><strong>int64_t duration</strong>：该视频/音频流长度</li>
+<li><strong>int64_t nb_frames</strong>：该流中已知时的帧数</li>
+<li><strong>AVDictionary *metadata</strong>：元数据信息</li>
+<li><strong>AVRational avg_frame_rate</strong>：帧率（注：对视频来说，这个挺重要的）</li>
+<li><strong>AVPacket attached_pic</strong>：附带的图片。比如说一些MP3，AAC音频文件附带的专辑封面。</li>
+</ul>
+<h3 id="aviocontext-libavformatavioh"><a class="markdownIt-Anchor" href="#aviocontext-libavformatavioh"></a> AVIOContext （libavformat/avio.h）</h3>
+<p>AVIOContext是FFMPEG管理输入输出数据的结构体</p>
+<ul>
+<li><strong>unsigned char *buffer</strong>：缓存开始位置</li>
+<li><strong>int buffer_size</strong>：缓存大小（默认32768）</li>
+<li><strong>unsigned char *buf_ptr</strong>：当前指针读取到的位置</li>
+<li><strong>unsigned char *buf_end</strong>：缓存结束的位置</li>
+<li>*<em>void <em>opaque</em></em>：URLContext结构体</li>
+</ul>
+<p>其中，<strong>opaque</strong>指向的URLContext：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">URLContext</span> &#123;</span></span><br><span class="line">    <span class="keyword">const</span> AVClass *av_class;    <span class="comment">/**&lt; information for av_log(). Set by url_open(). */</span></span><br><span class="line">    <span class="keyword">const</span> <span class="class"><span class="keyword">struct</span> <span class="title">URLProtocol</span> *<span class="title">prot</span>;</span></span><br><span class="line">    <span class="keyword">void</span> *priv_data;</span><br><span class="line">    <span class="keyword">char</span> *filename;             <span class="comment">/**&lt; specified URL */</span></span><br><span class="line">    <span class="keyword">int</span> flags;</span><br><span class="line">    <span class="keyword">int</span> max_packet_size;        <span class="comment">/**&lt; if non zero, the stream is packetized with this max packet size */</span></span><br><span class="line">    <span class="keyword">int</span> is_streamed;            <span class="comment">/**&lt; true if streamed (no seek possible), default = false */</span></span><br><span class="line">    <span class="keyword">int</span> is_connected;</span><br><span class="line">    AVIOInterruptCB interrupt_callback;</span><br><span class="line">    <span class="keyword">int64_t</span> rw_timeout;         <span class="comment">/**&lt; maximum time to wait for (network) read/write operation completion, in mcs */</span></span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">char</span> *protocol_whitelist;</span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">char</span> *protocol_blacklist;</span><br><span class="line">    <span class="keyword">int</span> min_packet_size;        <span class="comment">/**&lt; if non zero, the stream is packetized with this min packet size */</span></span><br><span class="line">&#125; URLContext;</span><br></pre></td></tr></table></figure>
+<p>URLContext结构体中还有一个结构体URLProtocol。注：每种协议（rtp，rtmp，file等）对应一个URLProtocol。这个结构体也不在FFMPEG提供的头文件中。从FFMPEG源代码中翻出其的定义：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">URLProtocol</span> &#123;</span></span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">char</span> *name;</span><br><span class="line">    <span class="keyword">int</span>     (*url_open)( URLContext *h, <span class="keyword">const</span> <span class="keyword">char</span> *url, <span class="keyword">int</span> flags);</span><br><span class="line">    <span class="keyword">int</span>     (*url_open2)(URLContext *h, <span class="keyword">const</span> <span class="keyword">char</span> *url, <span class="keyword">int</span> flags, AVDictionary **options);</span><br><span class="line">    <span class="keyword">int</span>     (*url_accept)(URLContext *s, URLContext **c);</span><br><span class="line">    <span class="keyword">int</span>     (*url_handshake)(URLContext *c);</span><br><span class="line">    <span class="keyword">int</span>     (*url_read)( URLContext *h, <span class="keyword">unsigned</span> <span class="keyword">char</span> *buf, <span class="keyword">int</span> size);</span><br><span class="line">    <span class="keyword">int</span>     (*url_write)(URLContext *h, <span class="keyword">const</span> <span class="keyword">unsigned</span> <span class="keyword">char</span> *buf, <span class="keyword">int</span> size);</span><br><span class="line">    <span class="keyword">int64_t</span> (*url_seek)( URLContext *h, <span class="keyword">int64_t</span> pos, <span class="keyword">int</span> whence);</span><br><span class="line">    <span class="keyword">int</span>     (*url_close)(URLContext *h);</span><br><span class="line">    <span class="keyword">int</span> (*url_read_pause)(URLContext *h, <span class="keyword">int</span> pause);</span><br><span class="line">    <span class="keyword">int64_t</span> (*url_read_seek)(URLContext *h, <span class="keyword">int</span> stream_index,</span><br><span class="line">                             <span class="keyword">int64_t</span> timestamp, <span class="keyword">int</span> flags);</span><br><span class="line">    <span class="keyword">int</span> (*url_get_file_handle)(URLContext *h);</span><br><span class="line">    <span class="keyword">int</span> (*url_get_multi_file_handle)(URLContext *h, <span class="keyword">int</span> **handles,</span><br><span class="line">                                     <span class="keyword">int</span> *numhandles);</span><br><span class="line">    <span class="keyword">int</span> (*url_get_short_seek)(URLContext *h);</span><br><span class="line">    <span class="keyword">int</span> (*url_shutdown)(URLContext *h, <span class="keyword">int</span> flags);</span><br><span class="line">    <span class="keyword">int</span> priv_data_size;</span><br><span class="line">    <span class="keyword">const</span> AVClass *priv_data_class;</span><br><span class="line">    <span class="keyword">int</span> flags;</span><br><span class="line">    <span class="keyword">int</span> (*url_check)(URLContext *h, <span class="keyword">int</span> mask);</span><br><span class="line">    <span class="keyword">int</span> (*url_open_dir)(URLContext *h);</span><br><span class="line">    <span class="keyword">int</span> (*url_read_dir)(URLContext *h, AVIODirEntry **next);</span><br><span class="line">    <span class="keyword">int</span> (*url_close_dir)(URLContext *h);</span><br><span class="line">    <span class="keyword">int</span> (*url_delete)(URLContext *h);</span><br><span class="line">    <span class="keyword">int</span> (*url_move)(URLContext *h_src, URLContext *h_dst);</span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">char</span> *default_whitelist;</span><br><span class="line">&#125; URLProtocol;</span><br></pre></td></tr></table></figure>
+<h3 id="avcodeccontext-libavcodecavcodech"><a class="markdownIt-Anchor" href="#avcodeccontext-libavcodecavcodech"></a> AVCodecContext （libavcodec/avcodec.h）</h3>
+<p>AVCodecContext是包含变量较多的结构体（感觉差不多是变量最多的结构体）。本文将会大概分析一下该结构体里每个变量的含义和作用。（这里只考虑解码）</p>
+<ul>
+<li><strong>enum AVMediaType codec_type</strong>：编解码器的类型（视频，音频，字幕…）</li>
+<li><strong>struct AVCodec *codec</strong>：采用的解码器AVCodec（H.264,MPEG2…）</li>
+<li><strong>int bit_rate</strong>：平均比特率</li>
+<li><strong>uint8_t *extradata; int extradata_size</strong>：针对特定编码器包含的附加信息（例如对于H.264解码器来说，存储SPS，PPS等）</li>
+<li><strong>AVRational time_base</strong>：根据该参数，可以把PTS转化为实际的时间（单位为秒s）</li>
+<li><strong>int width, height</strong>：如果是视频的话，代表宽和高</li>
+<li><strong>int refs</strong>：运动估计参考帧的个数（H.264的话会有多帧，MPEG2这类的一般就没有了）</li>
+<li><strong>int sample_rate</strong>：采样率（音频）</li>
+<li><strong>int channels</strong>：声道数（音频）</li>
+<li><strong>enum AVSampleFormat sample_fmt</strong>：采样格式</li>
+<li><strong>int frame_size</strong>：帧中每个通道的采样率（音频）</li>
+<li><strong>int profile</strong>：型（H.264里面就有，其他编码标准应该也有）</li>
+<li><strong>int level</strong>：级（和profile差不太多）</li>
+</ul>
+<p>其中，1.编解码器类型：<strong>codec_type</strong></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">enum</span> <span class="title">AVMediaType</span> &#123;</span></span><br><span class="line">    AVMEDIA_TYPE_UNKNOWN = <span class="number">-1</span>,  <span class="comment">///&lt; Usually treated as AVMEDIA_TYPE_DATA</span></span><br><span class="line">    AVMEDIA_TYPE_VIDEO,</span><br><span class="line">    AVMEDIA_TYPE_AUDIO,</span><br><span class="line">    AVMEDIA_TYPE_DATA,          <span class="comment">///&lt; Opaque data information usually continuous</span></span><br><span class="line">    AVMEDIA_TYPE_SUBTITLE,</span><br><span class="line">    AVMEDIA_TYPE_ATTACHMENT,    <span class="comment">///&lt; Opaque data information usually sparse</span></span><br><span class="line">    AVMEDIA_TYPE_NB</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>2.在FFMPEG中音频采样格式：<strong>sample_fmt</strong></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">enum</span> <span class="title">AVSampleFormat</span> &#123;</span></span><br><span class="line">    AV_SAMPLE_FMT_NONE = <span class="number">-1</span>,</span><br><span class="line">    AV_SAMPLE_FMT_U8,          <span class="comment">///&lt; unsigned 8 bits</span></span><br><span class="line">    AV_SAMPLE_FMT_S16,         <span class="comment">///&lt; signed 16 bits</span></span><br><span class="line">    AV_SAMPLE_FMT_S32,         <span class="comment">///&lt; signed 32 bits</span></span><br><span class="line">    AV_SAMPLE_FMT_FLT,         <span class="comment">///&lt; float</span></span><br><span class="line">    AV_SAMPLE_FMT_DBL,         <span class="comment">///&lt; double</span></span><br><span class="line"></span><br><span class="line">    AV_SAMPLE_FMT_U8P,         <span class="comment">///&lt; unsigned 8 bits, planar</span></span><br><span class="line">    AV_SAMPLE_FMT_S16P,        <span class="comment">///&lt; signed 16 bits, planar</span></span><br><span class="line">    AV_SAMPLE_FMT_S32P,        <span class="comment">///&lt; signed 32 bits, planar</span></span><br><span class="line">    AV_SAMPLE_FMT_FLTP,        <span class="comment">///&lt; float, planar</span></span><br><span class="line">    AV_SAMPLE_FMT_DBLP,        <span class="comment">///&lt; double, planar</span></span><br><span class="line">    AV_SAMPLE_FMT_S64,         <span class="comment">///&lt; signed 64 bits</span></span><br><span class="line">    AV_SAMPLE_FMT_S64P,        <span class="comment">///&lt; signed 64 bits, planar</span></span><br><span class="line"></span><br><span class="line">    AV_SAMPLE_FMT_NB           <span class="comment">///&lt; Number of sample formats. DO NOT USE if linking dynamically</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>3.FFMPEG中型：<strong>profile</strong></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> FF_PROFILE_UNKNOWN -99</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> FF_PROFILE_RESERVED -100</span></span><br><span class="line"> </span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> FF_PROFILE_AAC_MAIN 0</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> FF_PROFILE_AAC_LOW  1</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> FF_PROFILE_AAC_SSR  2</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> FF_PROFILE_AAC_LTP  3</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> FF_PROFILE_AAC_HE   4</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> FF_PROFILE_AAC_HE_V2 28</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> FF_PROFILE_AAC_LD   22</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> FF_PROFILE_AAC_ELD  38</span></span><br><span class="line"> </span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> FF_PROFILE_DTS         20</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> FF_PROFILE_DTS_ES      30</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> FF_PROFILE_DTS_96_24   40</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> FF_PROFILE_DTS_HD_HRA  50</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> FF_PROFILE_DTS_HD_MA   60</span></span><br><span class="line"> </span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> FF_PROFILE_MPEG2_422    0</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> FF_PROFILE_MPEG2_HIGH   1</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> FF_PROFILE_MPEG2_SS     2</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> FF_PROFILE_MPEG2_SNR_SCALABLE  3</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> FF_PROFILE_MPEG2_MAIN   4</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> FF_PROFILE_MPEG2_SIMPLE 5</span></span><br><span class="line"> </span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> FF_PROFILE_H264_CONSTRAINED  (1&lt;&lt;9)  <span class="comment">// 8+1; constraint_set1_flag</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> FF_PROFILE_H264_INTRA        (1&lt;&lt;11) <span class="comment">// 8+3; constraint_set3_flag</span></span></span><br><span class="line"> </span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> FF_PROFILE_H264_BASELINE             66</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> FF_PROFILE_H264_CONSTRAINED_BASELINE (66|FF_PROFILE_H264_CONSTRAINED)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> FF_PROFILE_H264_MAIN                 77</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> FF_PROFILE_H264_EXTENDED             88</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> FF_PROFILE_H264_HIGH                 100</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> FF_PROFILE_H264_HIGH_10              110</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> FF_PROFILE_H264_HIGH_10_INTRA        (110|FF_PROFILE_H264_INTRA)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> FF_PROFILE_H264_HIGH_422             122</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> FF_PROFILE_H264_HIGH_422_INTRA       (122|FF_PROFILE_H264_INTRA)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> FF_PROFILE_H264_HIGH_444             144</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> FF_PROFILE_H264_HIGH_444_PREDICTIVE  244</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> FF_PROFILE_H264_HIGH_444_INTRA       (244|FF_PROFILE_H264_INTRA)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> FF_PROFILE_H264_CAVLC_444            44</span></span><br><span class="line"> </span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> FF_PROFILE_VC1_SIMPLE   0</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> FF_PROFILE_VC1_MAIN     1</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> FF_PROFILE_VC1_COMPLEX  2</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> FF_PROFILE_VC1_ADVANCED 3</span></span><br><span class="line"> </span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> FF_PROFILE_MPEG4_SIMPLE                     0</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> FF_PROFILE_MPEG4_SIMPLE_SCALABLE            1</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> FF_PROFILE_MPEG4_CORE                       2</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> FF_PROFILE_MPEG4_MAIN                       3</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> FF_PROFILE_MPEG4_N_BIT                      4</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> FF_PROFILE_MPEG4_SCALABLE_TEXTURE           5</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> FF_PROFILE_MPEG4_SIMPLE_FACE_ANIMATION      6</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> FF_PROFILE_MPEG4_BASIC_ANIMATED_TEXTURE     7</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> FF_PROFILE_MPEG4_HYBRID                     8</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> FF_PROFILE_MPEG4_ADVANCED_REAL_TIME         9</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> FF_PROFILE_MPEG4_CORE_SCALABLE             10</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> FF_PROFILE_MPEG4_ADVANCED_CODING           11</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> FF_PROFILE_MPEG4_ADVANCED_CORE             12</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> FF_PROFILE_MPEG4_ADVANCED_SCALABLE_TEXTURE 13</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> FF_PROFILE_MPEG4_SIMPLE_STUDIO             14</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> FF_PROFILE_MPEG4_ADVANCED_SIMPLE           15</span></span><br></pre></td></tr></table></figure>
+<h3 id="avcodec-libavcodecavcodech"><a class="markdownIt-Anchor" href="#avcodec-libavcodecavcodech"></a> AVCodec （libavcodec/avcodec.h）</h3>
+<p>AVCodec是存储编解码器信息的结构体。</p>
+<ul>
+<li><strong>const char *name</strong>：编解码器的名字，比较短</li>
+<li><strong>const char *long_name</strong>：编解码器的名字，全称，比较长</li>
+<li><strong>enum AVMediaType type</strong>：指明了类型，是视频，音频，还是字幕</li>
+<li><strong>enum AVCodecID id</strong>：ID，不重复</li>
+<li><strong>const AVRational *supported_framerates</strong>：支持的帧率（仅视频）</li>
+<li><strong>const enum AVPixelFormat *pix_fmts</strong>：支持的像素格式（仅视频）</li>
+<li><strong>const int *supported_samplerates</strong>：支持的采样率（仅音频）</li>
+<li><strong>const enum AVSampleFormat *sample_fmts</strong>：支持的采样格式（仅音频）</li>
+<li><strong>const uint64_t *channel_layouts</strong>：支持的声道数（仅音频）</li>
+<li><strong>int priv_data_size</strong>：私有数据的大小</li>
+</ul>
+<p>其中，<strong>AVMediaType</strong>结构体：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">enum</span> <span class="title">AVMediaType</span> &#123;</span></span><br><span class="line">    AVMEDIA_TYPE_UNKNOWN = <span class="number">-1</span>,  <span class="comment">///&lt; Usually treated as AVMEDIA_TYPE_DATA</span></span><br><span class="line">    AVMEDIA_TYPE_VIDEO,</span><br><span class="line">    AVMEDIA_TYPE_AUDIO,</span><br><span class="line">    AVMEDIA_TYPE_DATA,          <span class="comment">///&lt; Opaque data information usually continuous</span></span><br><span class="line">    AVMEDIA_TYPE_SUBTITLE,</span><br><span class="line">    AVMEDIA_TYPE_ATTACHMENT,    <span class="comment">///&lt; Opaque data information usually sparse</span></span><br><span class="line">    AVMEDIA_TYPE_NB</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p><strong>AVCodecID</strong>结构体：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">enum</span> <span class="title">AVCodecID</span> &#123;</span></span><br><span class="line">    AV_CODEC_ID_NONE,</span><br><span class="line">    <span class="comment">/* video codecs */</span></span><br><span class="line">    AV_CODEC_ID_MPEG1VIDEO,</span><br><span class="line">    AV_CODEC_ID_MPEG2VIDEO, <span class="comment">///&lt; preferred ID for MPEG-1/2 video decoding</span></span><br><span class="line">    AV_CODEC_ID_H261,</span><br><span class="line">    AV_CODEC_ID_H263,</span><br><span class="line">    <span class="comment">//...（代码太长，略）</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>AVPixelFormat</strong>结构体：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">enum</span> <span class="title">AVPixelFormat</span> &#123;</span></span><br><span class="line">    AV_PIX_FMT_NONE = <span class="number">-1</span>,</span><br><span class="line">    AV_PIX_FMT_YUV420P,   <span class="comment">///&lt; planar YUV 4:2:0, 12bpp, (1 Cr &amp; Cb sample per 2x2 Y samples)</span></span><br><span class="line">    AV_PIX_FMT_YUYV422,   <span class="comment">///&lt; packed YUV 4:2:2, 16bpp, Y0 Cb Y1 Cr</span></span><br><span class="line">    AV_PIX_FMT_RGB24,     <span class="comment">///&lt; packed RGB 8:8:8, 24bpp, RGBRGB...</span></span><br><span class="line">    <span class="comment">//...（代码太长，略）</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="avpacket-libavcodecavcodech"><a class="markdownIt-Anchor" href="#avpacket-libavcodecavcodech"></a> AVPacket （libavcodec/avcodec.h）</h3>
+<p>AVPacket是存储压缩编码数据相关信息的结构体。例如对于H.264来说。1个AVPacket的data通常对应一个NAL。注意：在这里只是对应，而不是一模一样。他们之间有微小的差别：使用FFMPEG类库分离出多媒体文件中的H.264码流。因此在使用FFMPEG进行视音频处理的时候，常常可以将得到的AVPacket的data数据直接写成文件，从而得到视音频的码流文件。</p>
+<ul>
+<li><strong>int64_t pts</strong>：显示时间戳</li>
+<li><strong>int64_t dts</strong>：解码时间戳</li>
+<li><strong>uint8_t *data</strong>：压缩编码的数据</li>
+<li><strong>int size</strong>：data的大小</li>
+<li><strong>int stream_index</strong>：标识该AVPacket所属的视频/音频流。</li>
+</ul>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="http://qincji.gitee.io/2020/12/28/ffmpeg/06_struct/" title="FFmpeg重要结构体（转自雷神）" target="_blank" rel="external">http://qincji.gitee.io/2020/12/28/ffmpeg/06_struct/</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://qincji.gitee.io" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/images/avatar.jpg" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://qincji.gitee.io" target="_blank"><span class="text-dark">秦城季</span><small class="ml-1x">Android &amp; 音视频</small></a></h3>
+        <div></div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+      <div id="vcomments"></div>
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    
+    <li class="next">
+      <a href="/2020/12/27/ffmpeg/05_source/" title="使用Clion阅读FFmpeg源码（支持跳转）"><span>下一篇&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+    <li class="toggle-toc">
+      <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="文章目录" role="button">
+        <span>[&nbsp;</span><span>文章目录</span>
+        <i class="text-collapsed icon icon-anchor"></i>
+        <i class="text-in icon icon-close"></i>
+        <span>]</span>
+      </a>
+    </li>
+    
+  </ul>
+  
+  
+  <!-- Button trigger modal -->
+  <button type="button" class="btn btn-fancy btn-donate pop-onhover bg-gradient-warning" data-toggle="modal" data-target="#donateModal"><span>赏</span></button>
+  <!-- <div class="wave-icon wave-icon-danger btn-donate" data-toggle="modal" data-target="#donateModal">
+    <div class="wave-circle"><span class="icon"><i class="icon icon-bill"></i></span></div>
+  </div> -->
+  
+  
+  <div class="bar-right">
+    
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+    
+  </div>
+  </div>
+</nav>
+  
+<!-- Modal -->
+<div class="modal modal-center modal-small modal-xs-full fade" id="donateModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content donate">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      <div class="modal-body">
+        <div class="donate-box">
+          <div class="donate-head">
+            <p>感谢您的支持，我会继续努力的!</p>
+          </div>
+          <div class="tab-content">
+            <div role="tabpanel" class="tab-pane fade active in" id="alipay">
+              <div class="donate-payimg">
+                <img src="/images/donate/alipayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开支付宝扫一扫，即可进行扫码打赏哦</p>
+            </div>
+            <div role="tabpanel" class="tab-pane fade" id="wechatpay">
+              <div class="donate-payimg">
+                <img src="/images/donate/wechatpayimg.png" alt="扫码支持" title="扫一扫" />
+              </div>
+              <p class="text-muted mv">扫码打赏，你说多少就多少</p>
+              <p class="text-grey">打开微信扫一扫，即可进行扫码打赏哦</p>
+            </div>
+          </div>
+          <div class="donate-footer">
+            <ul class="nav nav-tabs nav-justified" role="tablist">
+              <li role="presentation" class="active">
+                <a href="#alipay" id="alipay-tab" role="tab" data-toggle="tab" aria-controls="alipay" aria-expanded="true"><i class="icon icon-alipay"></i> 支付宝</a>
+              </li>
+              <li role="presentation" class="">
+                <a href="#wechatpay" role="tab" id="wechatpay-tab" data-toggle="tab" aria-controls="wechatpay" aria-expanded="false"><i class="icon icon-wepay"></i> 微信支付</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/xhunmon" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(未命名)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+   
+    
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/valine"></script>
+  <script type="text/javascript">
+  var GUEST = ['nick', 'mail', 'link'];
+  var meta = 'nick,mail,link';
+  meta = meta.split(',').filter(function(item) {
+    return GUEST.indexOf(item) > -1;
+  });
+  new Valine({
+    el: '#vcomments',
+    verify: false,
+    notify: false,
+    appId: 'xMemPde6Lax4ffLfLBkuEi9t-gzGzoHsz',
+    appKey: 'jIVEp2lShgotSTy0GalhgIzm',
+    placeholder: 'Just go go',
+    avatar: 'mm',
+    meta: meta,
+    pageSize: '10' || 10,
+    visitor: false
+  });
+  </script>
+
+     
+
+
+
+
+
+
+
+</body>
+</html>
